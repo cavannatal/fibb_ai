@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 
 const features = [
   {
-    title: 'Artistic Styles',
-    description: 'Generate unique images in various artistic styles with just a few clicks.',
-    icon: '🎨'
+    title: 'Be Authentically Artifical',
+    description: 'Bring abstract ideas to life with our advanced AI interpretation.',
+    icon: '💡'
   },
   {
     title: 'Photo Realism',
@@ -13,10 +13,11 @@ const features = [
     icon: '📸'
   },
   {
-    title: 'Be Authentically Artifical',
-    description: 'Bring abstract ideas to life with our advanced AI interpretation.',
-    icon: '💡'
-  }
+    title: 'Artistic Styles',
+    description: 'Generate unique images in various artistic styles with just a few clicks.',
+    icon: '🎨'
+  },
+
 ];
 
 const Features: React.FC = () => {

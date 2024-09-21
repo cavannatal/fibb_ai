@@ -24,7 +24,7 @@ const LaunchBanner: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const launchDate = new Date('2024-10-11T09:00:00-05:00').getTime(); // CST is UTC-5
+    const launchDate = new Date('2024-10-11T09:00:00-05:00').getTime(); 
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const difference = launchDate - now;
