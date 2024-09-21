@@ -13,7 +13,7 @@ const features = [
     icon: '📸'
   },
   {
-    title: 'Abstract Concepts',
+    title: 'Be Authentically Artifical',
     description: 'Bring abstract ideas to life with our advanced AI interpretation.',
     icon: '💡'
   }
