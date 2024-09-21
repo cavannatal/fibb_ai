@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const Header: React.FC = () => {
   return (
     
-    <header className="h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <header className="h-[60vh] flex flex-col items-center justify-center text-center px-4">
       <motion.h1 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

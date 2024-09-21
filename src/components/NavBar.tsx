@@ -22,7 +22,7 @@ const NavBar = () => {
               <Link
                 key={index}
                 to={item.path}
-                className="py-2 px-2 text-center text-sm text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300 bg-gray-800 rounded"
+                className="py-2 px-2 text-center text-sm text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300  rounded"
               >
                 {item.name}
               </Link>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
-import aclimg from './images/acl.webp';
-import ashores from './images/ashores.jpg';
+import { Calendar, MapPin, Clock, ArrowRight, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+// Import images
+import aclImg from './images/acl.webp';
+import ashoresImg from './images/ashores.jpg';
 
 interface Event {
   id: string;
@@ -12,6 +15,7 @@ interface Event {
   location: string;
   description: string;
   imageUrl: string;
+  registrationLink: string;
 }
 
 const events: Event[] = [
@@ -19,10 +23,11 @@ const events: Event[] = [
     id: "1",
     title: "Fibb.ai Fam & Friends Pre-Launch Party",
     date: "October 9, 2024",
-    time: "9:00 AM - 5:00 PM",
+    time: "6:15 PM - 8:30 PM",
     location: "Auditorium Shores, Austin, Texas",
-    description: "Come and go as you please—drop by anytime and stay for as long as you’d like! Don’t miss out on this fun and informative evening. We can’t wait to see you there!",
-    imageUrl: ashores
+    description: "Join us for an exclusive pre-launch celebration! Mingle with the Fibb.ai team, get a sneak peek of our latest features, and enjoy an evening of innovation and fun.",
+    imageUrl: ashoresImg,
+    registrationLink: "https://partiful.com/e/uTQJe164bu6oYdO6fo8c"
   },
   {
     id: "2",
@@ -30,98 +35,129 @@ const events: Event[] = [
     date: "October 11, 2024",
     time: "9:00 AM - 3:00 PM",
     location: "Zilker Park, Austin, Texas",
-    description: "Join us at ACL for an exclusive photo opportunity at our launch event!",
-    imageUrl: aclimg
+    description: "Be part of history as we officially launch Fibb.ai at ACL! Experience our AI-powered photo booth and create unforgettable memories.",
+    imageUrl: aclImg,
+    registrationLink: "https://www.aclfestival.com/tickets"
   },
 ];
 
-const EventCard: React.FC<Event & { isActive: boolean; onClick: () => void }> = ({ 
-    title, date, time, location, description, imageUrl, isActive, onClick 
-  }) => (
+const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }> = ({
+  title,
+  date,
+  time,
+  location,
+  description,
+  imageUrl,
+  isExpanded,
+  onToggle,
+  registrationLink
+}) => {
+  const isExternalLink = registrationLink.startsWith('http');
+
+  return (
     <motion.div 
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer
-                  ${isActive ? 'md:col-span-2' : ''}`}
-      onClick={onClick}
+      className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
     >
-      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
-        <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
-          <h3 className="text-lg sm:text-xl font-semibold text-white">{title}</h3>
+      <div 
+        className="cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+          <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end p-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-white">{title}</h3>
+          </div>
+        </div>
+        <div className="p-4 space-y-2">
+          <div className="flex items-center text-gray-300">
+            <Calendar className="w-5 h-5 mr-2" />
+            <span>{date}</span>
+          </div>
+          <div className="flex items-center text-gray-300">
+            <Clock className="w-5 h-5 mr-2" />
+            <span>{time}</span>
+          </div>
+          <div className="flex items-center text-gray-300">
+            <MapPin className="w-5 h-5 mr-2" />
+            <span>{location}</span>
+          </div>
         </div>
       </div>
-      <div className="p-4">
-        <div className="flex items-center text-gray-300 text-sm sm:text-base mb-2">
-          <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
-          <span>{date}</span>
-        </div>
-        <div className="flex items-center text-gray-300 text-sm sm:text-base mb-2">
-          <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
-          <span>{time}</span>
-        </div>
-        <div className="flex items-center text-gray-300 text-sm sm:text-base mb-4">
-          <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-          <span>{location}</span>
-        </div>
-        <AnimatePresence>
-          {isActive && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="text-gray-400 text-sm sm:text-base mb-4">{description}</p>
-              <button className="flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-200 text-sm sm:text-base">
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="px-4 pb-4"
+          >
+            <p className="text-gray-300 mb-4">{description}</p>
+            {isExternalLink ? (
+              <a
+                href={registrationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Register Now <ExternalLink className="w-4 h-4 ml-2" />
+              </a>
+            ) : (
+              <Link
+                to={registrationLink}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
                 Register Now <ArrowRight className="w-4 h-4 ml-2" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              </Link>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
-  
-  const EventsPage: React.FC = () => {
-    const [activeEvent, setActiveEvent] = useState<string | null>(null);
-  
-    const handleEventClick = (eventId: string) => {
-      setActiveEvent(activeEvent === eventId ? null : eventId);
-    };
-  
-    return (
-      <section className="min-h-screen flex flex-col items-center justify-start px-4 py-12 bg-gray-900">
+};
+
+const EventsPage: React.FC = () => {
+  const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
+
+  const handleToggle = (eventId: string) => {
+    setExpandedEvent(expandedEvent === eventId ? null : eventId);
+  };
+
+  return (
+    <section className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-400 via-purple-500 to-blue-600"
-          style={{ fontFamily: 'Nunito, sans-serif' }}
+          className="text-4xl sm:text-5xl font-extrabold text-center mb-12"
         >
-          Upcoming Events
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+            Upcoming Events
+          </span>
         </motion.h1>
         
-        <motion.div
-          layout
-          className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 gap-6"
-        >
-          <AnimatePresence>
-            {events.map((event) => (
-              <EventCard 
-                key={event.id} 
-                {...event} 
-                isActive={activeEvent === event.id}
-                onClick={() => handleEventClick(event.id)}
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      </section>
-    );
-  };
-  
-  export default EventsPage;
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {events.map((event) => (
+            <EventCard 
+              key={event.id} 
+              {...event} 
+              isExpanded={expandedEvent === event.id}
+              onToggle={() => handleToggle(event.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default EventsPage;

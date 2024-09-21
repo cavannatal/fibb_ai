@@ -4,9 +4,9 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage/HomePage';
 import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
-
 import MissionStatementPage from './pages/MissionStatementPage/MissionStatementPage';
 import EventsPage from './pages/EventsPage/EventsPage';
+import FAQPage from './pages/FAQ/FAQPage';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +20,7 @@ const App: React.FC = () => {
             <Route path="/who-we-are" element={<WhoAreWePage />} />
             <Route path="/mission" element={<MissionStatementPage />} />
             <Route path="/events" element={<EventsPage />} />
+            <Route path="/FAQ" element={<FAQPage />} />
         
           </Routes>
         </main>
