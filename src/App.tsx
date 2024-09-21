@@ -4,7 +4,7 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import WhoAreWePage from './components/WhoAreWePage';
-import LaunchBanner from './components/LaunchBanner';
+
 import MissionStatementPage from './components/MissionStatementPage';
 
 const App: React.FC = () => {
