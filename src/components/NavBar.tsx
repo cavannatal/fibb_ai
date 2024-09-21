@@ -1,10 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 
-const NavBar: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
-
+const NavBar = () => {
   const navItems = [
     { name: "Who We Are", path: "/who-we-are" },
     { name: "Mission Statement", path: "/mission" },
@@ -44,21 +40,6 @@ const NavBar: React.FC = () => {
                 {item.name}
               </Link>
             ))}
-            {!isAuthenticated ? (
-              <button
-                onClick={() => loginWithRedirect()}
-                className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-              >
-                Log In
-              </button>
-            ) : (
-              <button
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                className="py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300"
-              >
-                Log Out
-              </button>
-            )}
           </div>
         </div>
       </div>
