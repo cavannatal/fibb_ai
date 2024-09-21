@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage/HomePage';
 import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
 
 import MissionStatementPage from './pages/MissionStatementPage/MissionStatementPage';
+import EventsPage from './pages/EventsPage/EventsPage';
 
 const App: React.FC = () => {
   return (
@@ -18,7 +19,7 @@ const App: React.FC = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/who-we-are" element={<WhoAreWePage />} />
             <Route path="/mission" element={<MissionStatementPage />} />
-            
+            <Route path="/events" element={<EventsPage />} />
         
           </Routes>
         </main>
