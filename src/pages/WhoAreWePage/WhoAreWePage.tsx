@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import matt from "../images/matt.jpg"
-import nick from "../images/nick.jpg"
+import matt from "../../images/matt.jpg"
+import nick from "../../images/nick.jpg"
 
 // Define types for our data structure
 interface TeamMember {

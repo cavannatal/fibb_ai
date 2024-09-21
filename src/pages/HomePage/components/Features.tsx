@@ -16,7 +16,7 @@ const features = [
     title: 'Artistic Styles',
     description: 'Generate unique images in various artistic styles with just a few clicks.',
     icon: '🎨'
-  },
+  }
 
 ];
 

@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
-import WhoAreWePage from './components/WhoAreWePage';
+import HomePage from './pages/HomePage/HomePage';
+import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
 
-import MissionStatementPage from './components/MissionStatementPage';
+import MissionStatementPage from './pages/MissionStatementPage/MissionStatementPage';
 
 const App: React.FC = () => {
   return (

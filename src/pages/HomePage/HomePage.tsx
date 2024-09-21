@@ -1,8 +1,8 @@
 import React from 'react';
-import Header from '../components/Header';
-import Features from '../components/Features';
-import HowItWorks from '../components/HowItWorks';
-import LaunchBanner from '../components/LaunchBanner';
+import Header from './components/Header';
+import Features from './components/Features';
+import HowItWorks from './components/HowItWorks';
+import LaunchBanner from './components/LaunchBanner';
 
 const HomePage: React.FC = () => {
   return (
