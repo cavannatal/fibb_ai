@@ -48,7 +48,7 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({ children }) => {
   );
 };
 
-const CaseStudy: React.FC = () => {
+const CaseStudyPage: React.FC = () => {
   const enterpriseRef = useRef<HTMLDivElement>(null);
   const proRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
@@ -171,4 +171,4 @@ const CaseStudy: React.FC = () => {
   );
 };
 
-export default CaseStudy;
+export default CaseStudyPage;
