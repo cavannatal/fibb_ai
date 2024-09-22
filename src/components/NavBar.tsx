@@ -10,6 +10,7 @@ const NavBar: React.FC = () => {
     { name: "Mission Statement", path: "/mission" },
     { name: "Events", path: "/events" },
     { name: "FAQ", path: "/faq" },
+    { name: "Case Study", path: "/case-study" },
   ];
 
   const handleAuth = () => {

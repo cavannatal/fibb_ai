@@ -8,6 +8,7 @@ import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
 import MissionStatementPage from './pages/MissionStatementPage/MissionStatementPage';
 import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
+import CaseStudyPage from './pages/CaseStudies/CaseStudyPage';
 
 
 const App: React.FC = () => {
@@ -30,6 +31,7 @@ const App: React.FC = () => {
               <Route path="/mission" element={<MissionStatementPage />} />
               <Route path="/FAQ" element={<FAQPage />} />
               <Route path="/events" element={<EventsPage />} />
+              <Route path="/case-study" element={<CaseStudyPage />} />
             </Routes>
           </main>
           <Footer />
