@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import matt from "../../images/matt.jpg"
-import nick from "../../images/nick.jpg"
+import matt from "./images/matt.jpg";
+import nick from "./images/nick.jpg";
+import cavan from "./images/cavan.jpg"
 
 // Define types for our data structure
 interface TeamMember {
@@ -35,7 +36,18 @@ const topTeamMembers: TeamMember[] = [
     ],
     imageUrl: nick,
     imageStyle: "object-cover object-center scale-100" 
-  }
+  },
+  { 
+    name: "Cavan Natal", 
+    role: "Software Engineer", 
+    description: [
+      "Fresh out of Texas Tech University with a Bachelor’s in Computer Science and a minor in Mathematics, Cavan is eager to apply his knowledge and skills to real-world challenges in software engineering and data science. His academic background has provided him with a solid foundation in programming, algorithms, and mathematical modeling, which he now aims to leverage in the professional world.",
+      "During his time at Texas Tech, Cavan honed his problem-solving skills, worked on projects ranging from building web applications to conducting data analysis, and developed a keen interest in the intersection of technology and data. He is passionate about creating solutions that are both innovative and efficient, whether through software development or data-driven insights.",
+      
+    ],
+    imageUrl: cavan,
+    imageStyle: "object-cover object-center scale-100" 
+  },
 ];
 
 interface BottomTeamMember {
@@ -55,16 +67,12 @@ const bottomTeamMembers: BottomTeamMember[] = [
     role: "Artificial Intelligence Researcher", 
     description: "Pushing the boundaries of what's possible"
   },
-  { 
-    name: "Cavan Natal", 
-    role: "Software Engineer", 
-    description: "Crafting our cutting-edge solutions"
-  },
+  
 ];
 
 const AboutUs: React.FC = () => {
   return (
-    <div className="py-16 bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="py-16 bg-gradient-to-b from-gray-900  text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
           className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600"
@@ -115,7 +123,7 @@ const AboutUs: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {bottomTeamMembers.map((member, index) => (
             <motion.div 
               key={index}
