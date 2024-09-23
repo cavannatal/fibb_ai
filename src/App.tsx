@@ -1,3 +1,4 @@
+// App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
@@ -9,7 +10,7 @@ import MissionStatementPage from './pages/MissionStatementPage/MissionStatementP
 import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
 import CaseStudyPage from './pages/CaseStudies/CaseStudyPage';
-
+import BusinessCaseStudyPage from './pages/CaseStudies/BusinessCaseStudyPage'; // New import
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
               <Route path="/FAQ" element={<FAQPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/case-study" element={<CaseStudyPage />} />
+              <Route path="/business-case-study" element={<BusinessCaseStudyPage />} /> {/* New route */}
             </Routes>
           </main>
           <Footer />
