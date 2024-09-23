@@ -49,41 +49,41 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({ children }) => {
 };
 
 const CaseStudyPage: React.FC = () => {
-  const enterpriseRef = useRef<HTMLDivElement>(null);
-  const proRef = useRef<HTMLDivElement>(null);
+  const consumerRef = useRef<HTMLDivElement>(null);
+  const productPlacementRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const enterpriseCase: CaseStudy = { 
-    id: "enterprise",
-    title: "Business Case", 
+  const consumerCase: CaseStudy = { 
+    id: "consumer",
+    title: "Use Case", 
     description: "", 
     imageUrl: "/api/placeholder/800/600",
     fullDescription: ""
   };
 
-  const proCase: CaseStudy = { 
-    id: "professional",
-    title: "User Use Case", 
-    description: "Use Story", 
+  const productPlacementCase: CaseStudy = { 
+    id: "product_placement",
+    title: "Product Placement", 
+    description: "Product Placement", 
     imageUrl: "/api/placeholder/800/600",
     fullDescription: ""
   };
 
-  const caseStudies = [enterpriseCase, proCase];
+  const caseStudies = [consumerCase, productPlacementCase];
 
   const caseStudyRefs = {
-    enterprise: useRef<HTMLDivElement>(null),
-    professional: useRef<HTMLDivElement>(null),
+    consumer: useRef<HTMLDivElement>(null),
+    product_placement: useRef<HTMLDivElement>(null),
   };
 
   const handleCaseStudyClick = (id: string) => {
     scrollToSection(detailsRef);
     setTimeout(() => {
-      caseStudyRefs[id as keyof typeof caseStudyRefs].current?.scrollIntoView({ behavior: 'smooth' });
+      caseStudyRefs[id as keyof typeof caseStudyRefs]?.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -104,7 +104,7 @@ const CaseStudyPage: React.FC = () => {
             className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-8"
             style={{ fontFamily: 'Nunito, sans-serif' }}
           >
-            Discover how our solutions transform businesses across different sectors.
+            Discover how our product can transform your needs.
           </p>
         </AnimatedSection>
         
@@ -112,42 +112,42 @@ const CaseStudyPage: React.FC = () => {
           <div className="flex space-x-4">
             <button
               className="px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
-              onClick={() => scrollToSection(enterpriseRef)}
+              onClick={() => scrollToSection(consumerRef)}
             >
-              Enterprise
+              Consumer
             </button>
             <button
               className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105"
-              onClick={() => scrollToSection(proRef)}
+              onClick={() => scrollToSection(productPlacementRef)}
             >
-              Professional
+              Product Placement
             </button>
           </div>
         </AnimatedSection>
       </header>
 
-      <section ref={enterpriseRef} className="py-16 px-4">
+      <section ref={consumerRef} className="py-16 px-4">
         <AnimatedSection>
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Enterprise Solution
+            Consumer 
           </h2>
         </AnimatedSection>
         <AnimatedSection>
           <div className="max-w-4xl mx-auto">
-            <CaseStudyCard {...enterpriseCase} onClick={handleCaseStudyClick} />
+            <CaseStudyCard {...consumerCase} onClick={handleCaseStudyClick} />
           </div>
         </AnimatedSection>
       </section>
 
-      <section ref={proRef} className="py-16 px-4 bg-gray-800">
+      <section ref={productPlacementRef} className="py-16 px-4 bg-gray-800">
         <AnimatedSection>
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Professional Solution
+            Product Placement
           </h2>
         </AnimatedSection>
         <AnimatedSection>
           <div className="max-w-4xl mx-auto">
-            <CaseStudyCard {...proCase} onClick={handleCaseStudyClick} />
+            <CaseStudyCard {...productPlacementCase} onClick={handleCaseStudyClick} />
           </div>
         </AnimatedSection>
       </section>
