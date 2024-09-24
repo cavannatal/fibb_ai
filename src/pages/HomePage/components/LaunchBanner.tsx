@@ -47,7 +47,7 @@ const LaunchBanner: React.FC = () => {
     <div className="w-full max-w-32xl mx-auto overflow-hidden">
       <div className="p-4 md:p-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-600">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl md:text-2xl font-bold">Fibb.ai Launch Countdown!</h2>
+          <h2 className="text-xl md:text-2xl font-bold">fibb.ai Launch Countdown!</h2>
           <Rocket className="h-6 w-6 md:h-8 md:w-8 animate-pulse text-blue-600" />
         </div>
         <div className="flex justify-around">

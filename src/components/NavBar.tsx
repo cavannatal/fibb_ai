@@ -11,6 +11,7 @@ const NavBar: React.FC = () => {
     { name: "Events", path: "/events" },
     { name: "FAQ", path: "/faq" },
     { name: "Case Studies", path: "/case-study" },
+    { name: "Cam", path: "/cam" },
   ];
 
   const handleAuth = () => {
