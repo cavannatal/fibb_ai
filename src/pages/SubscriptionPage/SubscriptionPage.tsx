@@ -1,0 +1,160 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
+import SubscriptionSwitch from './components/SubscriptionSwitch';  // Make sure to import the CustomSwitch component
+
+interface Plan {
+  name: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: string[];
+  isPopular?: boolean;
+}
+
+const plans: Plan[] = [
+    {
+      name: 'Basic Plan',
+      monthlyPrice: 10,
+      yearlyPrice: 8,
+      features: [
+        'Limited generations (~200 / month)',
+        'General commercial terms',
+        'Access to member gallery',
+        'Optional credit top ups',
+        '3 concurrent fast jobs'
+      ]
+    },
+    {
+      name: 'Standard Plan',
+      monthlyPrice: 30,
+      yearlyPrice: 24,
+      features: [
+        '15h Fast generations',
+        'Unlimited Relaxed generations',
+        'General commercial terms',
+        'Access to member gallery',
+        'Optional credit top ups',
+        '3 concurrent fast jobs'
+      ],
+      isPopular: true
+    },
+    {
+      name: 'Pro Plan',
+      monthlyPrice: 60,
+      yearlyPrice: 48,
+      features: [
+        '30h Fast generations',
+        'Unlimited Relaxed generations',
+        'General commercial terms',
+        'Access to member gallery',
+        'Optional credit top ups',
+        'Stealth image generation',
+        '12 concurrent fast jobs'
+      ]
+    },
+    {
+      name: 'Mega Plan',
+      monthlyPrice: 120,
+      yearlyPrice: 96,
+      features: [
+        '60h Fast generations',
+        'Unlimited Relaxed generations',
+        'General commercial terms',
+        'Access to member gallery',
+        'Optional credit top ups',
+        'Stealth image generation',
+        '12 concurrent fast jobs'
+      ]
+    }
+  ];
+
+const SubscriptionPage: React.FC = () => {
+  const [isYearly, setIsYearly] = useState(false);
+
+  const handleToggle = () => {
+    setIsYearly(!isYearly);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="text-center"
+        >
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600" style={{ fontFamily: 'Nunito, sans-serif' }}>
+            Purchase a subscription
+          </h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="mt-4 text-xl text-gray-300"
+            style={{ fontFamily: 'Nunito, sans-serif' }}
+          >
+            Choose the plan that works for you
+          </motion.p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="mt-8 flex justify-center items-center"
+        >
+          <SubscriptionSwitch isYearly={isYearly} onToggle={handleToggle} />
+        </motion.div>
+
+        <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0 xl:grid-cols-4">
+          {plans.map((plan, index) => (
+            <motion.div 
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 * (index + 1) }}
+              className={`bg-gray-800 rounded-lg shadow-lg divide-y divide-gray-700 ${plan.isPopular ? 'ring-2 ring-red-500' : ''}`}
+            >
+              <div className="p-6">
+                <h2 className="text-2xl font-semibold text-white">{plan.name}</h2>
+                <p className="mt-4">
+                  {isYearly && (
+                    <span className="text-lg line-through text-gray-400">${plan.monthlyPrice}</span>
+                  )}
+                  <span className="text-4xl font-extrabold text-white ml-2">
+                    ${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                  </span>
+                  <span className="text-base font-medium text-gray-300">/ month</span>
+                </p>
+                {isYearly && (
+                  <p className="mt-1 text-sm text-gray-400">20% off billed annually</p>
+                )}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="mt-8 w-full px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+                >
+                  Subscribe
+                </motion.button>
+              </div>
+              <div className="pt-6 pb-8 px-6">
+                <h3 className="text-xs font-medium text-gray-300 tracking-wide uppercase">What's included</h3>
+                <ul className="mt-6 space-y-4">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex space-x-3">
+                      <Check className="flex-shrink-0 h-5 w-5 text-green-400" aria-hidden="true" />
+                      <span className="text-sm text-gray-300">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SubscriptionPage;

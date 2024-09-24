@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const features = [
   {
-    title: 'Be Authentically Artifical',
+    title: 'Artifically Authentic',
     description: 'Bring abstract ideas to life with our advanced AI interpretation.',
     icon: '💡'
   },

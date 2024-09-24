@@ -11,6 +11,7 @@ import FAQPage from './pages/FAQ/FAQPage';
 import CaseStudyPage from './pages/CaseStudies/CaseStudyPage';
 import BusinessCaseStudyPage from './pages/CaseStudies/BusinessCaseStudyPage';
 import CameraPage from './pages/CameraPage/CameraPage';
+import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage'
 
 
 
@@ -55,6 +56,7 @@ const App: React.FC = () => {
               <Route path="/case-study" element={<CaseStudyPage />} />
               <Route path="/business-case-study" element={<BusinessCaseStudyPage />} />
               <Route path="/cam" element={<CameraPage />} />
+              <Route path="/subscribe" element={<SubscriptionPage />} />
             </Routes>
           </main>
           <Footer />
