@@ -2,13 +2,16 @@ import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+import img8 from './images/img8.png';
+import img2 from './images/img2.png';
+import img3 from './images/img3.png';
+import img4 from './images/img4.png';
+import img5 from './images/img5.png';
+import img6 from './images/img6.png';
+
 // Import images from the local 'images' folder
-const img8 = require('./images/img8.PNG');
-const img2 = require('./images/img2.PNG');
-const img3 = require('./images/img3.PNG');
-const img4 = require('./images/img4.PNG');
-const img5 = require('./images/img5.PNG');
-const img6 = require('./images/img6.PNG');
+
+
 
 
 

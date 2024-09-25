@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import matt from "./images/matt.jpg";
 import nick from "./images/nick.jpg";
 import cavan from "./images/cavan.jpg"
+import jake from "./images/jake.jpg"
 
 // Define types for our data structure
 interface TeamMember {
@@ -37,6 +38,15 @@ const topTeamMembers: TeamMember[] = [
     imageStyle: "object-cover object-center scale-100" 
   },
   { 
+    name: "Jake Metzer", 
+    role: "Chief Operating Officer", 
+    description: [
+      "Him",
+    ],
+    imageUrl: jake,
+    imageStyle: "object-cover object-center scale-100" 
+  },
+  { 
     name: "Cavan Natal", 
     role: "Software Engineer", 
     description: [
@@ -47,6 +57,7 @@ const topTeamMembers: TeamMember[] = [
     imageUrl: cavan,
     imageStyle: "object-cover object-center scale-100" 
   },
+  
 ];
 
 interface BottomTeamMember {
