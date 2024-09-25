@@ -4,6 +4,7 @@ import matt from "./images/matt.jpg";
 import nick from "./images/nick.jpg";
 import cavan from "./images/cavan.jpg"
 import jake from "./images/jake.jpg"
+import ceasar from "./images/ceasar.jpg"
 
 // Define types for our data structure
 interface TeamMember {
@@ -17,7 +18,7 @@ interface TeamMember {
 const topTeamMembers: TeamMember[] = [
   { 
     name: "Matt Yee", 
-    role: "Co-founder and CTO", 
+    role: "Co-founder and CEO", 
     description: [
       "Matt's professional journey is a testament to the transformative power of combining athletic discipline with technical innovation, making a tangible impact in both the corporate world and on the baseball field. Whether he's developing the next generation of cloud infrastructure or catching a 95+ mph fastball, Matt Yee embodies the spirit of adaptability, strategic thinking, and unwavering commitment to success.",
       "Matt's journey began with a solid academic foundation, earning dual Bachelor's degrees in Computer Science and Aerospace Engineering from Stanford University, followed by an MBA from The University of Texas at Austin. He has held significant roles at leading tech giants, including Google, Amazon Web Services (AWS), and Facebook, where he managed and contributed to groundbreaking projects, including collaboration with NASA JPL, the Department of Defense, and General Dynamics. His career has been marked by his ability to lead teams in developing cutting-edge solutions that integrate AI-driven applications, cloud architecture optimization, and innovative software engineering practices.",
@@ -46,6 +47,20 @@ const topTeamMembers: TeamMember[] = [
     'In his spare time, you’ll find Jake working with his hands—whether it’s woodworking, electronics tinkering, or 3D printing—along with staying active in competitive sports and enjoying great food. At fibb, Jake combines his technical expertise and entrepreneurial spirit to help shape the company’s future in AI.'
     ],
     imageUrl: jake,
+    imageStyle: "object-cover object-center scale-100" 
+  },
+  { 
+    name: "Ceasar Aguilar", 
+    role: "Head of Engineering", 
+    description: [
+    "An expert in the convergence of technology and strategic business applications, Cesar has carved a niche in spearheading initiatives that transform complex data into actionable business insights. With a solid academic background with degrees in Computer Science and Management Information Systems, Cesar has consistently leveraged his deep expertise to make significant impacts across various sectors.",
+    "At the heart of his career, Cesar has played pivotal roles in developing advanced machine learning models and predictive analytics solutions, significantly enhancing productivity and sales for major players such as Raytheon Technologies, the Department of Defense, DARPA, and Lockheed Martin. His tenure at Infor is particularly notable, where he led a dynamic team in applying AI to revolutionize financial and supply chain management analytics.",
+    "Beyond his technical prowess, Cesar is known for his ability to manage large development teams, guiding them through complex AI projects with a leadership style rooted in humility, transparency, and dedication. He believes in empowering his team by surrounding himself with competent professionals and giving them the autonomy to excel in their respective areas.",
+  "Outside of the office, Cesar is passionate about health and fitness, often starting his day with a morning walk and regular visits to the gym, underscoring his belief in the synergy of physical well-being and mental sharpness.",
+  "As the new Head of Engineering at Fibb, Cesar is poised to bridge the gap between cutting-edge R&D and practical, impactful applications of new technologies. His vision is to not only advance the technological frontier but also to cultivate an environment where innovation is seamlessly integrated with real-world solutions."
+
+  ],
+    imageUrl: ceasar,
     imageStyle: "object-cover object-center scale-100" 
   },
   { 

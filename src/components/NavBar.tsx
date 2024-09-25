@@ -12,6 +12,7 @@ const NavBar: React.FC = () => {
     { name: "FAQ", path: "/faq" },
     { name: "Case Studies", path: "/case-study" },
     { name: "Subscribe", path: "/subscribe" },
+    { name: "Ca", path: "/cam" },
   ];
 
   const handleAuth = () => {
