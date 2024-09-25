@@ -162,12 +162,15 @@ const CaseStudyPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {productPhotos.map((photo, index) => (
                 <ProductPhotoCard 
+                
                   key={index} 
                   {...photo} 
                   onClick={() => setSelectedPhoto(photo)}
                 />
+                
               ))}
             </div>
+            console.log("image Test")
           </div>
         </AnimatedSection>
       </section>
