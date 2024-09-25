@@ -18,7 +18,7 @@ interface TeamMember {
 const topTeamMembers: TeamMember[] = [
   { 
     name: "Matt Yee", 
-    role: "Co-founder and CEO", 
+    role: "Co-Founder and CEO", 
     description: [
       "Matt's professional journey is a testament to the transformative power of combining athletic discipline with technical innovation, making a tangible impact in both the corporate world and on the baseball field. Whether he's developing the next generation of cloud infrastructure or catching a 95+ mph fastball, Matt Yee embodies the spirit of adaptability, strategic thinking, and unwavering commitment to success.",
       "Matt's journey began with a solid academic foundation, earning dual Bachelor's degrees in Computer Science and Aerospace Engineering from Stanford University, followed by an MBA from The University of Texas at Austin. He has held significant roles at leading tech giants, including Google, Amazon Web Services (AWS), and Facebook, where he managed and contributed to groundbreaking projects, including collaboration with NASA JPL, the Department of Defense, and General Dynamics. His career has been marked by his ability to lead teams in developing cutting-edge solutions that integrate AI-driven applications, cloud architecture optimization, and innovative software engineering practices.",
@@ -30,7 +30,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Nick Friesen", 
-    role: "Co-founder", 
+    role: "Co-Founder and Head of Artificial Intelligence Research", 
     description: [
       "Nick is the founder of one of the largest dating photography companies in the world. With millions in revenue, and photographers based throughout the US, he’s an expert on facial expressions, body language, and image optimization. ",
       "With Fibb.ai, he brings the attention to detail and artistic understanding to configure our models to generate the most accurate personal replicas anyone ever has seen.",
@@ -50,7 +50,7 @@ const topTeamMembers: TeamMember[] = [
     imageStyle: "object-cover object-center scale-100" 
   },
   { 
-    name: "Ceasar Aguilar", 
+    name: "Cesar Aguilar", 
     role: "Head of Engineering", 
     description: [
     "An expert in the convergence of technology and strategic business applications, Cesar has carved a niche in spearheading initiatives that transform complex data into actionable business insights. With a solid academic background with degrees in Computer Science and Management Information Systems, Cesar has consistently leveraged his deep expertise to make significant impacts across various sectors.",
