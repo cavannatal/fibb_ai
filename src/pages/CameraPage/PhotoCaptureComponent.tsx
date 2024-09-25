@@ -67,44 +67,47 @@ const PhotoCaptureComponent: React.FC = () => {
 
   const renderFaceTemplate = () => {
     const commonClasses = "absolute opacity-50 border-4 border-yellow-300";
+    const faceOutlineClasses = `${commonClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[240px] h-[320px] rounded-full`;
+    
     switch (currentExpression) {
       case 'neutral':
         return (
           <>
-            <div className={`${commonClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 h-2/3 rounded-full`} />
-            <div className={`${commonClasses} top-[70%] left-1/2 transform -translate-x-1/2 w-1/6 h-0 border-b-4`} />
+            <div className={faceOutlineClasses} />
+            <div className={`${commonClasses} top-[70%] left-1/2 transform -translate-x-1/2 w-[80px] h-0 border-b-4`} />
           </>
         );
-        case 'happy':
+      case 'happy':
         return (
           <>
-            <div className={`${commonClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 h-2/3 rounded-full`} />
-            <div className={`${commonClasses} top-[62%] left-1/2 transform -translate-x-1/2 w-1/5 h-[15%] rounded-[100%] border-b-4 border-t-0 border-l-0 border-r-0`} />
+            <div className={faceOutlineClasses} />
+            <div className={`${commonClasses} top-[62%] left-1/2 transform -translate-x-1/2 w-[96px] h-[48px] rounded-[100%] border-b-4 border-t-0 border-l-0 border-r-0`} />
           </>
         );
       case 'laughing':
         return (
           <>
-            <div className={`${commonClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/3 h-2/3 rounded-full`} />
-            <div className="absolute top-[65%] left-1/2 transform -translate-x-1/2 w-[12%] h-[12%] bg-yellow-300 opacity-50 rounded-full" />
+            <div className={faceOutlineClasses} />
+            <div className="absolute top-[65%] left-1/2 transform -translate-x-1/2 w-[60px] h-[60px] bg-yellow-300 opacity-50 rounded-full" />
           </>
         );
       case 'left-profile':
         return (
           <>
-            <div className={`${commonClasses} top-1/4 left-1/2 w-1/6 h-1/2 rounded-r-full border-r-4`} />
-            <ArrowRight className="absolute top-1/2 left-1/3 transform -translate-y-1/2 w-12 h-12 text-yellow-300 opacity-70" />
+            <div className={`${commonClasses} top-1/4 left-1/2 w-[80px] h-[160px] rounded-r-full border-r-4`} />
+            <ArrowRight className="absolute top-1/2 left-1/3 transform -translate-y-1/2 w-[48px] h-[48px] text-yellow-300 opacity-70" />
           </>
         );
       case 'right-profile':
         return (
           <>
-            <div className={`${commonClasses} top-1/4 right-1/2 w-1/6 h-1/2 rounded-l-full border-l-4`} />
-            <ArrowLeft className="absolute top-1/2 right-1/3 transform -translate-y-1/2 w-12 h-12 text-yellow-300 opacity-70" />
+            <div className={`${commonClasses} top-1/4 right-1/2 w-[80px] h-[160px] rounded-l-full border-l-4`} />
+            <ArrowLeft className="absolute top-1/2 right-1/3 transform -translate-y-1/2 w-[48px] h-[48px] text-yellow-300 opacity-70" />
           </>
         );
     }
   };
+
 
   const getExpressionInstructions = () => {
     const instructions = {
