@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import SubscriptionSwitch from './components/SubscriptionSwitch';  // Make sure to import the CustomSwitch component
+import { loadStripe } from '@stripe/stripe-js';
+import SubscriptionSwitch from './components/SubscriptionSwitch';
+
+// Initialize Stripe
+const stripePromise = loadStripe('your_stripe_publishable_key');
 
 interface Plan {
   name: string;
@@ -9,70 +13,106 @@ interface Plan {
   yearlyPrice: number;
   features: string[];
   isPopular?: boolean;
+  monthlyPriceId: string;
+  yearlyPriceId: string;
 }
 
 const plans: Plan[] = [
-    {
-      name: 'Basic Plan',
-      monthlyPrice: 10,
-      yearlyPrice: 8,
-      features: [
-        'Limited generations (~200 / month)',
-        'General commercial terms',
-        'Access to member gallery',
-        'Optional credit top ups',
-        '3 concurrent fast jobs'
-      ]
-    },
-    {
-      name: 'Standard Plan',
-      monthlyPrice: 30,
-      yearlyPrice: 24,
-      features: [
-        '15h Fast generations',
-        'Unlimited Relaxed generations',
-        'General commercial terms',
-        'Access to member gallery',
-        'Optional credit top ups',
-        '3 concurrent fast jobs'
-      ],
-      isPopular: true
-    },
-    {
-      name: 'Pro Plan',
-      monthlyPrice: 60,
-      yearlyPrice: 48,
-      features: [
-        '30h Fast generations',
-        'Unlimited Relaxed generations',
-        'General commercial terms',
-        'Access to member gallery',
-        'Optional credit top ups',
-        'Stealth image generation',
-        '12 concurrent fast jobs'
-      ]
-    },
-    {
-      name: 'Mega Plan',
-      monthlyPrice: 120,
-      yearlyPrice: 96,
-      features: [
-        '60h Fast generations',
-        'Unlimited Relaxed generations',
-        'General commercial terms',
-        'Access to member gallery',
-        'Optional credit top ups',
-        'Stealth image generation',
-        '12 concurrent fast jobs'
-      ]
-    }
-  ];
+  {
+    name: 'Basic Plan',
+    monthlyPrice: 10,
+    yearlyPrice: 8,
+    features: [
+      'Limited generations (~200 / month)',
+      'General commercial terms',
+      'Access to member gallery',
+      'Optional credit top ups',
+      '3 concurrent fast jobs'
+    ],
+    monthlyPriceId: 'price_basic_monthly',
+    yearlyPriceId: 'price_basic_yearly'
+  },
+  {
+    name: 'Standard Plan',
+    monthlyPrice: 30,
+    yearlyPrice: 24,
+    features: [
+      '15h Fast generations',
+      'Unlimited Relaxed generations',
+      'General commercial terms',
+      'Access to member gallery',
+      'Optional credit top ups',
+      '3 concurrent fast jobs'
+    ],
+    isPopular: true,
+    monthlyPriceId: 'price_standard_monthly',
+    yearlyPriceId: 'price_standard_yearly'
+  },
+  {
+    name: 'Pro Plan',
+    monthlyPrice: 60,
+    yearlyPrice: 48,
+    features: [
+      '30h Fast generations',
+      'Unlimited Relaxed generations',
+      'General commercial terms',
+      'Access to member gallery',
+      'Optional credit top ups',
+      'Stealth image generation',
+      '12 concurrent fast jobs'
+    ],
+    monthlyPriceId: 'price_pro_monthly',
+    yearlyPriceId: 'price_pro_yearly'
+  },
+  {
+    name: 'Mega Plan',
+    monthlyPrice: 120,
+    yearlyPrice: 96,
+    features: [
+      '60h Fast generations',
+      'Unlimited Relaxed generations',
+      'General commercial terms',
+      'Access to member gallery',
+      'Optional credit top ups',
+      'Stealth image generation',
+      '12 concurrent fast jobs'
+    ],
+    monthlyPriceId: 'price_mega_monthly',
+    yearlyPriceId: 'price_mega_yearly'
+  }
+];
 
 const SubscriptionPage: React.FC = () => {
   const [isYearly, setIsYearly] = useState(false);
 
   const handleToggle = () => {
     setIsYearly(!isYearly);
+  };
+
+  const handleSubscribe = async (plan: Plan) => {
+    try {
+      const priceId = isYearly ? plan.yearlyPriceId : plan.monthlyPriceId;
+      const response = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ priceId }),
+      });
+      const { sessionId } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      const stripe = await stripePromise;
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        
+        if (error) {
+          console.error('Error:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -134,6 +174,7 @@ const SubscriptionPage: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="mt-8 w-full px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+                  onClick={() => handleSubscribe(plan)}
                 >
                   Subscribe
                 </motion.button>

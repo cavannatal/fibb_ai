@@ -168,7 +168,6 @@ const CaseStudyPage: React.FC = () => {
                 
               ))}
             </div>
-            console.log("image Test")
           </div>
         </AnimatedSection>
       </section>
