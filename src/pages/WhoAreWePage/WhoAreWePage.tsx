@@ -5,6 +5,7 @@ import nick from "./images/nick.jpg";
 import cavan from "./images/cavan.jpg"
 import jake from "./images/jake.jpg"
 import ceasar from "./images/ceasar.jpg"
+import Mike from './images/Mike.jpeg'
 
 // Define types for our data structure
 interface TeamMember {
@@ -64,6 +65,15 @@ const topTeamMembers: TeamMember[] = [
     imageStyle: "object-cover object-center scale-100" 
   },
   { 
+    name: "Michael Thompson", 
+    role: "Lead Software Engineer", 
+    description: [
+      
+    ],
+    imageUrl: Mike,
+    imageStyle: "object-cover object-center scale-100" 
+  },
+  { 
     name: "Cavan Natal", 
     role: "Software Engineer", 
     description: [
@@ -84,11 +94,7 @@ interface BottomTeamMember {
 }
 
 const bottomTeamMembers: BottomTeamMember[] = [
-  { 
-    name: "Mike Thompson", 
-    role: "Lead Software Engineer", 
-    description: "Architecting our AI systems"
-  },
+  
   { 
     name: "Santiago Milano", 
     role: "Artificial Intelligence Researcher", 
@@ -150,7 +156,7 @@ const AboutUs: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-12">
           {bottomTeamMembers.map((member, index) => (
             <motion.div 
               key={index}
