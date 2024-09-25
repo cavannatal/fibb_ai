@@ -9,11 +9,6 @@ import img4 from './images/img4.png';
 import img5 from './images/img5.png';
 import img6 from './images/img6.png';
 
-// Import images from the local 'images' folder
-
-
-
-
 
 interface ProductPhoto {
   src: string;
