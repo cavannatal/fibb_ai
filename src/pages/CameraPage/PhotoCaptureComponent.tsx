@@ -231,7 +231,7 @@ const PhotoCaptureComponent: React.FC = () => {
         formData.append('expression', image.expression);
         formData.append('position', image.position.toString());
   
-        const uploadResponse = await fetch('https://s3-us-west-2.amazonaws.com/s3-user-photos/api/upload-to-s3', {
+        const uploadResponse = await fetch('https://s3-us-west-2.amazonaws.com/s3-user-photos', {
           method: 'POST',
           body: formData,
         });
