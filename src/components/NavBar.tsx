@@ -18,8 +18,10 @@ const NavBar: React.FC = () => {
         { name: "Business", path: "/business-case-study" },
       ],
     },
+    { name: "Blog", path: "/blog" },
     { name: "Subscribe", path: "/subscribe" },
-    { name: "Ca", path: "/cam" },
+    //Only works right now with autnetication needs fixing when subscribe plans
+    ...(isAuthenticated ? [{ name: "Create", path: "/cam" }] : []),
   ];
 
   const handleAuth = () => {

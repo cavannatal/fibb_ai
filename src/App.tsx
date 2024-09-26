@@ -12,10 +12,8 @@ import BusinessCaseStudyPage from './pages/CaseStudies/BusinessCaseStudyPage';
 import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage'
 import CameraPage from './pages/CameraPage/CameraPage';
 import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
-
-
-
-
+import ProtectedRoute from './components/ProtectedRoute';
+import BlogPage from './pages/Blog/BlogPage';
 
 const Auth0ProviderWithNavigate = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -56,8 +54,17 @@ const App: React.FC = () => {
               <Route path="/case-study" element={<CaseStudyPage />} />
               <Route path="/business-case-study" element={<BusinessCaseStudyPage />} />
               <Route path="/subscribe" element={<SubscriptionPage />} />
-              <Route path="/cam" element={<CameraPage />} />
-              <Route path="/photo-capture" element={<PhotoCaptureComponent />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/cam" element={
+                <ProtectedRoute>
+                  <CameraPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/photo-capture" element={
+                <ProtectedRoute>
+                  <PhotoCaptureComponent />
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
           <Footer />
