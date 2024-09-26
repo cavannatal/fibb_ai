@@ -74,7 +74,7 @@ const uploadTestFileToS3 = (filePath) => {
 };
 
 // Endpoint to test local file upload
-app.get('/upload-img-to-s3', async (req, res) => {
+app.get('uploadImg', async (req, res) => {
   try {
     console.log('Uploading file:', upload_file);
     const data = await uploadTestFileToS3(upload_file);
