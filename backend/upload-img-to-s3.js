@@ -3,17 +3,13 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs');
-
+const fs = require('fs'); 
 require('dotenv').config();
 
 const app = express();
-const upload_file = path.resolve(__dirname, './src/cesar-favorites-8015.JPG');
 const email = 'cesar-test@gmail.com';
 
-let s3;
-
-// Initialize the Secrets Manager client
+// Initialize Secrets Manager client
 const secretsManager = new AWS.SecretsManager({
   region: process.env.AWS_REGION
 });
@@ -40,10 +36,9 @@ const getAWSCredentialsFromSecrets = async () => {
   }
 };
 
-// Function to create the S3 client using secrets from Secrets Manager
+// Create the S3 client using secrets from Secrets Manager
 const createS3Client = async () => {
   const credentials = await getAWSCredentialsFromSecrets();
-  
   return new AWS.S3({
     accessKeyId: credentials.accessKeyId,
     secretAccessKey: credentials.secretAccessKey,
@@ -51,10 +46,8 @@ const createS3Client = async () => {
   });
 };
 
-// Multer storage configuration for in-memory storage (buffer)
+// Multer storage configuration
 const storage = multer.memoryStorage();
-
-// Multer instance with file size and type validation
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
@@ -70,65 +63,41 @@ const upload = multer({
   }
 });
 
-// Function to upload a local test file to S3
-const uploadTestFileToS3 = (filePath) => {
-  return new Promise((resolve, reject) => {
-    if (!fs.existsSync(filePath)) {
-      return reject(new Error('No Images Detected'));
-    }
+// Upload image to S3
+const uploadFileToS3 = async (file) => {
+  const s3 = await createS3Client();
 
-    fs.readFile(filePath, (err, fileData) => {
-      if (err) {
-        return reject(new Error('Error reading test file: ' + err.message));
-      }
+  const fileExtension = path.extname(file.originalname);
+  const timestamp = Date.now();
+  const filename = email.split('@')[0] + crypto.randomBytes(8).toString('hex') + timestamp + fileExtension;
 
-      const timestamp = Date.now();
-      const fileExtension = path.extname(filePath);
-      const filename = email.split('@')[0] + crypto.randomBytes(8).toString('hex') + timestamp + fileExtension;
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: filename,
+    Body: file.buffer,
+    ContentType: file.mimetype
+  };
 
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: filename,
-        Body: fileData,
-        ContentType: 'image/' + fileExtension.slice(1) // Remove the dot from the extension
-      };
-      
-
-      s3.upload(params, (err, data) => {
-        if (err) {
-          return reject(new Error('Error uploading file to S3: ' + err.message));
-        }
-        resolve(data);
-      });
-    });
-  });
+  const data = await s3.upload(params).promise();
+  return data;
 };
 
-// Endpoint to test local file upload
-app.get('/uploadImg', async (req, res) => {
+// Endpoint to handle file upload
+app.post('/uploadImg', upload.single('file'), async (req, res) => {
   try {
-    if (!s3) {
-      throw new Error('S3 client not initialized');
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
-    console.log('Uploading file:', upload_file);
-    const data = await uploadTestFileToS3(upload_file);
-    res.json({ fileUrl: data.Location });
+
+    const data = await uploadFileToS3(file);
+    res.json({ success: true, fileUrl: data.Location });
   } catch (uploadError) {
     console.error(uploadError.message);
     res.status(500).json({ error: uploadError.message });
   }
 });
 
-// Initialize S3 client and start server
-const initializeAndStart = async () => {
-  try {
-    s3 = await createS3Client();
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => console.log(`Server running on port ${port}`));
-  } catch (error) {
-    console.error('Failed to initialize S3 client:', error);
-    process.exit(1);
-  }
-};
-
-initializeAndStart();
+// Set port and start server
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
