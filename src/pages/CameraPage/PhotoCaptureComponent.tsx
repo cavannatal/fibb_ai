@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import { Camera, Upload } from 'lucide-react';
+import { Camera, Upload, RotateCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Import images
@@ -9,32 +9,23 @@ import smileNoTeethImage from './images/smile_noteeth.png';
 import mysSmile from './images/smirk_mysterious.png';
 import mysSmileLeft from './images/smirk_mysterious_left.png';
 import mysSmileRight from './images/smirk_mysterious_right.png';
- 
 import smileTeethImage from './images/smile_teeth.png';
 import smileteethLeft from './images/smile_teeth_left.png';
 import smileteethRight from './images/smile_teeth_right.png';
-
 import confidenteyes from './images/confident_eyes.png';
 import excitedLeft from './images/excited_left.png';
 import excitedRight from './images/excited_right.png';
-
 import leftHandBack from './images/left_hand_back.png';
 import leftHandPalm from './images/left_hand_palm.png';
-
 import rightHandBack from './images/right_hand_back.png';
 import rightHandPalm from './images/right_hand_palm.png';
-
 import clenchedFist from './images/fist_clench.png';
-
 import bodyFront from './images/body_confident.png';
 import bodyRight from './images/body_right.png';
 import bodyTurnaround from './images/body_turnaround.png';
 import bodyLeft from './images/body_left.png';
-
 import bodyHandsUp from './images/body_arms_up.png';
 import bodyHandsDown from './images/body_arms_down.png';
-
-
 
 type Expression = 
   | 'neutral'
@@ -58,8 +49,8 @@ type Expression =
   | 'body_arms_down'
   | 'right_hand_palm'
   | 'right_hand_top'
-  |'left_hand_palm'
-  |'left_hand_top'
+  | 'left_hand_palm'
+  | 'left_hand_top'
   | 'clench_fist'
   | 'both_legs'
   | 'right_leg'
@@ -70,7 +61,6 @@ interface CapturedImage {
   expression: Expression;
   position: number;
 }
-
 
 const PHOTOS_PER_EXPRESSION = 5;
 const EXPRESSIONS: Expression[] = [
@@ -106,8 +96,8 @@ const EXPRESSIONS: Expression[] = [
 const expressionImageMap: Record<Expression, string> = {
   'neutral': neutralImage,
   'smile_noteeth': smileNoTeethImage,
-  'smile_noteeth_left': smileNoTeethImage, // Assuming you want to use the same image
-  'smile_noteeth_right': smileNoTeethImage, // Assuming you want to use the same image
+  'smile_noteeth_left': smileNoTeethImage,
+  'smile_noteeth_right': smileNoTeethImage, 
   'smile_teeth': smileTeethImage,
   'smile_teeth_left': smileteethLeft,
   'smile_teeth_right': smileteethRight,
@@ -128,9 +118,9 @@ const expressionImageMap: Record<Expression, string> = {
   'left_hand_palm': leftHandPalm,
   'left_hand_top': leftHandBack,
   'clench_fist': clenchedFist,
-  'both_legs': bodyFront, // Assuming full body shot for legs
-  'right_leg': bodyFront, // Assuming full body shot for right leg
-  'left_leg': bodyFront // Assuming full body shot for left leg
+  'both_legs': bodyFront, 
+  'right_leg': bodyFront, 
+  'left_leg': bodyFront 
 };
 
 const expressionInstructions: Record<Expression, string> = {
@@ -186,18 +176,19 @@ const expressionDisplayNames: Record<Expression, string> = {
   'right_hand_palm': "Right Hand Palm",
   'right_hand_top': "Right Hand Top",
   'left_hand_palm': "Left Hand Palm",
-  'left_hand_top': "Left Hand",
+  'left_hand_top': "Left Hand Top",
   'clench_fist': "Clenched Fist",
   'both_legs': "Both Legs",
   'right_leg': "Right Leg",
   'left_leg': "Left Leg"
 };
-    
+
 const PhotoCaptureComponent: React.FC = () => {
   const [capturedImages, setCapturedImages] = useState<CapturedImage[]>([]);
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const webcamRef = useRef<Webcam>(null);
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
@@ -222,48 +213,41 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   }, [capturedImages.length, currentExpression]);
 
-  // Mock upload function for testing purposes
-  const handleMockUpload = async () => {
-    if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
-      alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
-      return;
-    }
-
-    setIsUploading(true);
-    // Simulate a delay to mimic network request
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully! (Mock)`);
-    setCapturedImages([]);
-    setCurrentExpressionIndex(prev => prev + 1);
-    setIsUploading(false);
-  };
-
-  // Comment out the real upload function
-  /// THIS FUNCTION IS RESPONSIBLE FOR SENDING THE DATA I THINK LOOK HERE
-
-  /*
   const handleUpload = async () => {
     if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
       alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
       return;
     }
-
+  
     setIsUploading(true);
     try {
-      const response = await fetch('/api/upload-photos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(capturedImages),
+      const uploadPromises = capturedImages.map(async (image, index) => {
+        const fileName = `${currentExpression}_${index + 1}.jpg`;
+        const response = await fetch(image.src);
+        const blob = await response.blob();
+  
+        const formData = new FormData();
+        formData.append('file', blob, fileName);
+        formData.append('expression', image.expression);
+        formData.append('position', image.position.toString());
+  
+        const uploadResponse = await fetch('http://localhost:3001/api/upload-to-s3', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!uploadResponse.ok) {
+          throw new Error(`Failed to upload ${fileName}`);
+        }
+  
+        return uploadResponse.json();
       });
-
-      if (response.ok) {
-        alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
-        setCapturedImages([]);
-        setCurrentExpressionIndex(prev => prev + 1);
-      } else {
-        throw new Error('Upload failed');
-      }
+  
+      const results = await Promise.all(uploadPromises);
+  
+      alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
+      setCapturedImages([]);
+      setCurrentExpressionIndex(prev => prev + 1);
     } catch (error) {
       console.error('Error uploading photos:', error);
       alert('Failed to upload photos. Please try again.');
@@ -271,12 +255,17 @@ const PhotoCaptureComponent: React.FC = () => {
       setIsUploading(false);
     }
   };
-  */
 
   const handleImageError = () => {
     setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
     console.error(`Image load error for: ${currentExpression}.png`);
   };
+
+  const flipCamera = () => {
+    setFacingMode(prevMode => prevMode === 'user' ? 'environment' : 'user');
+  };
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
     return (
@@ -299,7 +288,8 @@ const PhotoCaptureComponent: React.FC = () => {
           ref={webcamRef}
           screenshotFormat="image/jpeg"
           className="rounded-lg shadow-lg scale-x-[-1]"
-          mirrored={true}
+          mirrored={facingMode === 'user'}
+          videoConstraints={{ facingMode }}
         />
         <img
           src={expressionImageMap[currentExpression]}
@@ -313,15 +303,27 @@ const PhotoCaptureComponent: React.FC = () => {
           </div>
         )}
       </div>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={capture}
-        disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
-        className={`mt-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : ''}`}
-      >
-        <Camera className="mr-2" /> Capture Photo ({capturedImages.length} of {PHOTOS_PER_EXPRESSION})
-      </motion.button>
+      <div className="flex mt-4 space-x-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={capture}
+          disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
+          className={`bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <Camera className="mr-2" /> Capture Photo ({capturedImages.length} of {PHOTOS_PER_EXPRESSION})
+        </motion.button>
+        {isMobile && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={flipCamera}
+            className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center"
+          >
+            <RotateCw className="mr-2" /> Flip Camera
+          </motion.button>
+        )}
+      </div>
       
       <div className="w-full max-w-4xl mt-8">
         <h3 className="text-xl font-bold mb-2 text-white">Captured Photos for {expressionDisplayNames[currentExpression]}</h3>
@@ -340,7 +342,7 @@ const PhotoCaptureComponent: React.FC = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={handleMockUpload}  // Changed to use mock upload function
+        onClick={handleUpload}
         disabled={isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION}
         className={`mt-4 bg-green-500 text-white px-4 py-2 rounded-full flex items-center ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : ''}`}
       >

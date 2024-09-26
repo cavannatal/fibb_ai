@@ -82,7 +82,7 @@ const PhotoUploadTracker: React.FC = () => {
       
       <div className="grid grid-cols-3 gap-4">
         {photos.map((photo) => (
-          <img key={photo.id} src={photo.url} alt="Uploaded photo" className="w-full h-auto rounded-md shadow-md" />
+          <img key={photo.id} src={photo.url} alt="Upload" className="w-full h-auto rounded-md shadow-md" />
         ))}
         {[...Array(10 - photos.length)].map((_, index) => (
           <div key={index} className="w-full pt-[100%] bg-gray-200 rounded-md" />
