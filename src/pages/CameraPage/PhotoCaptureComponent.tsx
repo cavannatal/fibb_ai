@@ -231,7 +231,7 @@ const PhotoCaptureComponent: React.FC = () => {
         formData.append('expression', image.expression);
         formData.append('position', image.position.toString());
   
-        const uploadResponse = await fetch('/uploadImg', {
+        const uploadResponse = await fetch('backend/upload-img-to-s3.js/uploadImg', {
           method: 'POST',
           body: formData,
         });
