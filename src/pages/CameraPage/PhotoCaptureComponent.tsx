@@ -243,7 +243,6 @@ const PhotoCaptureComponent: React.FC = () => {
         return uploadResponse.json();
       });
   
-      const results = await Promise.all(uploadPromises);
   
       alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
       setCapturedImages([]);
