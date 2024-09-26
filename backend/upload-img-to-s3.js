@@ -3,25 +3,25 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs'); 
-
-
+const fs = require('fs');
 
 require('dotenv').config();
 
 const app = express();
-const upload_file = path.resolve(__dirname, './src/cesar-favorites-8015.JPG'); 
-const email = 'cesar-test@gmail.com'
+const upload_file = path.resolve(__dirname, './src/cesar-favorites-8015.JPG');
+const email = 'cesar-test@gmail.com';
+
+let s3;
 
 // Initialize the Secrets Manager client
 const secretsManager = new AWS.SecretsManager({
-  region: process.env.AWS_REGION // Region of Secrets Manager
+  region: process.env.AWS_REGION
 });
 
 // Function to retrieve AWS credentials from Secrets Manager
 const getAWSCredentialsFromSecrets = async () => {
   try {
-    const secretName = process.env.AWS_SECRET_NAME; // The name of your secret in Secrets Manager
+    const secretName = process.env.AWS_SECRET_NAME;
     const data = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
     
     if (data.SecretString) {
@@ -73,7 +73,6 @@ const upload = multer({
 // Function to upload a local test file to S3
 const uploadTestFileToS3 = (filePath) => {
   return new Promise((resolve, reject) => {
-    // Check if the file exists
     if (!fs.existsSync(filePath)) {
       return reject(new Error('No Images Detected'));
     }
@@ -83,20 +82,18 @@ const uploadTestFileToS3 = (filePath) => {
         return reject(new Error('Error reading test file: ' + err.message));
       }
 
-      // Generate a unique filename
       const timestamp = Date.now();
       const fileExtension = path.extname(filePath);
       const filename = email.split('@')[0] + crypto.randomBytes(8).toString('hex') + timestamp + fileExtension;
 
-      // S3 upload parameters
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: filename, // File name
-        Body: fileData, // File data
-        ContentType: fileExtension
+        Key: filename,
+        Body: fileData,
+        ContentType: 'image/' + fileExtension.slice(1) // Remove the dot from the extension
       };
+      
 
-      // Upload file to S3
       s3.upload(params, (err, data) => {
         if (err) {
           return reject(new Error('Error uploading file to S3: ' + err.message));
@@ -108,8 +105,11 @@ const uploadTestFileToS3 = (filePath) => {
 };
 
 // Endpoint to test local file upload
-app.get('uploadImg', async (req, res) => {
+app.get('/uploadImg', async (req, res) => {
   try {
+    if (!s3) {
+      throw new Error('S3 client not initialized');
+    }
     console.log('Uploading file:', upload_file);
     const data = await uploadTestFileToS3(upload_file);
     res.json({ fileUrl: data.Location });
@@ -119,6 +119,16 @@ app.get('uploadImg', async (req, res) => {
   }
 });
 
-// Set port and start server
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Initialize S3 client and start server
+const initializeAndStart = async () => {
+  try {
+    s3 = await createS3Client();
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  } catch (error) {
+    console.error('Failed to initialize S3 client:', error);
+    process.exit(1);
+  }
+};
+
+initializeAndStart();
