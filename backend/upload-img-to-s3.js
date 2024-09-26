@@ -10,12 +10,43 @@ const app = express();
 const upload_file = path.resolve(__dirname, './src/cesar-favorites-8015.JPG'); 
 const email = 'cesar-test@gmail.com'
 
-// AWS S3 Configuration
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
+// Initialize the Secrets Manager client
+const secretsManager = new AWS.SecretsManager({
+  region: process.env.AWS_REGION // Region of Secrets Manager
 });
+
+// Function to retrieve AWS credentials from Secrets Manager
+const getAWSCredentialsFromSecrets = async () => {
+  try {
+    const secretName = process.env.AWS_SECRET_NAME; // The name of your secret in Secrets Manager
+    const data = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+    
+    if (data.SecretString) {
+      const secret = JSON.parse(data.SecretString);
+      return {
+        accessKeyId: secret.AWS_ACCESS_KEY_ID,
+        secretAccessKey: secret.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION
+      };
+    } else {
+      throw new Error('SecretString not found');
+    }
+  } catch (err) {
+    console.error('Error retrieving secret:', err);
+    throw err;
+  }
+};
+
+// Function to create the S3 client using secrets from Secrets Manager
+const createS3Client = async () => {
+  const credentials = await getAWSCredentialsFromSecrets();
+  
+  return new AWS.S3({
+    accessKeyId: credentials.accessKeyId,
+    secretAccessKey: credentials.secretAccessKey,
+    region: credentials.region
+  });
+};
 
 // Multer storage configuration for in-memory storage (buffer)
 const storage = multer.memoryStorage();
