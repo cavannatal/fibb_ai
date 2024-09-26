@@ -1,9 +1,16 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import { Camera, Upload, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Camera, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-type Expression = 'neutral' | 'happy' | 'laughing' | 'left-profile' | 'right-profile';
+// Import images
+import smileNoTeethImage from './images/smile_noteeth.png';
+import neutralImage from './images/neutral.png';
+import laughingImage from './images/smile_teeth.png';
+import leftProfileImage from './images/lookleft.png';
+import rightProfileImage from './images/lookright.png';
+
+type Expression = 'smile_noteeth' | 'neutral' | 'laughing' | 'left-profile' | 'right-profile';
 
 interface CapturedImage {
   src: string;
@@ -12,15 +19,44 @@ interface CapturedImage {
 }
 
 const PHOTOS_PER_EXPRESSION = 5;
-const EXPRESSIONS: Expression[] = ['neutral', 'happy', 'laughing', 'left-profile', 'right-profile'];
+const EXPRESSIONS: Expression[] = ['smile_noteeth', 'neutral', 'laughing', 'left-profile', 'right-profile'];
+
+const expressionImageMap: Record<Expression, string> = {
+  'smile_noteeth': smileNoTeethImage,
+  'neutral': neutralImage,
+  'laughing': laughingImage,
+  'left-profile': leftProfileImage,
+  'right-profile': rightProfileImage,
+};
+
+const expressionInstructions: Record<Expression, string> = {
+  'smile_noteeth': "Smile naturally without showing teeth",
+  'neutral': "Keep a neutral expression",
+  'laughing': "Laugh or show a big smile",
+  'left-profile': "Turn your head to the right (showing your left side)",
+  'right-profile': "Turn your head to the left (showing your right side)"
+};
+
+const expressionDisplayNames: Record<Expression, string> = {
+  'smile_noteeth': "Smile (No Teeth)",
+  'neutral': "Neutral",
+  'laughing': "Laughing",
+  'left-profile': "Left Profile",
+  'right-profile': "Right Profile"
+};
 
 const PhotoCaptureComponent: React.FC = () => {
   const [capturedImages, setCapturedImages] = useState<CapturedImage[]>([]);
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const webcamRef = useRef<Webcam>(null);
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
+
+  useEffect(() => {
+    setImageError(null);
+  }, [currentExpression]);
 
   const capture = useCallback(() => {
     if (capturedImages.length >= PHOTOS_PER_EXPRESSION) {
@@ -38,6 +74,25 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   }, [capturedImages.length, currentExpression]);
 
+  // Mock upload function for testing purposes
+  const handleMockUpload = async () => {
+    if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
+      alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
+      return;
+    }
+
+    setIsUploading(true);
+    // Simulate a delay to mimic network request
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully! (Mock)`);
+    setCapturedImages([]);
+    setCurrentExpressionIndex(prev => prev + 1);
+    setIsUploading(false);
+  };
+
+  // Comment out the real upload function
+  /*
   const handleUpload = async () => {
     if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
       alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
@@ -53,7 +108,7 @@ const PhotoCaptureComponent: React.FC = () => {
       });
 
       if (response.ok) {
-        alert(`Photos for ${currentExpression} expression uploaded successfully!`);
+        alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
         setCapturedImages([]);
         setCurrentExpressionIndex(prev => prev + 1);
       } else {
@@ -66,59 +121,11 @@ const PhotoCaptureComponent: React.FC = () => {
       setIsUploading(false);
     }
   };
+  */
 
-  const renderFaceTemplate = () => {
-    const commonClasses = "absolute opacity-50 border-4 border-yellow-300";
-    const faceOutlineClasses = `${commonClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[240px] h-[320px] rounded-full`;
-    
-    switch (currentExpression) {
-      case 'neutral':
-        return (
-          <>
-            <div className={faceOutlineClasses} />
-            <div className={`${commonClasses} top-[70%] left-1/2 transform -translate-x-1/2 w-[80px] h-0 border-b-4`} />
-          </>
-        );
-      case 'happy':
-        return (
-          <>
-            <div className={faceOutlineClasses} />
-            <div className={`${commonClasses} top-[62%] left-1/2 transform -translate-x-1/2 w-[96px] h-[48px] rounded-[100%] border-b-4 border-t-0 border-l-0 border-r-0`} />
-          </>
-        );
-      case 'laughing':
-        return (
-          <>
-            <div className={faceOutlineClasses} />
-            <div className="absolute top-[65%] left-1/2 transform -translate-x-1/2 w-[60px] h-[60px] bg-yellow-300 opacity-50 rounded-full" />
-          </>
-        );
-      case 'left-profile':
-        return (
-          <>
-            <div className={`${commonClasses} top-1/4 left-1/2 w-[80px] h-[160px] rounded-r-full border-r-4`} />
-            <ArrowRight className="absolute top-1/2 left-1/3 transform -translate-y-1/2 w-[48px] h-[48px] text-yellow-300 opacity-70" />
-          </>
-        );
-      case 'right-profile':
-        return (
-          <>
-            <div className={`${commonClasses} top-1/4 right-1/2 w-[80px] h-[160px] rounded-l-full border-l-4`} />
-            <ArrowLeft className="absolute top-1/2 right-1/3 transform -translate-y-1/2 w-[48px] h-[48px] text-yellow-300 opacity-70" />
-          </>
-        );
-    }
-  };
-
-  const getExpressionInstructions = () => {
-    const instructions = {
-      'neutral': "Keep a neutral expression",
-      'happy': "Smile naturally",
-      'laughing': "Laugh or show a big smile",
-      'left-profile': "Turn your head to the right (showing your left side)",
-      'right-profile': "Turn your head to the left (showing your right side)"
-    };
-    return instructions[currentExpression];
+  const handleImageError = () => {
+    setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
+    console.error(`Image load error for: ${currentExpression}.png`);
   };
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
@@ -133,9 +140,9 @@ const PhotoCaptureComponent: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-black p-4">
       <h2 className="text-2xl font-bold mb-4 text-white">
-        Capture {currentExpression.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} - Photo {capturedImages.length} of {PHOTOS_PER_EXPRESSION}
+        Capture {expressionDisplayNames[currentExpression]} - Photo {capturedImages.length} of {PHOTOS_PER_EXPRESSION}
       </h2>
-      <p className="text-lg mb-4 text-white">{getExpressionInstructions()}</p>
+      <p className="text-lg mb-4 text-white">{expressionInstructions[currentExpression]}</p>
       <div className="relative">
         <Webcam
           audio={false}
@@ -144,7 +151,17 @@ const PhotoCaptureComponent: React.FC = () => {
           className="rounded-lg shadow-lg scale-x-[-1]"
           mirrored={true}
         />
-        {renderFaceTemplate()}
+        <img
+          src={expressionImageMap[currentExpression]}
+          alt={`${expressionDisplayNames[currentExpression]} overlay`}
+          className="absolute top-0 left-0 w-full h-full opacity-50 pointer-events-none"
+          onError={handleImageError}
+        />
+        {imageError && (
+          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-2 text-sm">
+            {imageError}
+          </div>
+        )}
       </div>
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -153,11 +170,11 @@ const PhotoCaptureComponent: React.FC = () => {
         disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
         className={`mt-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <Camera className="mr-2" /> Capture Photo ({capturedImages.length } of {PHOTOS_PER_EXPRESSION})
+        <Camera className="mr-2" /> Capture Photo ({capturedImages.length} of {PHOTOS_PER_EXPRESSION})
       </motion.button>
       
       <div className="w-full max-w-4xl mt-8">
-        <h3 className="text-xl font-bold mb-2 text-white">Captured Photos for {currentExpression}</h3>
+        <h3 className="text-xl font-bold mb-2 text-white">Captured Photos for {expressionDisplayNames[currentExpression]}</h3>
         <div className="grid grid-cols-4 gap-2">
           {capturedImages.map((img, index) => (
             <div key={index} className="relative">
@@ -173,11 +190,11 @@ const PhotoCaptureComponent: React.FC = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={handleUpload}
+        onClick={handleMockUpload}  // Changed to use mock upload function
         disabled={isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION}
         className={`mt-4 bg-green-500 text-white px-4 py-2 rounded-full flex items-center ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <Upload className="mr-2" /> {isUploading ? 'Uploading...' : `Upload ${currentExpression} Photos & Continue`}
+        <Upload className="mr-2" /> {isUploading ? 'Uploading...' : `Upload ${expressionDisplayNames[currentExpression]} Photos & Continue`}
       </motion.button>
     </div>
   );
