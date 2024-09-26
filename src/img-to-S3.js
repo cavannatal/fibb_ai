@@ -3,13 +3,13 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const path = require('path');
-const helmet = require('helmet');
-require('dotenv-safe').config(); // For environment variables validation
+const fs = require('fs'); 
+require('dotenv').config();
+
 
 const app = express();
+const test_file = "src/s3-test-image.JPG";
 
-// Middleware for security headers
-app.use(helmet());
 
 // AWS S3 Configuration
 const s3 = new AWS.S3({
@@ -24,7 +24,6 @@ const storage = multer.memoryStorage();
 // Multer instance with file size and type validation
 const upload = multer({
   storage,
-  limits,
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|heic/;
     const mimetype = filetypes.test(file.mimetype);
@@ -38,41 +37,45 @@ const upload = multer({
   }
 });
 
-// Function to upload file to S3
-const uploadFileToS3 = (file) => {
+// Function to upload a local test file to S3
+const uploadTestFileToS3 = (filePath) => {
   return new Promise((resolve, reject) => {
-    // Generate a random filename
-    const fileExtension = path.extname(file.originalname);
-    const filename = crypto.randomBytes(16).toString('hex') + fileExtension;
-
-    // S3 upload parameters
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: filename, // File name
-      Body: file.buffer, // File data
-      ContentType: file.mimetype, // MIME type
-      ACL: 'public-read' // Make the file publicly accessible
-    };
-
-    // Upload file to S3
-    s3.upload(params, (err, data) => {
+    fs.readFile(filePath, (err, fileData) => {
       if (err) {
-        reject(err);
-      } else {
-        resolve(data);
+        return reject(err);
       }
+
+      // Generate a unique filename
+      const timestamp = Date.now();
+      const fileExtension = path.extname(filePath);
+      const filename = email.split('@')[0] + crypto.randomBytes(8).toString('hex') + timestamp + fileExtension;
+
+      // S3 upload parameters
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: filename, // File name
+        Body: fileData, // File data
+        ContentType: mimetype 
+      };
+
+      // Upload file to S3
+      s3.upload(params, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
     });
   });
 };
 
-// Upload endpoint with error handling
+// Upload endpoint with error handling for multer
 app.post('/upload', (req, res) => {
   upload.single('image')(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
       return res.status(400).json({ error: err.message });
     } else if (err) {
-      // An unknown error occurred when uploading.
       return res.status(500).json({ error: err.message });
     }
 
@@ -83,7 +86,6 @@ app.post('/upload', (req, res) => {
     // Try to upload file to S3
     try {
       const data = await uploadFileToS3(req.file);
-      // Return the uploaded file's S3 URL
       res.json({ fileUrl: data.Location });
     } catch (uploadError) {
       res.status(500).json({ error: uploadError.message });
@@ -91,6 +93,48 @@ app.post('/upload', (req, res) => {
   });
 });
 
+// Endpoint to test local file upload
+app.get('/upload-test-file', async (req, res) => {
+  try {
+    const data = await uploadTestFileToS3(test_file);
+    res.json({ fileUrl: data.Location });
+  } catch (uploadError) {
+    res.status(500).json({ error: uploadError.message });
+  }
+});
+
 // Set port and start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
+console.log(process.env.AWS_ACCESS_KEY_ID);
+console.log(process.env.AWS_SECRET_ACCESS_KEY);
+console.log(process.env.AWS_REGION);
+console.log(process.env.AWS_BUCKET_NAME);
+
+console.log("Reading test file:", test_file);
+fs.readFile(filePath, (err, fileData) => {
+  if (err) {
+    console.error("Error reading file:", err);
+    return reject(err);
+  }
+  console.log("File read successfully. Uploading to S3...");
+  
+  // S3 upload parameters
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: filename, 
+    Body: fileData, 
+    ContentType: contentType,
+  };
+
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.error("Error uploading to S3:", err);
+      reject(err);
+    } else {
+      console.log("File uploaded successfully:", data);
+      resolve(data);
+    }
+  });
+});
