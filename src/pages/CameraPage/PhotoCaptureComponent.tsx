@@ -186,7 +186,7 @@ const expressionDisplayNames: Record<Expression, string> = {
   'right_hand_palm': "Right Hand Palm",
   'right_hand_top': "Right Hand Top",
   'left_hand_palm': "Left Hand Palm",
-  'left_hand_top': "Left Hand Top",
+  'left_hand_top': "Left Hand",
   'clench_fist': "Clenched Fist",
   'both_legs': "Both Legs",
   'right_leg': "Right Leg",
