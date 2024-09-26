@@ -1,15 +1,15 @@
-const express = require('express');
-const multer = require('multer');
-const AWS = require('aws-sdk');
-const crypto = require('crypto');
-const path = require('path');
-const fs = require('fs'); 
-require('dotenv').config();
+import express from 'express';
+import multer from 'multer';
+import AWS from 'aws-sdk';
+import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs';
+import 'dotenv/config';
 
 
 const app = express();
-const test_file = "src/s3-test-image.JPG";
-
+const filePath = path.resolve(__dirname, '/Users/cesaraguilar/Documents/GitHub/fibb_ai/src/cesar-favorites-8015.JPG'); 
+const email = 'test@gmail.com'
 
 // AWS S3 Configuration
 const s3 = new AWS.S3({
@@ -96,7 +96,7 @@ app.post('/upload', (req, res) => {
 // Endpoint to test local file upload
 app.get('/upload-test-file', async (req, res) => {
   try {
-    const data = await uploadTestFileToS3(test_file);
+    const data = await uploadTestFileToS3(filePath);
     res.json({ fileUrl: data.Location });
   } catch (uploadError) {
     res.status(500).json({ error: uploadError.message });
@@ -112,7 +112,7 @@ console.log(process.env.AWS_SECRET_ACCESS_KEY);
 console.log(process.env.AWS_REGION);
 console.log(process.env.AWS_BUCKET_NAME);
 
-console.log("Reading test file:", test_file);
+console.log("Reading test file:", filePath);
 fs.readFile(filePath, (err, fileData) => {
   if (err) {
     console.error("Error reading file:", err);

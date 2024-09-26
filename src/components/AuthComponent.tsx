@@ -63,4 +63,5 @@ const AuthComponent: React.FC = () => {
   );
 };
 
+
 export default AuthComponent;

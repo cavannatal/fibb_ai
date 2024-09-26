@@ -20,11 +20,13 @@
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1691.0",
     "axios": "^1.7.7",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "firebase": "^10.13.2",
     "framer-motion": "^11.5.6",
     "lucide-react": "^0.445.0",
+    "mime": "^4.0.4",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.15",
     "postcss": "^8.4.47",
@@ -43,7 +45,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "upload": "node src/img-to-S3.js"
   },
   "eslintConfig": {
     "extends": [
