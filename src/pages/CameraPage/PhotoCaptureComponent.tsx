@@ -243,10 +243,18 @@ const PhotoCaptureComponent: React.FC = () => {
         return uploadResponse.json();
       });
   
+      const results = await Promise.all(uploadPromises);
   
-      alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
-      setCapturedImages([]);
-      setCurrentExpressionIndex(prev => prev + 1);
+      // Check if all uploads were successful
+      const allSuccessful = results.every(result => result.success);
+  
+      if (allSuccessful) {
+        alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
+        setCapturedImages([]);
+        setCurrentExpressionIndex(prev => prev + 1);
+      } else {
+        throw new Error('Some uploads failed');
+      }
     } catch (error) {
       console.error('Error uploading photos:', error);
       alert('Failed to upload photos. Please try again.');
