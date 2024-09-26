@@ -5,7 +5,6 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage/HomePage';
 import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
-import MissionStatementPage from './pages/MissionStatementPage/MissionStatementPage';
 import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
 import CaseStudyPage from './pages/CaseStudies/CaseStudyPage';
@@ -13,6 +12,7 @@ import BusinessCaseStudyPage from './pages/CaseStudies/BusinessCaseStudyPage';
 import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage'
 import CameraPage from './pages/CameraPage/CameraPage';
 import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
+
 
 
 
@@ -51,7 +51,6 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/who-we-are" element={<WhoAreWePage />} />
-              <Route path="/mission" element={<MissionStatementPage />} />
               <Route path="/FAQ" element={<FAQPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/case-study" element={<CaseStudyPage />} />

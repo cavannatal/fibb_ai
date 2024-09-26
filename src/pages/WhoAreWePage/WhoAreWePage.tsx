@@ -175,20 +175,7 @@ const AboutUs: React.FC = () => {
           ))}
         </div>
 
-        <motion.div 
-          className="bg-gray-800 p-8 rounded-lg shadow-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600">Our Vision</h3>
-          <p className="text-gray-300 mb-4">
-            At our core, we're a group of visionaries dedicated to enhancing human creativity through AI, not replacing it. We believe in the power of technology to transform industries while maintaining the highest standards of integrity and consumer trust.
-          </p>
-          <p className="text-gray-300">
-            Our goal is to empower industries with AI technology that's as authentic as it is artificial, always prioritizing creativity, integrity, and respect for individual privacy.
-          </p>
-        </motion.div>
+      
       </div>
     </div>
   );

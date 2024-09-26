@@ -75,7 +75,7 @@ const CaseStudyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <header className="h-[60vh] flex flex-col items-center justify-center text-center px-4">
+      <header className="h-[48vh] flex flex-col items-center justify-center text-center px-4">
         <AnimatedSection>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600">
             Case Studies
@@ -105,7 +105,7 @@ const CaseStudyPage: React.FC = () => {
         </AnimatedSection>
       </header>
 
-      <section className="py-16 px-4">
+      <section className="py-1 px-4">
   <AnimatedSection>
     <h2 className="text-3xl font-bold mb-8 text-center">
       Authentic Generation: Unparalleled Quality for Any Use

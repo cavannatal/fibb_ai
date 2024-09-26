@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, Upload, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,39 +11,41 @@ interface CapturedImage {
   position: number;
 }
 
-const TOTAL_POSITIONS = 35;
-const PHOTOS_PER_EXPRESSION = 7;
+const PHOTOS_PER_EXPRESSION = 5;
 const EXPRESSIONS: Expression[] = ['neutral', 'happy', 'laughing', 'left-profile', 'right-profile'];
 
 const PhotoCaptureComponent: React.FC = () => {
   const [capturedImages, setCapturedImages] = useState<CapturedImage[]>([]);
-  const [currentPosition, setCurrentPosition] = useState(1);
-  const [currentExpression, setCurrentExpression] = useState<Expression>('neutral');
+  const [currentExpressionIndex, setCurrentExpressionIndex] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const webcamRef = useRef<Webcam>(null);
 
-  useEffect(() => {
-    const expressionIndex = Math.floor((currentPosition - 1) / PHOTOS_PER_EXPRESSION);
-    setCurrentExpression(EXPRESSIONS[expressionIndex]);
-  }, [currentPosition]);
+  const currentExpression = EXPRESSIONS[currentExpressionIndex];
 
   const capture = useCallback(() => {
-    if (currentPosition > TOTAL_POSITIONS) {
-      alert("You've reached the maximum number of photos!");
+    if (capturedImages.length >= PHOTOS_PER_EXPRESSION) {
+      alert("You've captured all photos for this expression!");
       return;
     }
 
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-      setCapturedImages(prev => [...prev, { src: imageSrc, expression: currentExpression, position: currentPosition }]);
-      setCurrentPosition(prev => prev + 1);
+      setCapturedImages(prev => [...prev, { 
+        src: imageSrc, 
+        expression: currentExpression, 
+        position: prev.length + 1 
+      }]);
     }
-  }, [currentPosition, currentExpression]);
+  }, [capturedImages.length, currentExpression]);
 
   const handleUpload = async () => {
+    if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
+      alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
+      return;
+    }
+
     setIsUploading(true);
     try {
-      // API PHOTO LOCATION HEREEE!!!!!!!!!!!
       const response = await fetch('/api/upload-photos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,9 +53,9 @@ const PhotoCaptureComponent: React.FC = () => {
       });
 
       if (response.ok) {
-        alert('Photos uploaded successfully!');
+        alert(`Photos for ${currentExpression} expression uploaded successfully!`);
         setCapturedImages([]);
-        setCurrentPosition(1);
+        setCurrentExpressionIndex(prev => prev + 1);
       } else {
         throw new Error('Upload failed');
       }
@@ -108,7 +110,6 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   };
 
-
   const getExpressionInstructions = () => {
     const instructions = {
       'neutral': "Keep a neutral expression",
@@ -120,10 +121,19 @@ const PhotoCaptureComponent: React.FC = () => {
     return instructions[currentExpression];
   };
 
+  if (currentExpressionIndex >= EXPRESSIONS.length) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-black p-4">
+        <h2 className="text-2xl font-bold mb-4 text-white">All expressions completed!</h2>
+        <p className="text-lg text-white">Thank you for participating.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-black p-4">
       <h2 className="text-2xl font-bold mb-4 text-white">
-        Capture {currentExpression.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} - Position {currentPosition} of {TOTAL_POSITIONS}
+        Capture {currentExpression.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} - Photo {capturedImages.length} of {PHOTOS_PER_EXPRESSION}
       </h2>
       <p className="text-lg mb-4 text-white">{getExpressionInstructions()}</p>
       <div className="relative">
@@ -140,37 +150,35 @@ const PhotoCaptureComponent: React.FC = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={capture}
-        disabled={currentPosition > TOTAL_POSITIONS}
-        className={`mt-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${currentPosition > TOTAL_POSITIONS ? 'opacity-50 cursor-not-allowed' : ''}`}
+        disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
+        className={`mt-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <Camera className="mr-2" /> Capture Photo ({currentPosition} of {TOTAL_POSITIONS})
+        <Camera className="mr-2" /> Capture Photo ({capturedImages.length } of {PHOTOS_PER_EXPRESSION})
       </motion.button>
       
       <div className="w-full max-w-4xl mt-8">
-        <h3 className="text-xl font-bold mb-2 text-white">Captured Photos</h3>
-        <div className="grid grid-cols-5 gap-2">
+        <h3 className="text-xl font-bold mb-2 text-white">Captured Photos for {currentExpression}</h3>
+        <div className="grid grid-cols-4 gap-2">
           {capturedImages.map((img, index) => (
             <div key={index} className="relative">
               <img src={img.src} alt={`captured ${index}`} className="w-full h-24 object-cover rounded" />
               <span className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded">
-                {img.expression} - {img.position}
+                {img.position}
               </span>
             </div>
           ))}
         </div>
       </div>
       
-      {capturedImages.length > 0 && (
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleUpload}
-          disabled={isUploading || capturedImages.length < TOTAL_POSITIONS}
-          className={`mt-4 bg-green-500 text-white px-4 py-2 rounded-full flex items-center ${(isUploading || capturedImages.length < TOTAL_POSITIONS) ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload All Photos'}
-        </motion.button>
-      )}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleUpload}
+        disabled={isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION}
+        className={`mt-4 bg-green-500 text-white px-4 py-2 rounded-full flex items-center ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
+        <Upload className="mr-2" /> {isUploading ? 'Uploading...' : `Upload ${currentExpression} Photos & Continue`}
+      </motion.button>
     </div>
   );
 };

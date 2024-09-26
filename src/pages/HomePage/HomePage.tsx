@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Features from './components/Features';
 import HowItWorks from './components/HowItWorks';
 import LaunchBanner from './components/LaunchBanner';
+import MissionStatement from './components/MissionStatement';
 
 const HomePage: React.FC = () => {
   return (
@@ -13,6 +14,8 @@ const HomePage: React.FC = () => {
         <div className="space-y-20">
           <Features />
           <HowItWorks />
+          <MissionStatement/>
+
         </div>
       </main>
     </div>

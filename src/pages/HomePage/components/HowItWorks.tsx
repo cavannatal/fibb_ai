@@ -2,10 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const steps = [
-  'Take a Photo of yourself',
-  'Prompt the system by uploading your photo.',
-  'Our AI model will enhance your image to ensure a professional look without compromising quality.',
-  'Enjoy your polished and professional-looking photos!'
+  'Follow the guided experience to capture your likeness in its entirety.',
+  'Our advanced algorithms and AI models learn and adapt to your every detail.',
+  'Provide a prompt to generate an authentically artifical image without compromising quality.',
+  'Enjoy your polished and photorealistic photos!'
 ];
 
 const HowItWorks: React.FC = () => {

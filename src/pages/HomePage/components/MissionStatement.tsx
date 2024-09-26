@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const MissionStatementPage = () => {
+const MissionStatement = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white py-16 px-4 sm:px-6 lg:px-8">
+    
       <div className="max-w-4xl mx-auto">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}
@@ -31,8 +31,8 @@ const MissionStatementPage = () => {
         
         
       </div>
-    </div>
+    
   );
 };
 
-export default MissionStatementPage;
+export default MissionStatement;

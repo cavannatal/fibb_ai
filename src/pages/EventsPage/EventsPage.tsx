@@ -35,7 +35,7 @@ const events: Event[] = [
     date: "October 11, 2024",
     time: "9:00 AM - 3:00 PM",
     location: "Zilker Park, Austin, Texas",
-    description: "Be part of history as we officially launch Fibb.ai at ACL! Experience our AI-powered photo booth and create unforgettable memories.",
+    description: "Be part of history as we officially launch Fibb.ai alongside ACL! Experience our AI-powered photo booth and create unforgettable memories.",
     imageUrl: aclImg,
     registrationLink: "https://www.aclfestival.com/tickets"
   },
