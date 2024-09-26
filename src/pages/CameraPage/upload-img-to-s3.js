@@ -7,7 +7,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
-const upload_file = path.resolve(__dirname, '/Users/cesaraguilar/Documents/GitHub/fibb_ai/src/cesar-favorites-8015.JPG'); 
+const upload_file = path.resolve(__dirname, './src/cesar-favorites-8015.JPG'); 
 const email = 'cesar-test@gmail.com'
 
 // AWS S3 Configuration
@@ -88,8 +88,3 @@ app.get('/upload-img-to-s3', async (req, res) => {
 // Set port and start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
-
-console.log(process.env.AWS_ACCESS_KEY_ID);
-console.log(process.env.AWS_SECRET_ACCESS_KEY);
-console.log(process.env.AWS_REGION);
-console.log(process.env.AWS_BUCKET_NAME);
