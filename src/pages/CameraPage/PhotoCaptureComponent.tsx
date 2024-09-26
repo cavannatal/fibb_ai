@@ -58,6 +58,8 @@ type Expression =
   | 'body_arms_down'
   | 'right_hand_palm'
   | 'right_hand_top'
+  |'left_hand_palm'
+  |'left_hand_top'
   | 'clench_fist'
   | 'both_legs'
   | 'right_leg'
@@ -93,6 +95,8 @@ const EXPRESSIONS: Expression[] = [
   'body_arms_down',
   'right_hand_palm',
   'right_hand_top',
+  'left_hand_palm',
+  'left_hand_top',
   'clench_fist',
   'both_legs',
   'right_leg',
@@ -121,6 +125,8 @@ const expressionImageMap: Record<Expression, string> = {
   'body_arms_down': bodyHandsDown,
   'right_hand_palm': rightHandPalm,
   'right_hand_top': rightHandBack,
+  'left_hand_palm': leftHandPalm,
+  'left_hand_top': leftHandBack,
   'clench_fist': clenchedFist,
   'both_legs': bodyFront, // Assuming full body shot for legs
   'right_leg': bodyFront, // Assuming full body shot for right leg
@@ -149,6 +155,8 @@ const expressionInstructions: Record<Expression, string> = {
   'body_arms_down': "Keep both arms down by your sides",
   'right_hand_palm': "Show your right hand palm to the camera",
   'right_hand_top': "Show the top of your right hand to the camera",
+  'left_hand_palm': "Show your left hand palm to the camera",
+  'left_hand_top': "Show the top of your left hand to the camera",
   'clench_fist': "Clench your fist and show it to the camera",
   'both_legs': "Show both of your legs to the camera",
   'right_leg': "Show your right leg to the camera",
@@ -177,6 +185,8 @@ const expressionDisplayNames: Record<Expression, string> = {
   'body_arms_down': "Arms Down",
   'right_hand_palm': "Right Hand Palm",
   'right_hand_top': "Right Hand Top",
+  'left_hand_palm': "Left Hand Palm",
+  'left_hand_top': "Left Hand Top",
   'clench_fist': "Clenched Fist",
   'both_legs': "Both Legs",
   'right_leg': "Right Leg",
@@ -231,7 +241,7 @@ const PhotoCaptureComponent: React.FC = () => {
 
   // Comment out the real upload function
   /// THIS FUNCTION IS RESPONSIBLE FOR SENDING THE DATA I THINK LOOK HERE
-   
+
   /*
   const handleUpload = async () => {
     if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
