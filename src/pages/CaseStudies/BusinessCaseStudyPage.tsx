@@ -1,29 +1,24 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
+import ProductPlacementSection from './components/ProductPlacementSection';
 
 interface CaseStudy {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
   fullDescription: string;
 }
 
-interface CaseStudyCardProps extends CaseStudy {
-  onClick: (id: string) => void;
-}
-
-const CaseStudyCard: React.FC<CaseStudyCardProps> = ({ id, title, description, imageUrl, onClick }) => (
+const CaseStudyCard: React.FC<CaseStudy & { onClick: (id: string) => void }> = ({ id, title, description, onClick }) => (
   <motion.div 
-    className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-    whileHover={{ scale: 1.05 }}
-    transition={{ type: "spring", stiffness: 300 }}
+    className="flex flex-col bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+    whileHover={{ scale: 1.02, y: -5 }}
+    whileTap={{ scale: 0.98 }}
     onClick={() => onClick(id)}
   >
-    <img src={imageUrl} alt={title} className="w-full h-64 object-cover" />
-    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-      <h3 className="text-white text-xl font-bold mb-2">{title}</h3>
-      <p className="text-white text-sm">{description}</p>
+    <div className="p-6">
+      <h3 className="text-white text-2xl font-bold mb-2">{title}</h3>
+      <p className="text-gray-300 text-base">{description}</p>
     </div>
   </motion.div>
 );
@@ -45,93 +40,89 @@ const BusinessCaseStudyPage: React.FC = () => {
   const productPlacementCase: CaseStudy = { 
     id: "product_placement",
     title: "Product Placement Strategy", 
-    description: "", 
-    imageUrl: "/api/placeholder/800/600",
-    fullDescription: ""};
+    description: "Discover how our innovative approach to product placement increased brand visibility by 40% and boosted sales in key markets.", 
+    fullDescription: "Our comprehensive product placement strategy revolutionized how brands interact with their target audience.",
+  };
 
   const professionalUseCase: CaseStudy = {
     id: "professional_use",
     title: "Professional Use Case",
-    description: "",
-    imageUrl: "/api/placeholder/800/600",
-    fullDescription: ""
-};
+    description: "Learn how professionals in various industries leveraged our solutions to streamline workflows and increase productivity by 25%.",
+    fullDescription: "Across multiple industries, professionals found that our solutions dramatically improved their daily operations. By implementing our advanced workflow management system, teams were able to automate routine tasks, enhance collaboration, and gain valuable insights through real-time analytics. This led to a remarkable 25% increase in overall productivity. From legal firms streamlining case management to healthcare providers optimizing patient care, our versatile platform adapted to diverse professional needs. The result was not just increased efficiency, but also improved job satisfaction and better outcomes for clients and customers alike.",
+  };
 
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+  const scrollToSection = (id: string) => {
+    const ref = id === "product_placement" ? productPlacementRef : professionalUseRef;
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <header className="h-[60vh] flex flex-col items-center justify-center text-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <header className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-12">
         <AnimatedSection>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
             Business Case Studies
           </h1>
         </AnimatedSection>
         
         <AnimatedSection>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-8">
+          <p className="text-xl text-gray-300 max-w-2xl mb-8">
             Explore how our solutions are revolutionizing business strategies and professional workflows.
           </p>
         </AnimatedSection>
         
         <AnimatedSection>
-          <div className="flex space-x-4">
-            <button
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
-              onClick={() => scrollToSection(productPlacementRef)}
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <motion.button
+              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full transition-all duration-300"
+              whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px rgb(124, 58, 237)" }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => scrollToSection("product_placement")}
             >
               Product Placement
-            </button>
-            <button
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
-              onClick={() => scrollToSection(professionalUseRef)}
+            </motion.button>
+            <motion.button
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-full transition-all duration-300"
+              whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px rgb(99, 102, 241)" }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => scrollToSection("professional_use")}
             >
               Professional Use
-            </button>
+            </motion.button>
           </div>
         </AnimatedSection>
       </header>
 
-      <section ref={productPlacementRef} className="py-16 px-4 bg-gray-800">
+      <section className="py-16 px-4">
         <AnimatedSection>
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Product Placement Case Study
+            Our Case Studies
           </h2>
         </AnimatedSection>
         <AnimatedSection>
-          <div className="max-w-4xl mx-auto">
-            <CaseStudyCard {...productPlacementCase} onClick={() => scrollToSection(productPlacementRef)} />
+          <div className="max-w-5xl mx-auto space-y-8">
+            <CaseStudyCard {...productPlacementCase} onClick={scrollToSection} />
+            <CaseStudyCard {...professionalUseCase} onClick={scrollToSection} />
           </div>
         </AnimatedSection>
       </section>
 
-      <section ref={professionalUseRef} className="py-16 px-4">
+      <div ref={productPlacementRef}>
+        <ProductPlacementSection 
+          title={productPlacementCase.title}
+          description={productPlacementCase.description}
+          fullDescription={productPlacementCase.fullDescription}
+        />
+      </div>
+
+      <section ref={professionalUseRef} className="py-16 px-4 bg-gray-800">
         <AnimatedSection>
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Professional Use Case Study
+            {professionalUseCase.title}
           </h2>
-        </AnimatedSection>
-        <AnimatedSection>
-          <div className="max-w-4xl mx-auto">
-            <CaseStudyCard {...professionalUseCase} onClick={() => scrollToSection(professionalUseRef)} />
-          </div>
-        </AnimatedSection>
-      </section>
-
-      <section className="py-16 px-4 bg-gray-800">
-        <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center">Detailed Case Studies</h2>
-          <div className="max-w-4xl mx-auto space-y-16">
-            {[productPlacementCase, professionalUseCase].map((caseStudy) => (
-              <div key={caseStudy.id} className="bg-gray-700 rounded-lg p-6 shadow-lg">
-                <h3 className="text-2xl font-bold mb-4">{caseStudy.title}</h3>
-                <img src={caseStudy.imageUrl} alt={caseStudy.title} className="w-full h-64 object-cover mb-4 rounded-lg" />
-                <p className="text-lg mb-4">{caseStudy.description}</p>
-                <p className="text-lg">{caseStudy.fullDescription}</p>
-              </div>
-            ))}
+          <div className="max-w-4xl mx-auto bg-gray-700 rounded-lg p-6 shadow-lg">
+            <p className="text-lg mb-4">{professionalUseCase.description}</p>
+            <p className="text-lg">{professionalUseCase.fullDescription}</p>
           </div>
         </AnimatedSection>
       </section>

@@ -2,10 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import matt from "./images/matt.jpg";
 import nick from "./images/nick.jpg";
-import cavan from "./images/cavan.jpg"
-import jake from "./images/jake.jpg"
-import ceasar from "./images/ceasar.jpg"
-import Mike from './images/Mike.jpeg'
+import cavan from "./images/cavan.jpg";
+import jake from "./images/jake.jpg";
+import ceasar from "./images/ceasar.jpg";
+import Mike from './images/Mike.jpeg';
+import allie from './images/allie.jpg';
 
 // Define types for our data structure
 interface TeamMember {
@@ -74,6 +75,14 @@ const topTeamMembers: TeamMember[] = [
     
     ],
     imageUrl: Mike,
+    imageStyle: "object-cover object-center scale-100" 
+  },
+  { 
+    name: "Allie Friesen", 
+    role: "Head of Public Relations & Ethics", 
+    description: [
+    ],
+    imageUrl: allie,
     imageStyle: "object-cover object-center scale-100" 
   },
   { 
