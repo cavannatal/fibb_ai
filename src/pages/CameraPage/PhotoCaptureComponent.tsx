@@ -261,7 +261,7 @@ const PhotoCaptureComponent: React.FC = () => {
         return { success: true };
       });
   
-      const results = await Promise.all(uploadPromises);
+      //const results = await Promise.all(uploadPromises);
   
       // Since any failure would have thrown an error, we can proceed
       alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
