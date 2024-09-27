@@ -218,36 +218,54 @@ const PhotoCaptureComponent: React.FC = () => {
       alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
       return;
     }
-  
+
     setIsUploading(true);
     try {
       const uploadPromises = capturedImages.map(async (image, index) => {
         const fileName = `${currentExpression}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
-  
-        const formData = new FormData();
-        formData.append('file', blob, fileName);
-        formData.append('expression', image.expression);
-        formData.append('position', image.position.toString());
-  
-        const uploadResponse = await fetch('backend/upload-img-to-s3.js/uploadImg', {
+
+        // Requesting the presigned URL from the Lambda function
+        const presignedUrlResponse = await fetch('Yhttps://wpslia2qcj.execute-api.us-east-2.amazonaws.com/prod/upload-photos', {
           method: 'POST',
-          body: formData,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fileName: fileName,
+            fileType: blob.type
+          })
         });
-  
-        if (!uploadResponse.ok) {
+
+        if (!presignedUrlResponse.ok) {
+          throw new Error(`Failed to get presigned URL for ${fileName}`);
+        }
+
+        const { uploadUrl } = await presignedUrlResponse.json();
+
+        // Upload the file directly to S3 using the presigned URL
+        const s3UploadResponse = await fetch(uploadUrl, {
+          method: 'PUT',
+          body: blob,
+          headers: {
+            'Content-Type': blob.type  // Ensuring we set the content-type header
+          }
+        });
+
+        if (!s3UploadResponse.ok) {
           throw new Error(`Failed to upload ${fileName}`);
         }
-  
-        return uploadResponse.json();
+
+        // Assuming the response includes some JSON data about the upload
+        return s3UploadResponse.json();  
       });
-  
+
       const results = await Promise.all(uploadPromises);
-  
+
       // Check if all uploads were successful
       const allSuccessful = results.every(result => result.success);
-  
+
       if (allSuccessful) {
         alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
         setCapturedImages([]);
@@ -261,7 +279,7 @@ const PhotoCaptureComponent: React.FC = () => {
     } finally {
       setIsUploading(false);
     }
-  };
+};
 
   const handleImageError = () => {
     setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
