@@ -227,7 +227,7 @@ const PhotoCaptureComponent: React.FC = () => {
         const blob = await response.blob();
 
         // Requesting the presigned URL from the Lambda function
-        const presignedUrlResponse = await fetch('https://4969l8xmb0.execute-api.us-east-2.amazonaws.com/photo-upload-url', {
+        const presignedUrlResponse = await fetch('https://4969l8xmb0.execute-api.us-east-2.amazonaws.com/PRD', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
