@@ -222,7 +222,25 @@ const PhotoCaptureComponent: React.FC = () => {
     setIsUploading(true);
     try {
       const uploadPromises = capturedImages.map(async (image, index) => {
-        const fileName = `${currentExpression}_${index + 1}.jpg`;
+        // Get the current timestamp
+        const currentDate = Date.now();
+
+        // Create a new Date object
+        const date = new Date(currentDate);
+
+        // Extract date components
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const day = String(date.getDate()).padStart(2, '0');
+
+        // Extract time components
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        // Format the datetime as YYYY-MM-DD HH:MM:SS.mmm
+        const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        const fileName = `users/test/photos/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
@@ -264,7 +282,7 @@ const PhotoCaptureComponent: React.FC = () => {
       const results = await Promise.all(uploadPromises);
   
       // Since any failure would have thrown an error, we can proceed
-      alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
+      // alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
       setCapturedImages([]);
       setCurrentExpressionIndex(prev => prev + 1);
     } catch (error) {
