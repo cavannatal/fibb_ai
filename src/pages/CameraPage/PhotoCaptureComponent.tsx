@@ -218,67 +218,63 @@ const PhotoCaptureComponent: React.FC = () => {
       alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
       return;
     }
-
+  
     setIsUploading(true);
     try {
       const uploadPromises = capturedImages.map(async (image, index) => {
         const fileName = `${currentExpression}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
-
+  
         // Requesting the presigned URL from the Lambda function
-        const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws', {
+        const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-              fileName: fileName,
-              fileType: blob.type
+            fileName: fileName,
+            fileType: blob.type
           })
-      });
-
-      if (!presignedUrlResponse.ok) {
+        });
+  
+        if (!presignedUrlResponse.ok) {
           throw new Error(`Failed to get presigned URL for ${fileName}`);
-      }
-      
-      const { uploadUrl } = await presignedUrlResponse.json();
-      
-      // Make sure the PUT request to S3 is correctly set
-      const s3UploadResponse = await fetch(uploadUrl, {
+        }
+  
+        const { uploadUrl } = await presignedUrlResponse.json();
+  
+        // Upload to S3
+        const s3UploadResponse = await fetch(uploadUrl, {
           method: 'PUT',
           body: blob,
           headers: {
-              'Content-Type': blob.type  // This is crucial for S3 to accept the upload
+            'Content-Type': blob.type
           }
-      });
-      
-      if (!s3UploadResponse.ok) {
+        });
+  
+        if (!s3UploadResponse.ok) {
           throw new Error(`Failed to upload ${fileName}`);
-      }
-      
-      return s3UploadResponse.json();
+        }
+  
+        // Return a success object
+        return { success: true };
       });
-
+  
       const results = await Promise.all(uploadPromises);
-
-      // Check if all uploads were successful
-      const allSuccessful = results.every(result => result.success);
-
-      if (allSuccessful) {
-        alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
-        setCapturedImages([]);
-        setCurrentExpressionIndex(prev => prev + 1);
-      } else {
-        throw new Error('Some uploads failed');
-      }
+  
+      // Since any failure would have thrown an error, we can proceed
+      alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
+      setCapturedImages([]);
+      setCurrentExpressionIndex(prev => prev + 1);
     } catch (error) {
       console.error('Error uploading photos:', error);
       alert('Failed to upload photos. Please try again.');
     } finally {
       setIsUploading(false);
     }
-};
+  };
+  
 
   const handleImageError = () => {
     setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
