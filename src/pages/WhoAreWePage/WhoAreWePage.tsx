@@ -112,6 +112,11 @@ const bottomTeamMembers: BottomTeamMember[] = [
     role: "Artificial Intelligence Researcher", 
     description: "Pushing the boundaries of what's possible"
   },
+  { 
+    name: "Fahim Hasnain Fahad", 
+    role: "Principal Software Engineer", 
+    description: ""
+  },
   
 ];
 

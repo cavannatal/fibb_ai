@@ -1,12 +1,36 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import ProductPlacementSection from './components/ProductPlacementSection';
+import ProfessionalUseSection from './components/ProfessionalUseSection';
+
+import pro1 from './bus_images/professional/pro_1.png';
+import pro2 from './bus_images/professional/pro_2.png';
+import pro3 from './bus_images/professional/pro_3.png';
+import pro4 from './bus_images/professional/pro_4.png';
+import pro5 from './bus_images/professional/pro_5.png';
+import pro6 from './bus_images/professional/pro_6.png';
+import pro7 from './bus_images/professional/pro_7.png';
+import pro8 from './bus_images/professional/pro_8.png';
+import pro9 from './bus_images/professional/pro_9.png';
+import pro10 from './bus_images/professional/pro_10.png';
+import pro11 from './bus_images/professional/pro_11.png';
+import pro12 from './bus_images/professional/pro_12.png';
+import rohit from './bus_images/professional/rohit.jpg';
+
+
 
 interface CaseStudy {
   id: string;
   title: string;
   description: string;
   fullDescription: string;
+}
+
+interface UserProfile {
+  name: string;
+  description: string;
+  mainImage: string;
+  galleryImages: string[];
 }
 
 const CaseStudyCard: React.FC<CaseStudy & { onClick: (id: string) => void }> = ({ id, title, description, onClick }) => (
@@ -41,15 +65,38 @@ const BusinessCaseStudyPage: React.FC = () => {
     id: "product_placement",
     title: "Product Placement Strategy", 
     description: "Discover how our innovative approach to product placement increased brand visibility by 40% and boosted sales in key markets.", 
-    fullDescription: "Our comprehensive product placement strategy revolutionized how brands interact with their target audience.",
+    fullDescription: "Our comprehensive product placement strategy revolutionized how brands interact with their target audience. By leveraging data-driven insights and cutting-edge technology, we developed a multi-channel approach that seamlessly integrated products into various media formats. This resulted in a 40% increase in brand visibility and significant sales growth across key markets. Our strategy not only enhanced product recognition but also created meaningful connections between brands and consumers, leading to improved customer loyalty and long-term market success.",
   };
 
   const professionalUseCase: CaseStudy = {
     id: "professional_use",
     title: "Professional Use Case",
     description: "Learn how professionals in various industries leveraged our solutions to streamline workflows and increase productivity by 25%.",
-    fullDescription: "Across multiple industries, professionals found that our solutions dramatically improved their daily operations. By implementing our advanced workflow management system, teams were able to automate routine tasks, enhance collaboration, and gain valuable insights through real-time analytics. This led to a remarkable 25% increase in overall productivity. From legal firms streamlining case management to healthcare providers optimizing patient care, our versatile platform adapted to diverse professional needs. The result was not just increased efficiency, but also improved job satisfaction and better outcomes for clients and customers alike.",
+    fullDescription: "Look at the comparison of the real photos against our AI generated photos of real clients who have used our service.",
   };
+
+  const userProfiles: UserProfile[] = [
+    {
+      name: "Rohit",
+      description: "After just one photoshoot, Rohit now has unlimited professional-grade images at his disposal. If he doesn't like the shirt, he can swap it out. If he wants a different setting, he can move locations. All without sacrificing that high-end photograph quality.",
+      mainImage: rohit,
+      galleryImages: [
+        pro1,
+        pro2,
+        pro3,
+        pro4,
+        pro5,
+        pro6,
+        pro7,
+        pro8,
+        pro9,
+        pro10,
+        pro11,
+        pro12
+      ]
+    },
+
+  ];
 
   const scrollToSection = (id: string) => {
     const ref = id === "product_placement" ? productPlacementRef : professionalUseRef;
@@ -115,17 +162,14 @@ const BusinessCaseStudyPage: React.FC = () => {
         />
       </div>
 
-      <section ref={professionalUseRef} className="py-16 px-4 bg-gray-800">
-        <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center">
-            {professionalUseCase.title}
-          </h2>
-          <div className="max-w-4xl mx-auto bg-gray-700 rounded-lg p-6 shadow-lg">
-            <p className="text-lg mb-4">{professionalUseCase.description}</p>
-            <p className="text-lg">{professionalUseCase.fullDescription}</p>
-          </div>
-        </AnimatedSection>
-      </section>
+      <div ref={professionalUseRef}>
+        <ProfessionalUseSection 
+          title={professionalUseCase.title}
+          description={professionalUseCase.description}
+          fullDescription={professionalUseCase.fullDescription}
+          userProfiles={userProfiles}
+        />
+      </div>
     </div>
   );
 };
