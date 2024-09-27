@@ -227,38 +227,37 @@ const PhotoCaptureComponent: React.FC = () => {
         const blob = await response.blob();
 
         // Requesting the presigned URL from the Lambda function
-        const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
+        const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/photo-upload-url', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            fileName: fileName,
-            fileType: blob.type
+              fileName: fileName,
+              fileType: blob.type
           })
-        });
-
-        if (!presignedUrlResponse.ok) {
+      });
+      
+      if (!presignedUrlResponse.ok) {
           throw new Error(`Failed to get presigned URL for ${fileName}`);
-        }
-
-        const { uploadUrl } = await presignedUrlResponse.json();
-
-        // Upload the file directly to S3 using the presigned URL
-        const s3UploadResponse = await fetch(uploadUrl, {
+      }
+      
+      const { uploadUrl } = await presignedUrlResponse.json();
+      
+      // Make sure the PUT request to S3 is correctly set
+      const s3UploadResponse = await fetch(uploadUrl, {
           method: 'PUT',
           body: blob,
           headers: {
-            'Content-Type': blob.type  // Ensuring we set the content-type header
+              'Content-Type': blob.type  // This is crucial for S3 to accept the upload
           }
-        });
-
-        if (!s3UploadResponse.ok) {
+      });
+      
+      if (!s3UploadResponse.ok) {
           throw new Error(`Failed to upload ${fileName}`);
-        }
-
-        // Assuming the response includes some JSON data about the upload
-        return s3UploadResponse.json();  
+      }
+      
+      return s3UploadResponse.json();
       });
 
       const results = await Promise.all(uploadPromises);
