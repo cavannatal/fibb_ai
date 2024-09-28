@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
+import { CognitoContext } from '../auth/CognitoProviderWithNavigate'; // Import the Cognito context
+import userPool from './cognitoService'; // Import the user pool for Cognito
 
 const NavBar: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileCaseStudiesOpen, setIsMobileCaseStudiesOpen] = useState(false);
 
@@ -24,10 +25,14 @@ const NavBar: React.FC = () => {
   ];
 
   const handleAuth = () => {
-    if (isAuthenticated) {
-      logout({ logoutParams: { returnTo: window.location.origin } });
+    const cognitoUser = userPool.getCurrentUser();
+
+    if (isAuthenticated && cognitoUser) {
+      cognitoUser.signOut();
+      window.location.reload(); // Refresh the page after logout to update state
     } else {
-      loginWithRedirect();
+      // Redirect to login page or trigger sign-in process
+      window.location.href = '/login'; // Assuming you have a login route
     }
   };
 
@@ -96,7 +101,7 @@ const NavBar: React.FC = () => {
         </div>
       </div>
       {/* Mobile menu */}
-      <div 
+      <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
