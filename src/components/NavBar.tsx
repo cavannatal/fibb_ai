@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
 import { CognitoContext } from '../auth/CognitoProviderWithNavigate'; // Import the Cognito context
-import userPool from './cognitoService'; // Import the user pool for Cognito
+import userPool from './CognitoService'; // Import the user pool for Cognito
 
 const NavBar: React.FC = () => {
   const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context

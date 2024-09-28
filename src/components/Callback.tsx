@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import userPool from './cognitoService'; // Import the userPool from the service
+import userPool from './CognitoService'; // Import the userPool from the service
 
 const Callback: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
