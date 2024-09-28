@@ -19,7 +19,7 @@ const NavBar: React.FC = () => {
         { name: "Business", path: "/business-case-study" },
       ],
     },
-    { name: "Products", path: "/products" },
+    { name: "Subscribe", path: "/subscribe" },
     ...(isAuthenticated ? [{ name: "Create", path: "/cam" }] : []),
   ];
 
