@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { CognitoContext } from '../../../auth/CognitoProviderWithNavigate'; // Import Cognito context
 
 const Header: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
@@ -13,7 +13,7 @@ const Header: React.FC = () => {
       navigate("/cam");
     } else {
       // Redirect to login if not authenticated
-      loginWithRedirect();
+      window.location.href = '/login'; // Assuming you have a login route
     }
   };
 
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.3 }}
-        className="text-lg sm:text-xl  max-w-2xl mb-8"
+        className="text-lg sm:text-xl max-w-2xl mb-8"
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
         Transform your images into limitless possibilities without compromising authenticity or trust.
