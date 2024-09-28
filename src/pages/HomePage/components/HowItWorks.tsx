@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import fibbIcon from '../fibbIconBlack.svg'; // Import your Fibb icon
 
 const steps = [
   'Follow the guided experience to capture your likeness in its entirety.',
   'Our advanced algorithms and AI models learn and adapt to your every detail.',
-  'Provide a prompt to generate an authentically artifical image without compromising quality.',
+  'Provide a prompt to generate an authentically artificial image without compromising quality.',
   'Enjoy your polished and photorealistic photos!'
 ];
-
 
 const HowItWorks = () => {
   return (
@@ -25,7 +24,7 @@ const HowItWorks = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg"
             >
-              <Star className="flex-shrink-0 w-6 h-6 text-orange-400" />
+              <img src={fibbIcon} alt="Fibb Icon" className="flex-shrink-0 w-6 h-6" /> {/* Replaced Star with Fibb Icon */}
               <span className="text-sm sm:text-base text-gray-700">{step}</span>
             </motion.div>
           ))}

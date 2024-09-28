@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Hexagon } from 'lucide-react';
 
 const features = [
   {
@@ -35,7 +34,7 @@ const Features = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-[#02353d] p-6 rounded-lg"
             >
-              <Hexagon className="w-12 h-12 mb-4 text-white" />
+              <div className="text-5xl mb-4">{feature.icon}</div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-gray-300 text-sm">{feature.description}</p>
             </motion.div>
