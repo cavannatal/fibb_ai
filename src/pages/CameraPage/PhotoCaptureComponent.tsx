@@ -294,6 +294,7 @@ const PhotoCaptureComponent: React.FC = () => {
   };
   
 
+  
   const handleImageError = () => {
     setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
     console.error(`Image load error for: ${currentExpression}.png`);
@@ -307,19 +308,19 @@ const PhotoCaptureComponent: React.FC = () => {
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-black p-4">
-        <h2 className="text-2xl font-bold mb-4 text-white">All expressions completed!</h2>
-        <p className="text-lg text-white">Thank you for participating.</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
+        <h2 className="text-2xl font-bold mb-4 text-[#084248]">All expressions completed!</h2>
+        <p className="text-lg text-gray-600">Thank you for participating.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-black p-4">
-      <h2 className="text-2xl font-bold mb-4 text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
+      <h2 className="text-2xl font-bold mb-4 text-[#084248]">
         Capture {expressionDisplayNames[currentExpression]} - Photo {capturedImages.length} of {PHOTOS_PER_EXPRESSION}
       </h2>
-      <p className="text-lg mb-4 text-white">{expressionInstructions[currentExpression]}</p>
+      <p className="text-lg mb-4 text-gray-600">{expressionInstructions[currentExpression]}</p>
       <div className="relative">
         <Webcam
           audio={false}
@@ -347,7 +348,7 @@ const PhotoCaptureComponent: React.FC = () => {
           whileTap={{ scale: 0.95 }}
           onClick={capture}
           disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
-          className={`bg-blue-500 text-white px-4 py-2 rounded-full flex items-center ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
         >
           <Camera className="mr-2" /> Capture Photo ({capturedImages.length} of {PHOTOS_PER_EXPRESSION})
         </motion.button>
@@ -356,7 +357,7 @@ const PhotoCaptureComponent: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={flipCamera}
-            className="bg-purple-500 text-white px-4 py-2 rounded-full flex items-center"
+            className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
           >
             <RotateCw className="mr-2" /> Flip Camera
           </motion.button>
@@ -364,12 +365,12 @@ const PhotoCaptureComponent: React.FC = () => {
       </div>
       
       <div className="w-full max-w-4xl mt-8">
-        <h3 className="text-xl font-bold mb-2 text-white">Captured Photos for {expressionDisplayNames[currentExpression]}</h3>
+        <h3 className="text-xl font-bold mb-2 text-[#084248]">Captured Photos for {expressionDisplayNames[currentExpression]}</h3>
         <div className="grid grid-cols-4 gap-2">
           {capturedImages.map((img, index) => (
             <div key={index} className="relative">
-              <img src={img.src} alt={`captured ${index}`} className="w-full h-24 object-cover rounded" />
-              <span className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded">
+              <img src={img.src} alt={`captured ${index}`} className="w-full h-24 object-cover rounded-lg" />
+              <span className="absolute bottom-0 right-0 bg-[#084248] bg-opacity-75 text-white text-xs p-1 rounded-bl-lg">
                 {img.position}
               </span>
             </div>
@@ -382,7 +383,7 @@ const PhotoCaptureComponent: React.FC = () => {
         whileTap={{ scale: 0.95 }}
         onClick={handleUpload}
         disabled={isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION}
-        className={`mt-4 bg-green-500 text-white px-4 py-2 rounded-full flex items-center ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`mt-4 bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
       >
         <Upload className="mr-2" /> {isUploading ? 'Uploading...' : `Upload ${expressionDisplayNames[currentExpression]} Photos & Continue`}
       </motion.button>

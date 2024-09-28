@@ -58,7 +58,7 @@ const PhotoGallery: React.FC<{ images: string[], title: string }> = ({ images, t
   return (
     <section className="py-16 px-4">
       <AnimatedSection>
-        <h2 className="text-3xl font-bold mb-8 text-center">{title}</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">{title}</h2>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {images.map((image, index) => (
@@ -129,24 +129,24 @@ const ProductPlacementSection: React.FC<ProductPlacementSectionProps> = ({
   const galleryImages = [pp1, pp2, pp3, pp4, pp5, pp6];
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <AnimatedSection>
-        <h2 className="text-3xl font-bold mb-8 text-center">
+        <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
           {title}
         </h2>
-        <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg p-6 shadow-lg">
-          <p className="text-lg mb-4">{description}</p>
-          <p className="text-lg mb-6">{fullDescription}</p>
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow-lg">
+          <p className="text-lg mb-4 text-gray-600">{description}</p>
+          <p className="text-lg mb-6 text-gray-600">{fullDescription}</p>
           
-          <div className="bg-gray-700 rounded-lg p-6 mb-6">
-            <h3 className="text-2xl font-bold mb-4 flex items-center">
-              <TrendingUp className="mr-2 text-green-400" size={24} />
+          <div className="bg-gray-100 rounded-2xl p-6 mb-6">
+            <h3 className="text-2xl font-bold mb-4 flex items-center text-[#084248]">
+              <TrendingUp className="mr-2 text-[#084248]" size={24} />
               How Product Placement Works with Our Solution
             </h3>
-            <p className="text-lg mb-4">
+            <p className="text-lg mb-4 text-gray-600">
               Our innovative product placement solution seamlessly integrates your brand into various media contexts, making it easy to incorporate your product in any situation. Here's how it works:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-lg">
+            <ul className="list-disc list-inside space-y-2 text-lg text-gray-600">
               <li>Our state-of-the-art model will seamlessly integrate your product in any scene you want</li>
               <li>Dynamic product rendering ensures natural integration into content</li>
               <li>Customizable placement strategies tailored to your brand's unique needs</li>

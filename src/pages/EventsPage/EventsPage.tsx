@@ -61,7 +61,8 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+      style={{ fontFamily: 'Nunito, sans-serif' }}
     >
       <div 
         className="cursor-pointer"
@@ -74,15 +75,15 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
           </div>
         </div>
         <div className="p-4 space-y-2">
-          <div className="flex items-center text-gray-300">
+          <div className="flex items-center text-gray-600">
             <Calendar className="w-5 h-5 mr-2" />
             <span>{date}</span>
           </div>
-          <div className="flex items-center text-gray-300">
+          <div className="flex items-center text-gray-600">
             <Clock className="w-5 h-5 mr-2" />
             <span>{time}</span>
           </div>
-          <div className="flex items-center text-gray-300">
+          <div className="flex items-center text-gray-600">
             <MapPin className="w-5 h-5 mr-2" />
             <span>{location}</span>
           </div>
@@ -97,13 +98,13 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
             transition={{ duration: 0.3 }}
             className="px-4 pb-4"
           >
-            <p className="text-gray-300 mb-4">{description}</p>
+            <p className="text-gray-600 mb-4">{description}</p>
             {isExternalLink ? (
               <a
                 href={registrationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                className="inline-flex items-center px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
                 onClick={(e) => e.stopPropagation()}
               >
                 Register Now <ExternalLink className="w-4 h-4 ml-2" />
@@ -111,7 +112,7 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
             ) : (
               <Link
                 to={registrationLink}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200"
+                className="inline-flex items-center px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
                 onClick={(e) => e.stopPropagation()}
               >
                 Register Now <ArrowRight className="w-4 h-4 ml-2" />
@@ -132,18 +133,27 @@ const EventsPage: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="text-4xl sm:text-5xl font-extrabold text-center mb-12"
+          className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-8"
+          style={{ fontFamily: 'Nunito, sans-serif' }}
         >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-            Upcoming Events
-          </span>
+          Upcoming Events
         </motion.h1>
+        
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto text-center mb-12"
+          style={{ fontFamily: 'Nunito, sans-serif' }}
+        >
+          Join us for exciting events and be part of the Fibb.ai journey. Experience innovation firsthand and connect with our community.
+        </motion.p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {events.map((event) => (

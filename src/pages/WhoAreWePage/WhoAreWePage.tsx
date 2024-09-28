@@ -122,10 +122,10 @@ const bottomTeamMembers: BottomTeamMember[] = [
 
 const AboutUs: React.FC = () => {
   return (
-    <div className="py-16 bg-gradient-to-b from-gray-900  text-white">
+    <div className="py-16 bg-[#efedea]  text-[#004948]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
-          className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600"
+          className="text-4xl font-bold mb-8 text-center text-[#084248]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -134,7 +134,7 @@ const AboutUs: React.FC = () => {
         </motion.h2>
         
         <motion.p 
-          className="text-lg mb-12 text-gray-300 text-center"
+          className="text-lg mb-12 text-black text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -146,7 +146,7 @@ const AboutUs: React.FC = () => {
           {topTeamMembers.map((member, index) => (
             <motion.div 
               key={index}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg"
+              className="bg-[#bddde2] p-6 rounded-lg shadow-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -161,8 +161,8 @@ const AboutUs: React.FC = () => {
                 </div>
                 <div className="flex-grow text-center md:text-left">
                   <h3 className="text-2xl font-semibold mb-2">{member.name}</h3>
-                  <p className="text-blue-400 mb-4">{member.role}</p>
-                  <ul className="text-gray-400 list-disc list-inside md:list-outside space-y-2">
+                  <p className="text-[#084248] mb-4">{member.role}</p>
+                  <ul className="text-black list-disc list-inside md:list-outside space-y-2">
                     {member.description.map((item, idx) => (
                       <li key={idx}>{item}</li>
                     ))}
@@ -177,14 +177,14 @@ const AboutUs: React.FC = () => {
           {bottomTeamMembers.map((member, index) => (
             <motion.div 
               key={index}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
+              className="bg-[#bddde2] p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
             >
-              <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-              <p className="text-blue-400 mb-2">{member.role}</p>
-              <p className="text-gray-400">{member.description}</p>
+              <h3 className="text-xl text-black font-semibold mb-2">{member.name}</h3>
+              <p className="text-[#084248] mb-2">{member.role}</p>
+              <p className="text-black">{member.description}</p>
             </motion.div>
           ))}
         </div>

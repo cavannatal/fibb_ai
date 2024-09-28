@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-
 import img2 from './images/img2.png';
 import img3 from './images/img3.png';
 import img4 from './images/img4.png';
@@ -15,7 +14,6 @@ interface ProductPhoto {
   alt: string;
 }
 
-
 const AnimatedSection: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
@@ -27,11 +25,11 @@ const AnimatedSection: React.FC<{ children: React.ReactNode }> = ({ children }) 
 );
 
 const ProductPhotoCard: React.FC<ProductPhoto & { onClick: () => void }> = ({ src, alt, onClick }) => (
-  <div className="rounded-lg overflow-hidden shadow-lg cursor-pointer" onClick={onClick}>
+  <div className="rounded-lg overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300" onClick={onClick}>
     <img 
       src={src} 
       alt={alt} 
-      className="w-full h-64 object-cover object-center" // Added object-center
+      className="w-full h-64 object-cover object-center"
     />
   </div>
 );
@@ -48,7 +46,7 @@ const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ sr
       <img 
         src={src} 
         alt={alt} 
-        className="max-w-full max-h-full object-contain object-center" // Added object-center
+        className="max-w-full max-h-full object-contain object-center"
       />
     </div>
   </motion.div>
@@ -57,8 +55,6 @@ const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ sr
 const CaseStudyPage: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<ProductPhoto | null>(null);
-
-
 
   const scrollToGallery = () => {
     galleryRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -74,16 +70,16 @@ const CaseStudyPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-white text-gray-800" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <header className="h-[48vh] flex flex-col items-center justify-center text-center px-4">
         <AnimatedSection>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-[#084248]">
             Case Studies
           </h1>
         </AnimatedSection>
         
         <AnimatedSection>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-8">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mb-8">
             Discover how our product is transforming user experiences.
           </p>
         </AnimatedSection>
@@ -91,13 +87,13 @@ const CaseStudyPage: React.FC = () => {
         <AnimatedSection>
           <div className="flex space-x-4">
             <button
-              className="px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
+              className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
               onClick={scrollToGallery}
             >
               Consumer Uses
             </button>
             <Link to="/business-case-study">
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105">
+              <button className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105">
                 Business Uses
               </button>
             </Link>
@@ -105,67 +101,63 @@ const CaseStudyPage: React.FC = () => {
         </AnimatedSection>
       </header>
 
-      <section className="py-1 px-4">
-  <AnimatedSection>
-    <h2 className="text-3xl font-bold mb-8 text-center">
-      Authentic Generation: Unparalleled Quality for Any Use
-    </h2>
-  </AnimatedSection>
-  <AnimatedSection>
-    <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg p-8 shadow-lg">
-      <ul className="space-y-4 text-lg">
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Photorealistic Accuracy:</strong> Our AI generates images indistinguishable from high-quality photographs, perfect for professional presentations and marketing materials.</span>
-        </li>
-
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Customizable Styles:</strong> Easily adjust lighting, textures, and atmospheres to match specific brand aesthetics or creative visions.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Rapid Generation:</strong> Create high-quality, complex images in seconds, dramatically reducing production time and costs.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Scalable Resolution:</strong> Generate images from thumbnail sizes to ultra-high resolution prints without losing quality.</span>
-        </li>
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Consistent Quality:</strong> Maintain a high standard of realism across multiple generations, ensuring cohesive visual narratives.</span>
-        </li>
-        
-        <li className="flex items-start">
-          <span className="text-blue-400 mr-2">•</span>
-          <span><strong>Ethical Considerations:</strong> Built-in safeguards ensure responsible image generation, adhering to ethical guidelines and copyright considerations.</span>
-        </li>
-      </ul>
-      <div className="mt-8 text-center">
-        <button
-          onClick={scrollToGallery}
-          className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
-        >
-          View Gallery
-        </button>
-      </div>
-    </div>
-  </AnimatedSection>
-</section>
+      <section className="py-12 px-4">
+        <AnimatedSection>
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
+            Authentic Generation: Unparalleled Quality for Any Use
+          </h2>
+        </AnimatedSection>
+        <AnimatedSection>
+          <div className="max-w-4xl mx-auto bg-gray-100 rounded-2xl p-8 shadow-lg">
+            <ul className="space-y-4 text-lg">
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Photorealistic Accuracy:</strong> Our AI generates images indistinguishable from high-quality photographs, perfect for professional presentations and marketing materials.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Customizable Styles:</strong> Easily adjust lighting, textures, and atmospheres to match specific brand aesthetics or creative visions.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Rapid Generation:</strong> Create high-quality, complex images in seconds, dramatically reducing production time and costs.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Scalable Resolution:</strong> Generate images from thumbnail sizes to ultra-high resolution prints without losing quality.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Consistent Quality:</strong> Maintain a high standard of realism across multiple generations, ensuring cohesive visual narratives.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#084248] mr-2">•</span>
+                <span><strong>Ethical Considerations:</strong> Built-in safeguards ensure responsible image generation, adhering to ethical guidelines and copyright considerations.</span>
+              </li>
+            </ul>
+            <div className="mt-8 text-center">
+              <button
+                onClick={scrollToGallery}
+                className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
+              >
+                View Gallery
+              </button>
+            </div>
+          </div>
+        </AnimatedSection>
+      </section>
 
       <section ref={galleryRef} className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center">Consumer Photo Gallery</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">Consumer Photo Gallery</h2>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {productPhotos.map((photo, index) => (
                 <ProductPhotoCard 
-                
                   key={index} 
                   {...photo} 
                   onClick={() => setSelectedPhoto(photo)}
                 />
-                
               ))}
             </div>
           </div>

@@ -17,8 +17,6 @@ import pro11 from './bus_images/professional/pro_11.png';
 import pro12 from './bus_images/professional/pro_12.png';
 import rohit from './bus_images/professional/rohit.jpg';
 
-
-
 interface CaseStudy {
   id: string;
   title: string;
@@ -35,14 +33,14 @@ interface UserProfile {
 
 const CaseStudyCard: React.FC<CaseStudy & { onClick: (id: string) => void }> = ({ id, title, description, onClick }) => (
   <motion.div 
-    className="flex flex-col bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+    className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
     whileHover={{ scale: 1.02, y: -5 }}
     whileTap={{ scale: 0.98 }}
     onClick={() => onClick(id)}
   >
     <div className="p-6">
-      <h3 className="text-white text-2xl font-bold mb-2">{title}</h3>
-      <p className="text-gray-300 text-base">{description}</p>
+      <h3 className="text-[#084248] text-2xl font-bold mb-2">{title}</h3>
+      <p className="text-gray-600 text-base">{description}</p>
     </div>
   </motion.div>
 );
@@ -81,21 +79,9 @@ const BusinessCaseStudyPage: React.FC = () => {
       description: "After just one photoshoot, Rohit now has unlimited professional-grade images at his disposal. If he doesn't like the shirt, he can swap it out. If he wants a different setting, he can move locations. All without sacrificing that high-end photograph quality.",
       mainImage: rohit,
       galleryImages: [
-        pro1,
-        pro2,
-        pro3,
-        pro4,
-        pro5,
-        pro6,
-        pro7,
-        pro8,
-        pro9,
-        pro10,
-        pro11,
-        pro12
+        pro1, pro2, pro3, pro4, pro5, pro6, pro7, pro8, pro9, pro10, pro11, pro12
       ]
     },
-
   ];
 
   const scrollToSection = (id: string) => {
@@ -104,16 +90,16 @@ const BusinessCaseStudyPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-white text-gray-800" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <header className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-12">
         <AnimatedSection>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-[#084248]">
             Business Case Studies
           </h1>
         </AnimatedSection>
         
         <AnimatedSection>
-          <p className="text-xl text-gray-300 max-w-2xl mb-8">
+          <p className="text-xl text-gray-600 max-w-2xl mb-8">
             Explore how our solutions are revolutionizing business strategies and professional workflows.
           </p>
         </AnimatedSection>
@@ -121,16 +107,14 @@ const BusinessCaseStudyPage: React.FC = () => {
         <AnimatedSection>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <motion.button
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full transition-all duration-300"
-              whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px rgb(124, 58, 237)" }}
+              className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection("product_placement")}
             >
               Product Placement
             </motion.button>
             <motion.button
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-full transition-all duration-300"
-              whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px rgb(99, 102, 241)" }}
+              className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection("professional_use")}
             >
@@ -142,7 +126,7 @@ const BusinessCaseStudyPage: React.FC = () => {
 
       <section className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center">
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
             Our Case Studies
           </h2>
         </AnimatedSection>

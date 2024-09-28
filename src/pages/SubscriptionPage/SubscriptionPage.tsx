@@ -116,7 +116,7 @@ const SubscriptionPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -124,14 +124,14 @@ const SubscriptionPage: React.FC = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600" style={{ fontFamily: 'Nunito, sans-serif' }}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-[#084248]" style={{ fontFamily: 'Nunito, sans-serif' }}>
             Purchase a subscription
           </h2>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="mt-4 text-xl text-gray-300"
+            className="mt-4 text-xl text-gray-600"
             style={{ fontFamily: 'Nunito, sans-serif' }}
           >
             Choose the plan that works for you
@@ -154,38 +154,39 @@ const SubscriptionPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 * (index + 1) }}
-              className={`bg-gray-800 rounded-lg shadow-lg divide-y divide-gray-700 ${plan.isPopular ? 'ring-2 ring-red-500' : ''}`}
+              className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${plan.isPopular ? 'ring-2 ring-[#084248]' : ''}`}
+              style={{ fontFamily: 'Nunito, sans-serif' }}
             >
               <div className="p-6">
-                <h2 className="text-2xl font-semibold text-white">{plan.name}</h2>
+                <h2 className="text-2xl font-semibold text-[#084248]">{plan.name}</h2>
                 <p className="mt-4">
                   {isYearly && (
                     <span className="text-lg line-through text-gray-400">${plan.monthlyPrice}</span>
                   )}
-                  <span className="text-4xl font-extrabold text-white ml-2">
+                  <span className="text-4xl font-extrabold text-[#084248] ml-2">
                     ${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
                   </span>
-                  <span className="text-base font-medium text-gray-300">/ month</span>
+                  <span className="text-base font-medium text-gray-600">/ month</span>
                 </p>
                 {isYearly && (
-                  <p className="mt-1 text-sm text-gray-400">20% off billed annually</p>
+                  <p className="mt-1 text-sm text-gray-500">20% off billed annually</p>
                 )}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="mt-8 w-full px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+                  className="mt-8 w-full px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
                   onClick={() => handleSubscribe(plan)}
                 >
                   Subscribe
                 </motion.button>
               </div>
               <div className="pt-6 pb-8 px-6">
-                <h3 className="text-xs font-medium text-gray-300 tracking-wide uppercase">What's included</h3>
+                <h3 className="text-xs font-medium text-gray-500 tracking-wide uppercase">What's included</h3>
                 <ul className="mt-6 space-y-4">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex space-x-3">
-                      <Check className="flex-shrink-0 h-5 w-5 text-green-400" aria-hidden="true" />
-                      <span className="text-sm text-gray-300">{feature}</span>
+                      <Check className="flex-shrink-0 h-5 w-5 text-[#084248]" aria-hidden="true" />
+                      <span className="text-sm text-gray-600">{feature}</span>
                     </li>
                   ))}
                 </ul>

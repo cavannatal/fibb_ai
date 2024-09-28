@@ -57,7 +57,7 @@ const PhotoGallery: React.FC<{ images: string[], title: string }> = ({ images, t
 
   return (
     <div className="py-8">
-      <h3 className="text-2xl font-bold mb-4">{title}</h3>
+      <h3 className="text-2xl font-bold mb-4 text-[#084248]">{title}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {images.map((image, index) => (
           <PhotoCard
@@ -121,13 +121,13 @@ const UserProfileSection: React.FC<{ profile: UserProfile }> = ({ profile }) => 
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-gray-600 rounded-lg p-6 mb-6">
+    <div className="bg-gray-100 rounded-2xl p-6 mb-6 shadow-md">
       <div 
         className="flex justify-between items-center cursor-pointer" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-2xl font-bold">{profile.name}</h3>
-        {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+        <h3 className="text-2xl font-bold text-[#084248]">{profile.name}</h3>
+        {isExpanded ? <ChevronUp size={24} className="text-[#084248]" /> : <ChevronDown size={24} className="text-[#084248]" />}
       </div>
       <AnimatePresence>
         {isExpanded && (
@@ -137,7 +137,7 @@ const UserProfileSection: React.FC<{ profile: UserProfile }> = ({ profile }) => 
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <p className="text-lg my-4">{profile.description}</p>
+            <p className="text-lg my-4 text-gray-600">{profile.description}</p>
             <div className="w-64 h-86 mx-auto overflow-hidden rounded-lg mb-4">
               <img 
                 src={profile.mainImage} 
@@ -160,17 +160,15 @@ const ProfessionalUseSection: React.FC<ProfessionalUseSectionProps> = ({
   userProfiles
 }) => {
   return (
-    <section className="py-16 px-4 bg-gray-800">
+    <section className="py-16 px-4 bg-white" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <AnimatedSection>
-        <h2 className="text-3xl font-bold mb-8 text-center">
+        <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
           {title}
         </h2>
-        <div className="max-w-4xl mx-auto bg-gray-700 rounded-lg p-6 shadow-lg">
-          <p className="text-lg mb-4">{description}</p>
-          <p className="text-lg mb-6">{fullDescription}</p>
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow-lg">
+          <p className="text-lg mb-4 text-gray-600">{description}</p>
+          <p className="text-lg mb-6 text-gray-600">{fullDescription}</p>
           
-          
-
           {userProfiles.map((profile, index) => (
             <UserProfileSection key={index} profile={profile} />
           ))}
