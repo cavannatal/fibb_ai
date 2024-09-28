@@ -3,10 +3,18 @@ import { motion } from 'framer-motion';
 import fibbIcon from '../fibbIconBlack.svg'; // Import your Fibb icon
 
 const steps = [
-  'Follow the guided experience to capture your likeness in its entirety.',
-  'Our advanced algorithms and AI models learn and adapt to your every detail.',
-  'Provide a prompt to generate an authentically artificial image without compromising quality.',
-  'Enjoy your polished and photorealistic photos!'
+  {
+    title: "Step 1: Sign Up & SelfSync",
+    description: "Create an account and sync your likeness with our guided photoshoot."
+  },
+  {
+    title: "Step 2: Customize & Create",
+    description: "Choose settings, outfits, and backgrounds to generate your images."
+  },
+  {
+    title: "Step 3: Share & Utilize",
+    description: "Download your images for personal or professional use."
+  }
 ];
 
 const HowItWorks = () => {
@@ -22,10 +30,13 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg"
+              className="flex items-start space-x-4 bg-gray-100 p-4 rounded-lg"
             >
-              <img src={fibbIcon} alt="Fibb Icon" className="flex-shrink-0 w-6 h-6" /> {/* Replaced Star with Fibb Icon */}
-              <span className="text-sm sm:text-base text-gray-700">{step}</span>
+              <img src={fibbIcon} alt="Fibb Icon" className="flex-shrink-0 w-6 h-6 mt-1" />
+              <div>
+                <h3 className="text-[#004948] font-bold mb-1">{step.title}</h3>
+                <span className="text-sm sm:text-base text-gray-700">{step.description}</span>
+              </div>
             </motion.div>
           ))}
         </div>

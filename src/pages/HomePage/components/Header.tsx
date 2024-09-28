@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         className="text-lg sm:text-xl  max-w-2xl mb-8"
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
-        Transform your imagination with our proprietary cutting edge likeness technology.
+        Transform your images into limitless possibilities without compromising authenticity or trust.
       </motion.p>
       
       <motion.button

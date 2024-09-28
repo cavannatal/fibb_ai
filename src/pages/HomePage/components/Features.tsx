@@ -1,21 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Zap, Infinity, Shield } from 'lucide-react';
 
 const features = [
   {
-    title: 'Authentically Artifical',
-    description: 'Bring abstract ideas to life with our advanced AI interpretation.',
-    icon: '💡'
+    title: 'SelfSync Technology',
+    description: 'Experience seamless AI model training with our guided photo-taking process.',
+    icon: Zap
   },
   {
-    title: 'Photo Realism',
-    description: 'Create hyper-realistic images that blur the line between AI and reality.',
-    icon: '📸'
+    title: 'Infinite Possibilities',
+    description: 'Place yourself anywhere, wearing anything, with photorealistic precision.',
+    icon: Infinity
   },
   {
-    title: 'Artistic Styles',
-    description: 'Generate unique images in various artistic styles with just a few clicks.',
-    icon: '🎨'
+    title: 'Ethical & Transparent',
+    description: 'Committed to responsible AI practices that respect your privacy.',
+    icon: Shield
   }
 ];
 
@@ -34,7 +35,9 @@ const Features = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-[#02353d] p-6 rounded-lg"
             >
-              <div className="text-5xl mb-4">{feature.icon}</div>
+              <div className="text-5xl mb-4">
+                {React.createElement(feature.icon, { size: 48, className: "text-white" })}
+              </div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-gray-300 text-sm">{feature.description}</p>
             </motion.div>
