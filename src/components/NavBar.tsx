@@ -32,7 +32,7 @@ const NavBar: React.FC = () => {
       window.location.reload(); // Refresh the page after logout to update state
     } else {
       // Redirect to login page or trigger sign-in process
-      window.location.href = '/login'; // Assuming you have a login route
+      window.location.href = '/login'; // Add login route here
     }
   };
 
