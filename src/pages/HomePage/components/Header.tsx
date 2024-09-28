@@ -23,17 +23,17 @@ const Header: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
-        className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600"
+        className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 "
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
-        Welcome to fibb.ai
+        Authentically Artificial
       </motion.h1>
       
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.3 }}
-        className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-8"
+        className="text-lg sm:text-xl  max-w-2xl mb-8"
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
         Transform your imagination with our proprietary cutting edge likeness technology.
@@ -43,10 +43,10 @@ const Header: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="px-6 py-3 bg-gradient-to-r from-red-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
+        className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
         onClick={handleButtonClick}
       >
-        Start Creating
+        Get Started
       </motion.button>
     </header>
   );

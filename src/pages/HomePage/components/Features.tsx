@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Hexagon } from 'lucide-react';
 
 const features = [
   {
@@ -17,28 +18,29 @@ const features = [
     description: 'Generate unique images in various artistic styles with just a few clicks.',
     icon: '🎨'
   }
-
 ];
 
-const Features: React.FC = () => {
+const Features = () => {
   return (
-    <section>
-      <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Unleash Your Creativity</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature, index) => (
-          <motion.div 
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
-          >
-            <div className="text-3xl mb-3">{feature.icon}</div>
-            <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-            <p className="text-gray-400 text-sm">{feature.description}</p>
-          </motion.div>
-        ))}
+    <section className="bg-[#024751] text-white py-16">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold mb-12 text-center">Unleash Your Creativity</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-[#02353d] p-6 rounded-lg"
+            >
+              <Hexagon className="w-12 h-12 mb-4 text-white" />
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-gray-300 text-sm">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

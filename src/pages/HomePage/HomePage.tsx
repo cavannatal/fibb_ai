@@ -7,7 +7,7 @@ import MissionStatement from './components/MissionStatement';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="">
       <LaunchBanner/>
       <Header />
       <main className="py-12">

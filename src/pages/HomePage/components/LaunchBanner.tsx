@@ -8,8 +8,8 @@ interface CountdownUnitProps {
 
 const CountdownUnit: React.FC<CountdownUnitProps> = ({ value, label }) => (
   <div className="flex flex-col items-center">
-    <span className="text-2xl md:text-4xl font-bold">{value}</span>
-    <span className="text-xs md:text-sm uppercase">{label}</span>
+    <span className="text-xl md:text-3xl font-bold">{value}</span>
+    <span className="text-xs uppercase">{label}</span>
   </div>
 );
 
@@ -44,19 +44,19 @@ const LaunchBanner: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-5xl mx-auto overflow-hidden">
-      <div className="p-4 md:p-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-600">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl md:text-2xl font-bold">fibb.ai Launch Countdown!</h2>
-          <Rocket className="h-6 w-6 md:h-8 md:w-8 animate-pulse text-blue-600" />
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="py-2 px-4">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#093148] to-[#004948]">fibb.ai Launch Countdown</h2>
+          <Rocket className="h-5 w-5 md:h-6 md:w-6 animate-pulse text-[#004948]" />
         </div>
-        <div className="flex justify-around">
+        <div className="flex justify-around text-transparent bg-clip-text bg-gradient-to-r from-[#093148] to-[#004948]">
           <CountdownUnit value={timeLeft.days} label="Days" />
           <CountdownUnit value={timeLeft.hours} label="Hours" />
           <CountdownUnit value={timeLeft.minutes} label="Minutes" />
           <CountdownUnit value={timeLeft.seconds} label="Seconds" />
         </div>
-        <p className="mt-4 text-center text-sm md:text-base">
+        <p className="mt-2 text-center text-xs md:text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#093148] to-[#004948]">
           Launching on October 11th, 2024 at 9:00 AM CST
         </p>
       </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
+import FibbLogoBlack from './images/FibbLogoBlack.svg';
 
 const NavBar: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -10,7 +11,7 @@ const NavBar: React.FC = () => {
 
   const navItems = [
     { name: "Who We Are", path: "/who-we-are" },
-    { name: "Events", path: "/events" },
+    { name: "About", path: "/about" },
     {
       name: "Case Studies",
       children: [
@@ -18,9 +19,7 @@ const NavBar: React.FC = () => {
         { name: "Business", path: "/business-case-study" },
       ],
     },
-    { name: "Blog", path: "/blog" },
-    { name: "Subscribe", path: "/subscribe" },
-    //Only works right now with autnetication needs fixing when subscribe plans
+    { name: "Products", path: "/products" },
     ...(isAuthenticated ? [{ name: "Create", path: "/cam" }] : []),
   ];
 
@@ -41,36 +40,34 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="shadow-lg ">
+    <nav className="bg-gray-100 shadow-lg">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">
-            <span className="font-semibold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-600">fibb.ai</span>
+            <img src={FibbLogoBlack} alt="fibb.ai logo" className="h-10" />
           </Link>
           <div className="md:hidden">
-            <button onClick={toggleMenu} className="text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300">
+            <button onClick={toggleMenu} className="text-gray-600 hover:text-gray-800 transition duration-300">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
-          <div className="hidden md:flex md:items-center md:space-x-1">
+          <div className="hidden md:flex md:items-center md:space-x-6">
             {navItems.map((item, index) => (
               item.children ? (
                 <div key={index} className="relative group">
                   <button
-                    className={`py-4 px-2 text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300 flex items-center ${
-                      index === 0 ? 'md:ml-4' : ''
-                    }`}
+                    className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 flex items-center"
                   >
                     {item.name}
                     <ChevronDown size={16} className="ml-1" />
                   </button>
-                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg  ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                       {item.children.map((subItem, subIndex) => (
                         <Link
                           key={subIndex}
                           to={subItem.path}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300"
+                          className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300"
                           role="menuitem"
                         >
                           {subItem.name}
@@ -83,9 +80,7 @@ const NavBar: React.FC = () => {
                 <Link
                   key={index}
                   to={item.path}
-                  className={`py-4 px-2 text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300 ${
-                    index === 0 ? 'md:ml-4' : ''
-                  }`}
+                  className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300"
                 >
                   {item.name}
                 </Link>
@@ -93,9 +88,9 @@ const NavBar: React.FC = () => {
             ))}
             <button
               onClick={handleAuth}
-              className="ml-4 py-4 px-2 text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300"
+              className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 font-semibold"
             >
-              {isAuthenticated ? 'Log Out' : 'Sign Up / Login'}
+              {isAuthenticated ? 'Log Out' : 'Sign Up'}
             </button>
           </div>
         </div>
@@ -106,13 +101,13 @@ const NavBar: React.FC = () => {
           isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50">
           {navItems.map((item, index) => (
             item.children ? (
               <div key={index}>
                 <button
                   onClick={toggleMobileCaseStudies}
-                  className="w-full text-left py-2 px-4 text-base text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300 flex items-center justify-between"
+                  className="w-full text-left py-2 px-4 text-base text-gray-600 hover:#084248 hover:bg-gray-100 transition duration-300 flex items-center justify-between"
                 >
                   {item.name}
                   {isMobileCaseStudiesOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -123,7 +118,7 @@ const NavBar: React.FC = () => {
                       <Link
                         key={subIndex}
                         to={subItem.path}
-                        className="block py-2 px-4 text-sm text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300"
+                        className="block py-2 px-4 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {subItem.name}
@@ -136,7 +131,7 @@ const NavBar: React.FC = () => {
               <Link
                 key={index}
                 to={item.path}
-                className="block py-2 px-4 text-base text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300"
+                className="block py-2 px-4 text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
@@ -148,9 +143,9 @@ const NavBar: React.FC = () => {
               handleAuth();
               setIsMenuOpen(false);
             }}
-            className="w-full text-left py-2 px-4 text-base text-gray-300 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-red-400 hover:to-blue-600 transition duration-300"
+            className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300 font-semibold"
           >
-            {isAuthenticated ? 'Log Out' : 'Sign Up / Login'}
+            {isAuthenticated ? 'Log Out' : 'Sign Up'}
           </button>
         </div>
       </div>

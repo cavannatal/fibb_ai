@@ -42,7 +42,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Auth0ProviderWithNavigate>
-        <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 to-black text-white" style={{ fontFamily: 'Nunito, sans-serif' }}>
+        <div className="flex flex-col min-h-screen bg-[#efedee]" style={{ fontFamily: 'Nunito, sans-serif' }}>
           <NavBar />
           
           <main className="flex-grow">

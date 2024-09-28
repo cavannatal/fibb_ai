@@ -87,7 +87,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Cavan Natal", 
-    role: "Software Engineer", 
+    role: "Senior Software Engineer", 
     description: [
       "Fresh out of Texas Tech University with a Bachelor’s in Computer Science and a minor in Mathematics, Cavan is eager to apply his knowledge and skills to real-world challenges in software engineering and data science. His academic background has provided him with a solid foundation in programming, algorithms, and mathematical modeling, which he now aims to leverage in the professional world.",
       "During his time at Texas Tech, Cavan honed his problem-solving skills, worked on projects ranging from building web applications to conducting data analysis, and developed a keen interest in the intersection of technology and data. He is passionate about creating solutions that are both innovative and efficient, whether through software development or data-driven insights.",
