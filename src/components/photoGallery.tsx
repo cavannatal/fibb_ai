@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { Grid, CircularProgress, Typography } from '@material-ui/core';
 import AWS from 'aws-sdk';
-import { trackWindowScroll } from 'react-lazy-load-image-component';
-import PhotoCard from './PhotoCard';
-import S3FinalImageUpload from './s3FinalImageUpload';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import { Auth } from '@aws-amplify/auth';
 
 // TODO: Replace 'cesarFillMeInAWSData' with our actual AWS region
 AWS.config.update({
@@ -18,26 +18,52 @@ interface Photo {
   lastModified: Date;
 }
 
-function GalleryComponent({ scrollPosition }: { scrollPosition: any }) {
+function Gallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPhotos();
+    async function getCurrentUser() {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        setUserId(user.username);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+        setError('Unable to authenticate user. Please try logging in again.');
+      }
+    }
+    getCurrentUser();
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      fetchPhotos();
+    }
+  }, [userId]);
+
   const fetchPhotos = async () => {
+    if (!userId) return;
+
     try {
       // TODO: Replace 'cesarFillMeInAWSData' with our actual S3 bucket name
       const params = {
         Bucket: 'cesarFillMeInAWSData',
+        Prefix: `${userId}/`, // This assumes each user has their own folder in the bucket
         // TODO: Consider adding MaxKeys to limit the number of results
         // MaxKeys: 100
       };
 
       const data = await s3.listObjectsV2(params).promise();
       
-      const photoList = await Promise.all(data.Contents!.map(async (object) => {
+      if (!data.Contents || data.Contents.length === 0) {
+        setPhotos([]);
+        setLoading(false);
+        return;
+      }
+
+      const photoList = await Promise.all(data.Contents.map(async (object) => {
         // TODO: Replace 'cesarFillMeInAWSData' with our actual S3 bucket name
         const url = await s3.getSignedUrlPromise('getObject', {
           Bucket: 'cesarFillMeInAWSData',
@@ -52,11 +78,11 @@ function GalleryComponent({ scrollPosition }: { scrollPosition: any }) {
       }));
 
       setPhotos(photoList);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching photos:', error);
+      setError('Failed to load photos. Please try again later.');
+    } finally {
       setLoading(false);
-      // TODO: Implement user-friendly error handling
     }
   };
 
@@ -64,21 +90,31 @@ function GalleryComponent({ scrollPosition }: { scrollPosition: any }) {
     return <CircularProgress />;
   }
 
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  if (photos.length === 0) {
+    return <Typography>No photos found in your gallery.</Typography>;
+  }
+
   return (
-    <div>
-      <S3FinalImageUpload onPhotoUploaded={fetchPhotos} />
-      <Grid container spacing={2}>
-        {photos.map((photo) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
-            <PhotoCard photo={photo} scrollPosition={scrollPosition} />
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+    <Grid container spacing={2}>
+      {photos.map((photo) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
+          <LazyLoadImage
+            alt={photo.id}
+            height={200}
+            src={photo.url} 
+            width="100%"
+            effect="blur"
+            style={{ objectFit: 'cover' }}
+          />
+        </Grid>
+      ))}
+    </Grid>
   );
 }
-
-const Gallery = trackWindowScroll(GalleryComponent);
 
 export default Gallery;
 
