@@ -13,7 +13,7 @@ const Header: React.FC = () => {
       navigate("/cam");
     } else {
       // Redirect to login if not authenticated
-      window.location.href = '/login'; // Assuming you have a login route
+      window.location.href = '/signup'; // Assuming you have a login route
     }
   };
 
