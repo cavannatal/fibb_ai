@@ -14,12 +14,44 @@ export const CognitoContext = createContext<CognitoContextType>({
   handleRedirectCallback: () => {},
 });
 
-const poolData = {
-  UserPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID!,
-  ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID!,
+// Attempt to get configuration from different sources
+const getUserPoolId = () => {
+  return process.env.REACT_APP_COGNITO_USER_POOL_ID || 
+         process.env.REACT_APP_USER_POOL_ID || 
+         (window as any).REACT_APP_COGNITO_USER_POOL_ID;
 };
 
-const userPool = new CognitoUserPool(poolData);
+const getClientId = () => {
+  return process.env.REACT_APP_COGNITO_CLIENT_ID || 
+         process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID || 
+         (window as any).REACT_APP_COGNITO_CLIENT_ID;
+};
+
+const userPoolId = getUserPoolId();
+const clientId = getClientId();
+
+console.log('Cognito Configuration:');
+console.log('UserPoolId:', userPoolId);
+console.log('ClientId:', clientId);
+
+if (!userPoolId || !clientId) {
+  console.error('Missing Cognito configuration. Please check your environment variables or global configuration.');
+  throw new Error('Cognito configuration is incomplete. Check your setup.');
+}
+
+const poolData = {
+  UserPoolId: userPoolId,
+  ClientId: clientId,
+};
+
+let userPool: CognitoUserPool;
+try {
+  userPool = new CognitoUserPool(poolData);
+  console.log('Cognito User Pool initialized successfully');
+} catch (error) {
+  console.error('Error initializing Cognito User Pool:', error);
+  throw error;
+}
 
 export const CognitoProviderWithNavigate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -1,23 +1,79 @@
-// SignupPage.tsx
-import React from 'react';
-import { Authenticator } from '@aws-amplify/ui-react';
+import React, { useState, useEffect } from 'react';
+import { getCurrentUser, signOut } from 'aws-amplify/auth';
+import { Amplify } from 'aws-amplify';
+import { Button, View, Text, Heading, useTheme } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+
+import awsExports from '../../aws-exports';
+Amplify.configure(awsExports);
 
 const SignupPage: React.FC = () => {
+  const [user, setUser] = useState<any>(null);
+  const { tokens } = useTheme();
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    } catch (err) {
+      setUser(null);
+    }
+  }
+
+  const handleAuthRedirect = () => {
+    const authConfig = awsExports.Auth?.Cognito;
+    const userPoolClientId = authConfig?.userPoolClientId;
+    const domain = authConfig?.hostedUI?.domain;
+    const redirectSignIn = authConfig?.hostedUI?.redirectSignIn;
+
+    if (userPoolClientId && domain && redirectSignIn) {
+      const hostedUiUrl = `https://${domain}/login?client_id=${userPoolClientId}&response_type=code&scope=email+openid+profile&redirect_uri=${redirectSignIn}`;
+      window.location.href = hostedUiUrl;
+    } else {
+      console.error('Missing Cognito configuration');
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md">
-        <Authenticator initialState="signUp">
-          {({ user }) => (
-            <div className="text-center">
-              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                Welcome, {user?.username}!
-              </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                You have successfully signed up and logged in.
-              </p>
-            </div>
-          )}
-        </Authenticator>
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        {user ? (
+          <View textAlign="center">
+            <Heading level={2} padding={tokens.space.medium}>
+              Welcome, {user.attributes.email || user.username}!
+            </Heading>
+            <Text padding={tokens.space.medium}>
+              You are successfully logged in.
+            </Text>
+            <Button onClick={handleSignOut} variation="primary">Sign out</Button>
+          </View>
+        ) : (
+          <View textAlign="center">
+            <Heading level={2} padding={tokens.space.medium}>
+              Welcome to Our App
+            </Heading>
+            <Text padding={tokens.space.medium}>
+              To sign up or sign in, you'll be redirected to our secure login page.
+              You'll need to provide your email and phone number during sign-up.
+            </Text>
+            <Button onClick={handleAuthRedirect} variation="primary">
+              Sign Up / Sign In
+            </Button>
+          </View>
+        )}
       </div>
     </div>
   );
