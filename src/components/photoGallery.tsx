@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, CircularProgress, Typography, IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import InstagramIcon from '@material-ui/icons/Instagram';
 import AWS from 'aws-sdk';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -122,6 +123,27 @@ function Gallery() {
     }
   };
 
+  const shareToInstagramStories = (photoUrl: string) => {
+    // Instagram Stories sharing URL
+    const instagramUrl = `instagram-stories://share?source_application=your_app_id`;
+
+    // Check if the user is on a mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // If on mobile, attempt to open the Instagram app
+      window.location.href = `${instagramUrl}&background_image=${encodeURIComponent(photoUrl)}`;
+      
+      // Fallback for if the Instagram app isn't installed or doesn't open
+      setTimeout(() => {
+        window.location.href = 'https://www.instagram.com';
+      }, 2000);
+    } else {
+      // If not on mobile, open Instagram website
+      window.open('https://www.instagram.com', '_blank');
+    }
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -171,6 +193,18 @@ function Gallery() {
             >
               <GetAppIcon />
             </IconButton>
+            <IconButton
+              style={{
+                position: 'absolute',
+                top: 5,
+                right: 85,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              }}
+              onClick={() => shareToInstagramStories(photo.url)}
+              aria-label="share to Instagram Stories"
+            >
+              <InstagramIcon />
+            </IconButton>
           </div>
         </Grid>
       ))}
@@ -180,18 +214,12 @@ function Gallery() {
 
 export default Gallery;
 
-// DEVELOPER NOTE: Consider adding a confirmation dialog before deleting photos
 
-// DEVELOPER NOTE: Implement proper error logging and monitoring for production environments
 
-// DEVELOPER NOTE: Consider adding undo functionality for deleted photos
-
-// DEVELOPER NOTE: For iPhone users, provide instructions on how to save the downloaded image to their photo album
-
+// DEVELOPER NOTE: Consider adding undo functionality for deleted photos??
+// DEVELOPER NOTE: For iPhone users,we provide instructions on how to save the downloaded image to their photo album
+// DEVELOPER NOTE: Ensure that the Instagram sharing feature is thoroughly tested on various devices and browsers... 
 // TODO: Implement pagination or infinite scrolling for large collections
-
 // TODO: Add search and filtering options
-
 // TODO: Implement error boundary to catch and display errors gracefully
-
-// DEVELOPER NOTE: For accessibility, ensure that the delete and download buttons are properly labeled and can be accessed via keyboard navigation
+// DEVELOPER NOTE: For AWS accessibility, ensure that all buttons are properly labeled and can be accessed via keyboard navigation
