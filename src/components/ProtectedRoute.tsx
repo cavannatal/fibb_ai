@@ -1,22 +1,16 @@
-import React, { useContext } from 'react';
-import { CognitoContext } from '../auth/CognitoProviderWithNavigate'; // Importing Cognito context
-import { useNavigate } from 'react-router-dom'; // Use this to redirect
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
+  user?: any;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useContext(CognitoContext); // Get authentication status from context
-  const navigate = useNavigate();
-
-  if (!isAuthenticated) {
-    // Redirect to login if not authenticated
-    navigate('/login');
-    return null;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, user }) => {
+  if (!user) {
+    return <Navigate to="/signup" replace />;
   }
-
-  return <>{children}</>;
+  return children;
 };
 
 export default ProtectedRoute;

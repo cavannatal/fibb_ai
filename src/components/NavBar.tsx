@@ -1,14 +1,17 @@
-import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
-import { CognitoContext } from '../auth/CognitoProviderWithNavigate'; // Import the Cognito context
-import userPool from './CognitoService'; // Import the user pool for Cognito
 
-const NavBar: React.FC = () => {
-  const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context
+interface NavBarProps {
+  signOut?: () => void;
+  user?: any; // We're using 'any' here as the exact type is not exported from Amplify
+}
+
+const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileCaseStudiesOpen, setIsMobileCaseStudiesOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Who We Are", path: "/who-we-are" },
@@ -21,28 +24,18 @@ const NavBar: React.FC = () => {
       ],
     },
     { name: "Subscribe", path: "/subscribe" },
-    ...(isAuthenticated ? [{ name: "Create", path: "/cam" }] : []),
+    ...(user ? [{ name: "Create", path: "/cam" }] : []),
   ];
 
   const handleAuth = () => {
-    const cognitoUser = userPool.getCurrentUser();
-
-    if (isAuthenticated && cognitoUser) {
-      cognitoUser.signOut();
-      window.location.reload(); // Refresh the page after logout to update state
+    if (user && signOut) {
+      signOut();
     } else {
-      // Redirect to login page or trigger sign-in process
-      window.location.href = '/login'; // Assuming you have a login route
+      navigate('/signup');
     }
   };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const toggleMobileCaseStudies = () => {
-    setIsMobileCaseStudiesOpen(!isMobileCaseStudiesOpen);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMobileCaseStudies = () => setIsMobileCaseStudiesOpen(!isMobileCaseStudiesOpen);
 
   return (
     <nav className="bg-gray-100 shadow-lg">
@@ -60,9 +53,7 @@ const NavBar: React.FC = () => {
             {navItems.map((item, index) => (
               item.children ? (
                 <div key={index} className="relative group">
-                  <button
-                    className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 flex items-center"
-                  >
+                  <button className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 flex items-center">
                     {item.name}
                     <ChevronDown size={16} className="ml-1" />
                   </button>
@@ -95,7 +86,7 @@ const NavBar: React.FC = () => {
               onClick={handleAuth}
               className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 font-semibold"
             >
-              {isAuthenticated ? 'Log Out' : 'Sign Up'}
+              {user ? 'Log Out' : 'Sign Up'}
             </button>
           </div>
         </div>
@@ -150,7 +141,7 @@ const NavBar: React.FC = () => {
             }}
             className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300 font-semibold"
           >
-            {isAuthenticated ? 'Log Out' : 'Sign Up'}
+            {user ? 'Log Out' : 'Sign Up'}
           </button>
         </div>
       </div>
