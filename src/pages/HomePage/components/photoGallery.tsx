@@ -11,7 +11,7 @@ import { Auth } from '@aws-amplify/auth';
 // TODO: Replace 'cesarFillMeInAWSData' with our actual AWS region
 // DEVELOPER NOTE: Ensure that the region matches our S3 bucket's region
 AWS.config.update({
-  region: 'cesarFillMeInAWSData',
+  region: process.env.REACT_APP_AWS_REGION,
 });
 
 const s3 = new AWS.S3();

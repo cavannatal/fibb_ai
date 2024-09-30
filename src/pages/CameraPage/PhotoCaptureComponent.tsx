@@ -2,6 +2,9 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, Upload, RotateCw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import awsconfig from '../../aws-exports';
+import { Amplify } from 'aws-amplify';
+import { Auth } from 'aws-amplify/auth';
 
 // Import images
 import neutralImage from './images/neutral.png';
@@ -26,6 +29,8 @@ import bodyTurnaround from './images/body_turnaround.png';
 import bodyLeft from './images/body_left.png';
 import bodyHandsUp from './images/body_arms_up.png';
 import bodyHandsDown from './images/body_arms_down.png';
+
+Amplify.configure(awsconfig)
 
 type Expression = 
   | 'neutral'
@@ -220,27 +225,25 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   
     setIsUploading(true);
+  
     try {
+      // Get the user sub before proceeding
+      const user = await Auth.currentAuthenticatedUser();
+      const sub = user.attributes.sub;
+  
       const uploadPromises = capturedImages.map(async (image, index) => {
-        // Get the current timestamp
         const currentDate = Date.now();
-
-        // Create a new Date object
         const date = new Date(currentDate);
-
-        // Extract date components
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
         const day = String(date.getDate()).padStart(2, '0');
-
-        // Extract time components
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
-
-        // Format the datetime as YYYY-MM-DD HH:MM:SS.mmm
         const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        const fileName = `users/test/photos/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+  
+        // Construct file name using the retrieved 'sub'
+        const fileName = `users/${sub}/photos/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
@@ -248,12 +251,12 @@ const PhotoCaptureComponent: React.FC = () => {
         const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             fileName: fileName,
-            fileType: blob.type
-          })
+            fileType: blob.type,
+          }),
         });
   
         if (!presignedUrlResponse.ok) {
@@ -267,24 +270,20 @@ const PhotoCaptureComponent: React.FC = () => {
           method: 'PUT',
           body: blob,
           headers: {
-            'Content-Type': blob.type
-          }
+            'Content-Type': blob.type,
+          },
         });
   
         if (!s3UploadResponse.ok) {
           throw new Error(`Failed to upload ${fileName}`);
         }
   
-        // Return a success object
         return { success: true };
       });
   
-      const results = await Promise.all(uploadPromises);
-  
-      // Since any failure would have thrown an error, we can proceed
-      // alert(`Photos for ${expressionDisplayNames[currentExpression]} expression uploaded successfully!`);
+      await Promise.all(uploadPromises);
       setCapturedImages([]);
-      setCurrentExpressionIndex(prev => prev + 1);
+      setCurrentExpressionIndex((prev) => prev + 1);
     } catch (error) {
       console.error('Error uploading photos:', error);
       alert('Failed to upload photos. Please try again.');
@@ -292,8 +291,6 @@ const PhotoCaptureComponent: React.FC = () => {
       setIsUploading(false);
     }
   };
-  
-
   
   const handleImageError = () => {
     setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);

@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CognitoContext } from '../../../auth/CognitoProviderWithNavigate'; // Import Cognito context
 
+// Add user gallery
+
 const Header: React.FC = () => {
   const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context
   const navigate = useNavigate();
