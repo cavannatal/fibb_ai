@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Amplify } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, CheckboxField } from '@aws-amplify/ui-react';
 import { getCurrentUser, signOut } from 'aws-amplify/auth';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -25,12 +25,27 @@ import '@aws-amplify/ui-react/styles.css';
 Amplify.configure(awsExports);
 
 const CustomSignUp = () => {
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(event.target.checked);
+  };
+
   return (
     <>
       <Authenticator.SignUp.FormFields />
-      <p style={{ marginTop: '10px', textAlign: 'center' }}>
-        By creating an account, you agree to our Terms of Service and Privacy Policy.
-      </p>
+      <CheckboxField
+        label="I agree to the Terms of Service and Privacy Policy"
+        name="agreement"
+        value="agree"
+        checked={isChecked}
+        onChange={handleCheckboxChange}
+      />
+      {!isChecked && (
+        <p style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px' }}>
+          You must agree to the Terms of Service and Privacy Policy to create an account.
+        </p>
+      )}
     </>
   );
 };
@@ -78,17 +93,24 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/signup" element={
               <Authenticator
+                //socialProviders={['facebook', 'google']}
                 components={{
                   SignUp: {
-                    FormFields: () => <CustomSignUp />
+                    FormFields: CustomSignUp
                   }
                 }}
               >
-                {({ user: authUser }) => {
-                  if (authUser) {
-                    setUser(authUser);
+                {({ signOut, user }) => {
+                  if (user) {
+                    setUser(user);
                   }
-                  return <BlogPage />;
+                  return (
+                    <div>
+                      <h1>Hello {user?.username || 'Guest'}</h1>
+                      <button onClick={signOut}>Sign out</button>
+                      <BlogPage />
+                    </div>
+                  );
                 }}
               </Authenticator>
             } />
