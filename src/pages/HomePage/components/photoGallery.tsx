@@ -22,87 +22,22 @@ interface Photo {
   lastModified: Date;
 }
 
-// Custom hook for lazy loading images
-/*function useLazyImage(src: string, placeholder: string = '') {
-  const [imageSrc, setImageSrc] = useState(placeholder);
-  const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
-
-  useEffect(() => {
-    let observer: IntersectionObserver;
-    let didCancel = false;
-
-    if (imageRef && imageSrc !== src) {
-      if (IntersectionObserver) {
-        observer = new IntersectionObserver(
-          entries => {
-            entries.forEach(entry => {
-              if (!didCancel && (entry.intersectionRatio > 0 || entry.isIntersecting)) {
-                setImageSrc(src);
-                observer.unobserve(imageRef);
-              }
-            });
-          },
-          { threshold: 0.01, rootMargin: '75%' }
-        );
-        observer.observe(imageRef);
-      } else {
-        // Fallback for browsers that don't support IntersectionObserver
-        setImageSrc(src);
-      }
-    }
-    return () => {
-      didCancel = true;
-      if (observer && imageRef) {
-        observer.unobserve(imageRef);
-      }
-    };
-  }, [src, imageSrc, imageRef]);
-
-  return { imageSrc, setImageRef };
-}
-
-// LazyImage component
-const LazyImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
-  const { imageSrc, setImageRef } = useLazyImage(src, '/path/to/placeholder.jpg');
-  return (
-    <img
-      ref={setImageRef}
-      src={imageSrc}
-      alt={alt}
-      style={{ width: '100%', height: 200, objectFit: 'cover' }}
-    />
-  );
-};*/
-
-// Main PhotoGallery component
 function PhotoGallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Fetch current user
-  useEffect(() => {
-    async function fetchCurrentUser() {
-      try {
-        const { username } = await getCurrentUser();
-        setUserId(username);
-      } catch (error) {
-        console.error('Error fetching current user:', error);
-        //setError('Unable to authenticate user. Please try logging in again.');
-      }
+  const fetchCurrentUser = useCallback(async () => {
+    try {
+      const { username } = await getCurrentUser();
+      setUserId(username);
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      // setError('Unable to authenticate user. Please try logging in again.');
     }
-    fetchCurrentUser();
   }, []);
 
-  // Fetch photos when userId is available
-  useEffect(() => {
-    if (userId) {
-      fetchPhotos();
-    }
-  }, [userId]);
-
-  // Fetch photos from S3
   const fetchPhotos = useCallback(async () => {
     if (!userId) return;
 
@@ -138,7 +73,16 @@ function PhotoGallery() {
     }
   }, [userId]);
 
-  // Delete a photo
+  useEffect(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchPhotos();
+    }
+  }, [userId, fetchPhotos]);
+
   const deletePhoto = async (photoId: string) => {
     try {
       await s3.deleteObject({ Bucket: BUCKET_NAME, Key: photoId }).promise();
@@ -149,7 +93,6 @@ function PhotoGallery() {
     }
   };
 
-  // Download a photo
   const downloadPhoto = async (photoId: string, photoUrl: string) => {
     try {
       const response = await fetch(photoUrl);
@@ -168,7 +111,6 @@ function PhotoGallery() {
     }
   };
 
-  // Share to Instagram Stories
   const shareToInstagramStories = (photoUrl: string) => {
     const instagramUrl = `instagram-stories://share?source_application=your_app_id`;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -183,8 +125,6 @@ function PhotoGallery() {
     }
   };
 
-  /*if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;*/
   if (error) return <Typography color="error">{error}</Typography>;
 
   if (photos.length === 0) {
@@ -203,7 +143,7 @@ function PhotoGallery() {
           Sign in to view your Gallery.
         </Typography>
         <Typography variant="subtitle1" color="textSecondary" paragraph>
-        Sign up to start building your collection.
+          Sign up to start building your collection.
         </Typography>
         <Button
           variant="contained"
@@ -225,7 +165,7 @@ function PhotoGallery() {
           <div style={{ position: 'relative' }}>
             <img
               src={photo.url}
-              alt={`Photo ${photo.id}`}
+              alt={`Id ${photo.id}`}
               style={{ width: '100%', height: 200, objectFit: 'cover' }}
             />
             <IconButton
