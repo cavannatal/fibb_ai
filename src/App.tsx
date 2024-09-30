@@ -16,7 +16,6 @@ import CameraPage from './pages/CameraPage/CameraPage';
 import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
-import SignupPage from './pages/SignUpPage/SignupPage';
 import PhotoGallery from './pages/HomePage/components/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
 
@@ -24,6 +23,17 @@ import awsExports from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
 
 Amplify.configure(awsExports);
+
+const CustomSignUp = () => {
+  return (
+    <>
+      <Authenticator.SignUp.FormFields />
+      <p style={{ marginTop: '10px', textAlign: 'center' }}>
+        By creating an account, you agree to our Terms of Service and Privacy Policy.
+      </p>
+    </>
+  );
+};
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -67,10 +77,18 @@ const App: React.FC = () => {
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/signup" element={
-              <Authenticator>
-                {({ user }) => {
-                  setUser(user);
-                  return <SignupPage />;
+              <Authenticator
+                components={{
+                  SignUp: {
+                    FormFields: () => <CustomSignUp />
+                  }
+                }}
+              >
+                {({ user: authUser }) => {
+                  if (authUser) {
+                    setUser(authUser);
+                  }
+                  return <BlogPage />;
                 }}
               </Authenticator>
             } />

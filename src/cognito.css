@@ -1,0 +1,57 @@
+.background-customizable {
+    background-color: #f0f8ff; /* Light blue background */
+  }
+  
+  .banner-customizable {
+    background-color: #4a90e2; /* Blue banner */
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  .submitButton-customizable {
+    background-color: #4CAF50; /* Green submit button */
+    color: white;
+  }
+  
+  .submitButton-customizable:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  .textDescription-customizable {
+    color: #333;
+    font-style: italic;
+  }
+  
+  .redirect-customizable {
+    color: #4a90e2; /* Blue text for redirect link */
+  }
+  
+  .idpButton-customizable {
+    background-color: #3b5998; /* Facebook blue for social login button */
+    color: white;
+  }
+  
+  .idpButton-customizable:hover {
+    background-color: #2d4373; /* Darker blue on hover */
+  }
+  
+  .legalText-customizable {
+    color: #666;
+  }
+  
+  .inputField-customizable {
+    border: 2px solid #4a90e2; /* Blue border for input fields */
+    border-radius: 4px; /* Rounded corners */
+  }
+  
+  .inputField-customizable:focus {
+    border-color: #45a049; /* Green border when focused */
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Light blue glow */
+  }
+  
+  .errorMessage-customizable {
+    background-color: #ffebee; /* Light red background for error messages */
+    border-color: #f44336; /* Red border */
+    color: #d32f2f; /* Dark red text */
+  }
