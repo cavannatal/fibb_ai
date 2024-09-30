@@ -13,7 +13,7 @@ const TOSPage: React.FC = () => {
       >
         <header className="text-center mb-12">
           <img src={logoImage} alt="Fibb.ai Logo" className="mx-auto mb-8" style={{ width: '200px' }} />
-          <h1 className="text-4xl font-bold mb-4 text-[#084248]">Fibb.ai Privacy Policy</h1>
+          <h1 className="text-4xl font-bold mb-4 text-[#084248]">Privacy Policy</h1>
           <p className="text-xl text-gray-600">Last updated: September 30, 2024</p>
         </header>
 
