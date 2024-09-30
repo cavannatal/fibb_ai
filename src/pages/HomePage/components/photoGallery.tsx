@@ -1,62 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, CircularProgress, Typography, IconButton } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import AWS from 'aws-sdk';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Auth } from '@aws-amplify/auth';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Grid, CircularProgress, Typography, IconButton, Box, Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import { S3 } from 'aws-sdk';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { Link } from 'react-router-dom';
 
-// TODO: Replace 'cesarFillMeInAWSData' with our actual AWS region
-// DEVELOPER NOTE: Ensure that the region matches our S3 bucket's region
-AWS.config.update({
-  region: process.env.REACT_APP_AWS_REGION,
-});
+// Environment variables
+const BUCKET_NAME = process.env.REACT_APP_S3_BUCKET_NAME || '';
+const REGION = process.env.REACT_APP_AWS_REGION || '';
 
-const s3 = new AWS.S3();
+// S3 instance
+const s3 = new S3({ region: REGION });
 
+// Types
 interface Photo {
   id: string;
   url: string;
   lastModified: Date;
 }
 
-function Gallery() {
+// Custom hook for lazy loading images
+/*function useLazyImage(src: string, placeholder: string = '') {
+  const [imageSrc, setImageSrc] = useState(placeholder);
+  const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    let observer: IntersectionObserver;
+    let didCancel = false;
+
+    if (imageRef && imageSrc !== src) {
+      if (IntersectionObserver) {
+        observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (!didCancel && (entry.intersectionRatio > 0 || entry.isIntersecting)) {
+                setImageSrc(src);
+                observer.unobserve(imageRef);
+              }
+            });
+          },
+          { threshold: 0.01, rootMargin: '75%' }
+        );
+        observer.observe(imageRef);
+      } else {
+        // Fallback for browsers that don't support IntersectionObserver
+        setImageSrc(src);
+      }
+    }
+    return () => {
+      didCancel = true;
+      if (observer && imageRef) {
+        observer.unobserve(imageRef);
+      }
+    };
+  }, [src, imageSrc, imageRef]);
+
+  return { imageSrc, setImageRef };
+}
+
+// LazyImage component
+const LazyImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const { imageSrc, setImageRef } = useLazyImage(src, '/path/to/placeholder.jpg');
+  return (
+    <img
+      ref={setImageRef}
+      src={imageSrc}
+      alt={alt}
+      style={{ width: '100%', height: 200, objectFit: 'cover' }}
+    />
+  );
+};*/
+
+// Main PhotoGallery component
+function PhotoGallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
+  // Fetch current user
   useEffect(() => {
-    async function getCurrentUser() {
+    async function fetchCurrentUser() {
       try {
-        const user = await Auth.currentAuthenticatedUser();
-        setUserId(user.username);
+        const { username } = await getCurrentUser();
+        setUserId(username);
       } catch (error) {
         console.error('Error fetching current user:', error);
-        setError('Unable to authenticate user. Please try logging in again.');
+        //setError('Unable to authenticate user. Please try logging in again.');
       }
     }
-    getCurrentUser();
+    fetchCurrentUser();
   }, []);
 
+  // Fetch photos when userId is available
   useEffect(() => {
     if (userId) {
       fetchPhotos();
     }
   }, [userId]);
 
-  const fetchPhotos = async () => {
+  // Fetch photos from S3
+  const fetchPhotos = useCallback(async () => {
     if (!userId) return;
 
     try {
-      // TODO: Replace 'cesarFillMeInAWSData' with our actual S3 bucket name
-      const params = {
-        Bucket: 'cesarFillMeInAWSData',
-        Prefix: `${userId}/`,
-      };
-
+      const params = { Bucket: BUCKET_NAME, Prefix: `${userId}/` };
       const data = await s3.listObjectsV2(params).promise();
       
       if (!data.Contents || data.Contents.length === 0) {
@@ -66,9 +117,8 @@ function Gallery() {
       }
 
       const photoList = await Promise.all(data.Contents.map(async (object) => {
-        // TODO: Replace 'cesarFillMeInAWSData' with our actual S3 bucket name
         const url = await s3.getSignedUrlPromise('getObject', {
-          Bucket: 'cesarFillMeInAWSData',
+          Bucket: BUCKET_NAME,
           Key: object.Key!,
           Expires: 3600, // URL expires in 1 hour
         });
@@ -86,18 +136,12 @@ function Gallery() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
+  // Delete a photo
   const deletePhoto = async (photoId: string) => {
     try {
-      // TODO: Replace 'cesarFillMeInAWSData' with our actual S3 bucket name
-      const deleteParams = {
-        Bucket: 'cesarFillMeInAWSData',
-        Key: photoId,
-      };
-
-      await s3.deleteObject(deleteParams).promise();
-      
+      await s3.deleteObject({ Bucket: BUCKET_NAME, Key: photoId }).promise();
       setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
     } catch (error) {
       console.error('Error deleting photo:', error);
@@ -105,6 +149,7 @@ function Gallery() {
     }
   };
 
+  // Download a photo
   const downloadPhoto = async (photoId: string, photoUrl: string) => {
     try {
       const response = await fetch(photoUrl);
@@ -123,37 +168,54 @@ function Gallery() {
     }
   };
 
+  // Share to Instagram Stories
   const shareToInstagramStories = (photoUrl: string) => {
-    // Instagram Stories sharing URL
     const instagramUrl = `instagram-stories://share?source_application=your_app_id`;
-
-    // Check if the user is on a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-      // If on mobile, attempt to open the Instagram app
       window.location.href = `${instagramUrl}&background_image=${encodeURIComponent(photoUrl)}`;
-      
-      // Fallback for if the Instagram app isn't installed or doesn't open
       setTimeout(() => {
         window.location.href = 'https://www.instagram.com';
       }, 2000);
     } else {
-      // If not on mobile, open Instagram website
       window.open('https://www.instagram.com', '_blank');
     }
   };
 
-  if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
-  }
+  /*if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;*/
+  if (error) return <Typography color="error">{error}</Typography>;
 
   if (photos.length === 0) {
-    return <Typography>No photos found in your gallery.</Typography>;
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="60vh"
+        textAlign="center"
+        px={3}
+      >
+        <PhotoLibraryIcon style={{ fontSize: 80, color: '#9e9e9e', marginBottom: 16 }} />
+        <Typography variant="h4" gutterBottom>
+          Sign in to view your Gallery.
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary" paragraph>
+        Sign up to start building your collection.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/signup"
+          style={{ marginTop: 16 }}
+        >
+          Sign Up Now
+        </Button>
+      </Box>
+    );
   }
 
   return (
@@ -161,13 +223,10 @@ function Gallery() {
       {photos.map((photo) => (
         <Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
           <div style={{ position: 'relative' }}>
-            <LazyLoadImage
-              alt={photo.id}
-              height={200}
-              src={photo.url} 
-              width="100%"
-              effect="blur"
-              style={{ objectFit: 'cover' }}
+            <img
+              src={photo.url}
+              alt={`Photo ${photo.id}`}
+              style={{ width: '100%', height: 200, objectFit: 'cover' }}
             />
             <IconButton
               style={{
@@ -212,8 +271,7 @@ function Gallery() {
   );
 }
 
-export default Gallery;
-
+export default PhotoGallery;
 
 
 // DEVELOPER NOTE: Consider adding undo functionality for deleted photos??

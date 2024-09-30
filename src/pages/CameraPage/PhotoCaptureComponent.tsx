@@ -4,7 +4,7 @@ import { Camera, Upload, RotateCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import awsconfig from '../../aws-exports';
 import { Amplify } from 'aws-amplify';
-import { Auth } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 // Import images
 import neutralImage from './images/neutral.png';
@@ -228,8 +228,8 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       // Get the user sub before proceeding
-      const user = await Auth.currentAuthenticatedUser();
-      const sub = user.attributes.sub;
+      const { userId, username } = await getCurrentUser();
+      const sub = userId; // or use username if that's what you need
   
       const uploadPromises = capturedImages.map(async (image, index) => {
         const currentDate = Date.now();

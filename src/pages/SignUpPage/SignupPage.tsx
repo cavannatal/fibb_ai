@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentUser, signOut } from 'aws-amplify/auth';
 import { Amplify } from 'aws-amplify';
-import { Button, View, Text, Heading, useTheme } from '@aws-amplify/ui-react';
+import { Button, View, Text, Heading, useTheme, CheckboxField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 import awsExports from '../../aws-exports';
@@ -9,6 +9,7 @@ Amplify.configure(awsExports);
 
 const SignupPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const [consentChecked, setConsentChecked] = useState(false);
   const { tokens } = useTheme();
 
   useEffect(() => {
@@ -25,6 +26,11 @@ const SignupPage: React.FC = () => {
   }
 
   const handleAuthRedirect = () => {
+    if (!consentChecked) {
+      alert("Please check the consent box before proceeding.");
+      return;
+    }
+
     const authConfig = awsExports.Auth?.Cognito;
     const userPoolClientId = authConfig?.userPoolClientId;
     const domain = authConfig?.hostedUI?.domain;
@@ -69,7 +75,14 @@ const SignupPage: React.FC = () => {
               To sign up or sign in, you'll be redirected to our secure login page.
               You'll need to provide your email and phone number during sign-up.
             </Text>
-            <Button onClick={handleAuthRedirect} variation="primary">
+            <CheckboxField
+              label="I consent to receiving text messages and email notifications from Fibb.ai for account verification"
+              name="consent"
+              value="yes"
+              checked={consentChecked}
+              onChange={(e) => setConsentChecked(e.target.checked)}
+            />
+            <Button onClick={handleAuthRedirect} variation="primary" disabled={!consentChecked}>
               Sign Up / Sign In
             </Button>
           </View>

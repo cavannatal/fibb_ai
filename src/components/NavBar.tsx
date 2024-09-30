@@ -8,6 +8,7 @@ interface NavBarProps {
   user?: any; // We're using 'any' here as the exact type is not exported from Amplify
 }
 
+
 const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileCaseStudiesOpen, setIsMobileCaseStudiesOpen] = useState(false);
@@ -23,6 +24,8 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
         { name: "Business", path: "/business-case-study" },
       ],
     },
+    { name: "Blog", path: "/blog" },
+    { name: "Photo Gallery", path: "/photo-gallery" },
     { name: "Subscribe", path: "/subscribe" },
     ...(user ? [{ name: "Create", path: "/cam" }] : []),
   ];

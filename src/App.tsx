@@ -17,6 +17,7 @@ import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import SignupPage from './pages/SignUpPage/SignupPage';
+import PhotoGallery from './pages/HomePage/components/photoGallery';
 
 import awsExports from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
@@ -62,6 +63,7 @@ const App: React.FC = () => {
             <Route path="/business-case-study" element={<BusinessCaseStudyPage />} />
             <Route path="/subscribe" element={<SubscriptionPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/signup" element={
               <Authenticator>
                 {({ user }) => {
