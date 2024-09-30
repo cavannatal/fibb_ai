@@ -1,5 +1,7 @@
 import { CognitoUserPool, CognitoUser, AuthenticationDetails, CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import * as crypto from 'crypto';
 
+// User pool configuration using environment variables for Amplify Gen2
 const poolData = {
   UserPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID!,
   ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID!,
@@ -7,13 +9,15 @@ const poolData = {
 
 const userPool = new CognitoUserPool(poolData);
 
-const calculateSecretHash = (username: string, clientId: string, clientSecret: string) => {
-  const crypto = require('crypto');
-  return crypto.createHmac('SHA256', clientSecret)
+// Function to calculate the SecretHash for Cognito requests
+const calculateSecretHash = (username: string, clientId: string, clientSecret: string): string => {
+  return crypto
+    .createHmac('SHA256', clientSecret)
     .update(username + clientId)
     .digest('base64');
 };
 
+// Sign-in function
 export const signIn = (username: string, password: string) => {
   return new Promise((resolve, reject) => {
     const authenticationData: any = {
@@ -21,6 +25,7 @@ export const signIn = (username: string, password: string) => {
       Password: password,
     };
 
+    // If client secret exists, add the SecretHash
     if (process.env.REACT_APP_COGNITO_CLIENT_SECRET) {
       authenticationData.SecretHash = calculateSecretHash(
         username,
@@ -33,7 +38,7 @@ export const signIn = (username: string, password: string) => {
 
     const cognitoUser = new CognitoUser({
       Username: username,
-      Pool: userPool
+      Pool: userPool,
     });
 
     cognitoUser.authenticateUser(authenticationDetails, {
@@ -43,28 +48,32 @@ export const signIn = (username: string, password: string) => {
   });
 };
 
+// Sign-up function
 export const signUp = (username: string, password: string, email: string) => {
   return new Promise((resolve, reject) => {
     const attributeList = [
       new CognitoUserAttribute({ Name: 'email', Value: email }),
     ];
 
-    const signUpParams: any = {};
+    // Prepare client metadata, include SecretHash if necessary
+    const clientMetadata: any = {};
     if (process.env.REACT_APP_COGNITO_CLIENT_SECRET) {
-      signUpParams.SecretHash = calculateSecretHash(
+      clientMetadata.SecretHash = calculateSecretHash(
         username,
         process.env.REACT_APP_COGNITO_CLIENT_ID!,
         process.env.REACT_APP_COGNITO_CLIENT_SECRET
       );
     }
 
-    userPool.signUp(username, password, attributeList, [], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    }, signUpParams);
+    userPool.signUp(username,password,attributeList,[],(err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      },
+      clientMetadata // Pass the client metadata with SecretHash
+    );
   });
 };
 
