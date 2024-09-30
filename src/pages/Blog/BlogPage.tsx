@@ -73,10 +73,7 @@ Here are some fun things we're considering for the future:
 
 We hope you're as excited about the updates as we are! Got ideas? Let us know—this is all about making your photo experience better!
 
-Cheers,
-
-**Matt Yee**  
-*Co-Founder & CEO*`,
+Cheers,`,
   date: "2024-09-30",
   category: "Product",
   author: "Matt Yee",
