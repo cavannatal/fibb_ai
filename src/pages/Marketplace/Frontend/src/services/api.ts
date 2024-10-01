@@ -1,11 +1,17 @@
 import axios from 'axios';
 import { Product } from '../types';
 
-const API_BASE_URL = 'CavanCesarFillMEIN'; // Replace with your API Gateway URL
+// fill in with aws later instead of local 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
-  const response = await axios.get<Product[]>(`${API_BASE_URL}/products/featured`);
-  return response.data;
+  try {
+    const response = await axios.get<Product[]>(`${API_BASE_URL}/products/featured`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching featured products:', error);
+    return [];
+  }
 };
 
 export const getAllProducts = async (): Promise<Product[]> => {

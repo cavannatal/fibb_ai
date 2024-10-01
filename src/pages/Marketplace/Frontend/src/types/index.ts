@@ -3,5 +3,5 @@ export interface Product {
     name: string;
     type: 'lora' | 'dataset' | 'workflow';
     price: number;
-    imageUrl: string;
+    imageUrl?: string;
   }

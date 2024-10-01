@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import MarketplaceHome from './pages/MarketplaceHome';
-import LoRAsPage from './pages/LoRAsPage';
+import LoRAsPage from './pages/LorasPage';
 import DatasetsPage from './pages/DatasetsPage';
 import WorkflowsPage from './pages/WorkflowsPage';
 
