@@ -18,6 +18,11 @@ export const createProduct = async (product: Omit<Product, 'id' | 'imageUrl'>): 
   return response.data;
 };
 
+export const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
+});
+
+
 export const uploadProductImage = async (uploadUrl: any, file: File): Promise<void> => {
   const formData = new FormData();
   Object.entries(uploadUrl.fields).forEach(([key, value]) => {

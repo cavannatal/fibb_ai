@@ -15,12 +15,14 @@ functions:
       - http:
           path: products
           method: get
+          cors: true
   createProduct:
     handler: src/handlers/products.createProductHandler
     events:
       - http:
           path: products
           method: post
+          cors: true
 
 resources:
   Resources:
@@ -39,3 +41,7 @@ resources:
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4000  
