@@ -90,6 +90,7 @@ const App: React.FC = () => {
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/signup" element={
+              <div className="my-12">
               <Authenticator
                 //socialProviders={['facebook', 'google']}
                 components={{
@@ -109,6 +110,7 @@ const App: React.FC = () => {
                   );
                 }}
               </Authenticator>
+              </div>
             } />
             <Route 
               path="/cam" 
