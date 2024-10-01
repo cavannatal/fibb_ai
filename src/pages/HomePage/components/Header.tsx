@@ -28,7 +28,7 @@ const Header: React.FC = () => {
         className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 "
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
-        Unleash Your Photorealistic Self with Authentic AI
+        Artificially Authentic Photos
       </motion.h1>
       
       <motion.p
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
         className="text-lg sm:text-xl max-w-2xl mb-8"
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
-       Transform your images into limitless possibilities without compromising authenticity or trust.
+      Total Customization, Total You – Build Photos Exactly How You Want
       </motion.p>
       
       <motion.button

@@ -4,6 +4,21 @@
   font-weight: bold;
 }
 
+@font-face {
+  font-family: 'Sofia Pro Bold';
+  src: url('./fonts/SofiaProBold/SofiaProBold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Font1';
+  src: url('./fonts/Font1/Font1.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 
 body {
   margin: 0;

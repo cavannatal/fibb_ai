@@ -91,7 +91,7 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/signup" element={
               <Authenticator
-                socialProviders={['facebook', 'google']}
+                //socialProviders={['facebook', 'google']}
                 components={{
                   SignUp: {
                     FormFields: CustomSignUp

@@ -1,219 +1,110 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Grid, CircularProgress, Typography, IconButton, Box, Button } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
-import { S3 } from 'aws-sdk';
+import React, { useState, useEffect } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
-import { Link } from 'react-router-dom';
+import { fetchUserAttributes } from 'aws-amplify/auth';
+import { list, getUrl } from 'aws-amplify/storage';
+import { useNavigate } from 'react-router-dom';
+import { Camera } from 'lucide-react';
 
-// Environment variables
-const BUCKET_NAME = process.env.REACT_APP_S3_BUCKET_NAME || '';
-const REGION = process.env.REACT_APP_AWS_REGION || '';
-
-// S3 instance
-const s3 = new S3({ region: REGION });
-
-// Types
-interface Photo {
-  id: string;
-  url: string;
-  lastModified: Date;
-}
-
-function PhotoGallery() {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [loading, setLoading] = useState(true);
+const PhotoGallery: React.FC = () => {
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const fetchCurrentUser = useCallback(async () => {
-    try {
-      const { username } = await getCurrentUser();
-      setUserId(username);
-    } catch (error) {
-      console.error('Error fetching current user:', error);
-      // setError('Unable to authenticate user. Please try logging in again.');
-    }
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      try {
+        console.log("Starting to fetch photos...");
+        
+        const { userId: sub } = await getCurrentUser();
+        console.log("Current user sub:", sub);
+
+        const userAttributes = await fetchUserAttributes();
+        console.log("User attributes:", userAttributes);
+
+        const result = await list({
+          prefix: `users/${sub}/photos/`,
+          options: {
+            accessLevel: 'private'
+          }
+        });
+        console.log("S3 list result:", result);
+
+        const photoUrls = await Promise.all(
+          result.items.map(async (item) => {
+            const { url } = await getUrl({ 
+              key: item.key,
+              options: {
+                accessLevel: 'private'
+              }
+            });
+            return url.toString();
+          })
+        );
+        console.log("Fetched photo URLs:", photoUrls);
+
+        setPhotos(photoUrls);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching photos:", err);
+        setError(`${err instanceof Error ? err.message : String(err)}`);
+        setLoading(false);
+      }
+    };
+
+    fetchPhotos();
   }, []);
 
-  const fetchPhotos = useCallback(async () => {
-    if (!userId) return;
-
-    try {
-      const params = { Bucket: BUCKET_NAME, Prefix: `${userId}/` };
-      const data = await s3.listObjectsV2(params).promise();
-      
-      if (!data.Contents || data.Contents.length === 0) {
-        setPhotos([]);
-        setLoading(false);
-        return;
-      }
-
-      const photoList = await Promise.all(data.Contents.map(async (object) => {
-        const url = await s3.getSignedUrlPromise('getObject', {
-          Bucket: BUCKET_NAME,
-          Key: object.Key!,
-          Expires: 3600, // URL expires in 1 hour
-        });
-        return {
-          id: object.Key!,
-          url: url,
-          lastModified: object.LastModified!,
-        };
-      }));
-
-      setPhotos(photoList);
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-      setError('Failed to load photos. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchCurrentUser();
-  }, [fetchCurrentUser]);
-
-  useEffect(() => {
-    if (userId) {
-      fetchPhotos();
-    }
-  }, [userId, fetchPhotos]);
-
-  const deletePhoto = async (photoId: string) => {
-    try {
-      await s3.deleteObject({ Bucket: BUCKET_NAME, Key: photoId }).promise();
-      setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
-    } catch (error) {
-      console.error('Error deleting photo:', error);
-      alert('Failed to delete photo. Please try again.');
-    }
+  const handleStartGenerating = () => {
+    navigate('/cam');
   };
 
-  const downloadPhoto = async (photoId: string, photoUrl: string) => {
-    try {
-      const response = await fetch(photoUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = photoId.split('/').pop() || 'photo.jpg';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error downloading photo:', error);
-      alert('Failed to download photo. Please try again.');
-    }
-  };
-
-  const shareToInstagramStories = (photoUrl: string) => {
-    const instagramUrl = `instagram-stories://share?source_application=your_app_id`;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      window.location.href = `${instagramUrl}&background_image=${encodeURIComponent(photoUrl)}`;
-      setTimeout(() => {
-        window.location.href = 'https://www.instagram.com';
-      }, 2000);
-    } else {
-      window.open('https://www.instagram.com', '_blank');
-    }
-  };
-
-  if (error) return <Typography color="error">{error}</Typography>;
-
-  if (photos.length === 0) {
+  if (loading) {
     return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="60vh"
-        textAlign="center"
-        px={3}
-      >
-        <PhotoLibraryIcon style={{ fontSize: 80, color: '#9e9e9e', marginBottom: 16 }} />
-        <Typography variant="h4" gutterBottom>
-          Sign in to view your Gallery.
-        </Typography>
-        <Typography variant="subtitle1" color="textSecondary" paragraph>
-          Sign up to start building your collection.
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/signup"
-          style={{ marginTop: 16 }}
-        >
-          Sign Up Now
-        </Button>
-      </Box>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+  
+  if (error || photos.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <Camera className="mx-auto mb-4 text-gray-400" size={64} />
+          <h2 className="text-2xl font-bold mb-2">No Images Generated Yet</h2>
+          <p className="text-gray-600 mb-6">
+            {error ? `An error occurred: ${error}` : "Start capturing moments and see your gallery come to life!"}
+          </p>
+          <button 
+            onClick={handleStartGenerating}
+            className="bg-[#084248] text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Start Generating
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Grid container spacing={2}>
-      {photos.map((photo) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
-          <div style={{ position: 'relative' }}>
-            <img
-              src={photo.url}
-              alt={`Id ${photo.id}`}
-              style={{ width: '100%', height: 200, objectFit: 'cover' }}
-            />
-            <IconButton
-              style={{
-                position: 'absolute',
-                top: 5,
-                right: 5,
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              }}
-              onClick={() => deletePhoto(photo.id)}
-              aria-label="delete photo"
-            >
-              <DeleteIcon />
-            </IconButton>
-            <IconButton
-              style={{
-                position: 'absolute',
-                top: 5,
-                right: 45,
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              }}
-              onClick={() => downloadPhoto(photo.id, photo.url)}
-              aria-label="download photo"
-            >
-              <GetAppIcon />
-            </IconButton>
-            <IconButton
-              style={{
-                position: 'absolute',
-                top: 5,
-                right: 85,
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              }}
-              onClick={() => shareToInstagramStories(photo.url)}
-              aria-label="share to Instagram Stories"
-            >
-              <InstagramIcon />
-            </IconButton>
-          </div>
-        </Grid>
-      ))}
-    </Grid>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Your Photo Gallery</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {photos.map((photo, index) => (
+          <img 
+            key={index} 
+            src={photo} 
+            alt={`User ${index + 1}`} 
+            className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition duration-300"
+          />
+        ))}
+      </div>
+    </div>
   );
-}
+};
 
 export default PhotoGallery;
-
-
 // DEVELOPER NOTE: Consider adding undo functionality for deleted photos??
 // DEVELOPER NOTE: For iPhone users,we provide instructions on how to save the downloaded image to their photo album
 // DEVELOPER NOTE: Ensure that the Instagram sharing feature is thoroughly tested on various devices and browsers... 
