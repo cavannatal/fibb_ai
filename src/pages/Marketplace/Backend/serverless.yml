@@ -7,17 +7,34 @@ provider:
   region: ${opt:region, 'us-east-1'}
   environment:
     PRODUCTS_TABLE: ${self:service}-products-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}"
 
 functions:
   getProducts:
-    handler: src/handlers/products.getProductsHandler
+    handler: src/handlers/products.getProducts
     events:
       - http:
           path: products
           method: get
           cors: true
+  getFeaturedProducts:
+    handler: src/handlers/products.getFeaturedProducts
+    events:
+      - http:
+          path: products/featured
+          method: get
+          cors: true
   createProduct:
-    handler: src/handlers/products.createProductHandler
+    handler: src/handlers/products.createProduct
     events:
       - http:
           path: products
@@ -40,8 +57,3 @@ resources:
 
 plugins:
   - serverless-plugin-typescript
-  - serverless-offline
-
-custom:
-  serverless-offline:
-    httpPort: 4000  
