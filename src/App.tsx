@@ -101,13 +101,10 @@ const App: React.FC = () => {
                 {({ signOut, user }) => {
                   if (user) {
                     setUser(user);
-
                   }
                   return (
                     <div>
-                      <h1>Hello {user?.username || 'Guest'}</h1>
-                      <button onClick={signOut}>Sign out</button>
-                      <BlogPage />
+                      <HomePage />
                     </div>
                   );
                 }}
