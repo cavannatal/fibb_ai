@@ -1,0 +1,19 @@
+service: fibb-ai-marketplace
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+
+functions:
+  hello:
+    handler: src/handlers/hello.handler
+    events:
+      - http:
+          path: hello
+          method: get
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
