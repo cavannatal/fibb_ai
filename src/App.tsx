@@ -9,8 +9,7 @@ import HomePage from './pages/HomePage/HomePage';
 import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
 import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
-import CaseStudyPage from './pages/CaseStudies/CaseStudyPage';
-import BusinessCaseStudyPage from './pages/CaseStudies/BusinessCaseStudyPage';
+import CombinedCaseStudyPage from './pages/CaseStudies/CaseStudiesCombined';
 import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage';
 import CameraPage from './pages/CameraPage/CameraPage';
 import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
@@ -82,18 +81,17 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/who-we-are" element={<WhoAreWePage />} />
+            <Route path="/team" element={<WhoAreWePage />} />
             <Route path="/FAQ" element={<FAQPage />} />
             <Route path="/events" element={<EventsPage />} />
-            <Route path="/case-study" element={<CaseStudyPage />} />
-            <Route path="/business-case-study" element={<BusinessCaseStudyPage />} />
+            <Route path="/portfolio" element={<CombinedCaseStudyPage />} />
             <Route path="/subscribe" element={<SubscriptionPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/signup" element={
               <Authenticator
-                //socialProviders={['facebook', 'google']}
+                socialProviders={['facebook', 'google']}
                 components={{
                   SignUp: {
                     FormFields: CustomSignUp
@@ -103,6 +101,7 @@ const App: React.FC = () => {
                 {({ signOut, user }) => {
                   if (user) {
                     setUser(user);
+
                   }
                   return (
                     <div>
