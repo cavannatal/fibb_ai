@@ -28,7 +28,7 @@ const Header: React.FC = () => {
         className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 "
         style={{ fontFamily: 'Nunito, sans-serif' }}
       >
-        Artificially Authentic Photos
+        Artificially Authentic Media
       </motion.h1>
       
       <motion.p
