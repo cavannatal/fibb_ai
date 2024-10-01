@@ -13,11 +13,11 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "Team", path: "/team" },
+    { name: "Our Team", path: "/team" },
     { name: "Events", path: "/events" },
-    { name: "Portfolio", path: '/portfolio' },
+    ...(user ? [{ name: "Your Gallery", path: "/photo-gallery" }] : []),
     { name: "Blog", path: "/blog" },
-    { name: "Your Gallery", path: "/photo-gallery" },
+    { name: "Portfolio", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
     ...(user ? [{ name: "Create", path: "/cam" }] : []),
   ];
@@ -40,7 +40,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
             <img src={FibbLogoBlack} alt="fibb.ai logo" className="h-10" />
           </Link>
           <div className="md:hidden">
-            <button onClick={toggleMenu} className="text-gray-600 hover:text-gray-800 transition duration-300">
+            <button onClick={toggleMenu} className="text-gray-600 hover:text-[#084248] transition duration-300">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -49,14 +49,14 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
               <Link
                 key={index}
                 to={item.path}
-                className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300"
+                className="py-2 px-2 text-gray-600 hover:text-[#084248] transition duration-300"
               >
                 {item.name}
               </Link>
             ))}
             <button
               onClick={handleAuth}
-              className="py-2 px-2 text-gray-600 hover:text-gray-800 transition duration-300 font-semibold"
+              className="py-2 px-2 text-gray-600 hover:text-[#084248] transition duration-300 font-semibold"
             >
               {user ? 'Log Out' : 'Sign Up'}
             </button>
@@ -74,7 +74,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
             <Link
               key={index}
               to={item.path}
-              className="block py-2 px-4 text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300"
+              className="block py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
@@ -85,7 +85,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
               handleAuth();
               setIsMenuOpen(false);
             }}
-            className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition duration-300 font-semibold"
+            className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
           >
             {user ? 'Log Out' : 'Sign Up'}
           </button>
