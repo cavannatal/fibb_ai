@@ -1,10 +1,14 @@
-import { Storage } from 'aws-amplify';
+import { uploadData, getUrl } from 'aws-amplify/storage';
 
 export const uploadFile = async (file: File, key: string): Promise<string> => {
   try {
-    const result = await Storage.put(key, file, {
-      contentType: file.type
-    });
+    const result = await uploadData({
+      key,
+      data: file,
+      options: {
+        contentType: file.type
+      }
+    }).result;
     return result.key;
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -14,8 +18,8 @@ export const uploadFile = async (file: File, key: string): Promise<string> => {
 
 export const getSignedUrl = async (key: string): Promise<string> => {
   try {
-    const signedURL = await Storage.get(key);
-    return signedURL;
+    const { url } = await getUrl({ key });
+    return url.toString()
   } catch (error) {
     console.error('Error getting signed URL:', error);
     throw error;

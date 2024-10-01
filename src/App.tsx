@@ -17,6 +17,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/HomePage/components/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
+import Marketplace from './pages/Marketplace/index'
+
 
 import awsExports from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
@@ -89,6 +91,7 @@ const App: React.FC = () => {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/signup" element={
               <div className="my-12">
               <Authenticator
