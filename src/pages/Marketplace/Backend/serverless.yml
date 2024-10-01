@@ -5,14 +5,36 @@ provider:
   runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
+  environment:
+    PRODUCTS_TABLE: ${self:service}-products-${self:provider.stage}
 
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  getProducts:
+    handler: src/handlers/products.getProductsHandler
     events:
       - http:
-          path: hello
+          path: products
           method: get
+  createProduct:
+    handler: src/handlers/products.createProductHandler
+    events:
+      - http:
+          path: products
+          method: post
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.PRODUCTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
 
 plugins:
   - serverless-plugin-typescript
