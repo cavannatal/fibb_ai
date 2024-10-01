@@ -1,0 +1,66 @@
+service: fibb-ai-marketplace
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    PRODUCTS_TABLE: ${self:service}-products-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}"
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::${self:service}-images-${self:provider.stage}/*"
+
+functions:
+  getProducts:
+    handler: src/functions/products.getProducts
+    events:
+      - http:
+          path: products
+          method: get
+  getFeaturedProducts:
+    handler: src/functions/products.getFeaturedProducts
+    events:
+      - http:
+          path: products/featured
+          method: get
+  createProduct:
+    handler: src/functions/products.createProduct
+    events:
+      - http:
+          path: products
+          method: post
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.PRODUCTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    ImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-images-${self:provider.stage}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
