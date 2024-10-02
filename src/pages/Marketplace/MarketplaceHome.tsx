@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Search, Bell, MessageSquare, Tag, Home, Car, Shirt, Tv, Gift, Clipboard, TreeDeciduous, Database, Upload, UploadCloud, Grid, List } from 'lucide-react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { Search, Bell, MessageSquare, Tv, TreeDeciduous, Database, Upload, UploadCloud, Grid, List } from 'lucide-react';
 import { debounce } from 'lodash';
 import { generateClient } from 'aws-amplify/api';
 import { GraphQLResult } from '@aws-amplify/api';
@@ -36,29 +36,27 @@ interface SubscriptionSwitchProps {
   onToggle: () => void;
 }
 
-const SubscriptionSwitch: React.FC<SubscriptionSwitchProps> = ({ isYearly, onToggle }) => {
-  return (
+const SubscriptionSwitch: React.FC<SubscriptionSwitchProps> = ({ isYearly, onToggle }) => (
+  <motion.div
+    className="w-48 h-10 bg-gray-200 rounded-full p-1 cursor-pointer flex items-center relative"
+    onClick={onToggle}
+  >
     <motion.div
-      className="w-48 h-10 bg-gray-200 rounded-full p-1 cursor-pointer flex items-center relative"
-      onClick={onToggle}
-    >
-      <motion.div
-        className="w-24 h-8 bg-[#084248] rounded-full absolute"
-        layout
-        transition={{ type: "spring", stiffness: 700, damping: 30 }}
-        style={{ left: isYearly ? 'calc(50% - 2px)' : '2px' }}
-      />
-      <div className="w-full h-full flex items-center justify-around relative z-10">
-        <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-gray-600' : 'text-white'}`}>
-          Monthly
-        </span>
-        <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-white' : 'text-gray-600'}`}>
-          Annually
-        </span>
-      </div>
-    </motion.div>
-  );
-};
+      className="w-24 h-8 bg-[#084248] rounded-full absolute"
+      layout
+      transition={{ type: "spring", stiffness: 700, damping: 30 }}
+      style={{ left: isYearly ? 'calc(50% - 2px)' : '2px' }}
+    />
+    <div className="w-full h-full flex items-center justify-around relative z-10">
+      <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-gray-600' : 'text-white'}`}>
+        Monthly
+      </span>
+      <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-white' : 'text-gray-600'}`}>
+        Annually
+      </span>
+    </div>
+  </motion.div>
+);
 
 const DatasetCard: React.FC<{ dataset: Dataset }> = ({ dataset }) => (
   <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
@@ -97,16 +95,53 @@ const MarketplaceHome: React.FC = () => {
     { name: 'Bioinformatics', icon: <Database size={20} /> },
   ];
 
-  const performSearch = async (term: string) => {
-    // ... (search logic remains the same)
-  };
+  const performSearch = useCallback(async (term: string) => {
+    if (!term) {
+      setSearchResults([]);
+      return;
+    }
 
-  const debouncedSearch = useCallback(debounce(performSearch, 300), []);
+    setIsSearching(true);
+    setSearchError(null);
+
+    try {
+      const response = await client.graphql({
+        query: searchDatasets,
+        variables: {
+          filter: {
+            or: [
+              { name: { matchPhrasePrefix: term } },
+              { description: { matchPhrasePrefix: term } }
+            ]
+          },
+          limit: 20
+        }
+      }) as GraphQLResult<{ searchDatasets: { items: Dataset[] } }>;
+
+      const datasets = response.data?.searchDatasets.items || [];
+      setSearchResults(datasets);
+    } catch (err) {
+      console.error('Error searching datasets:', err);
+      setSearchError('An error occurred while searching. Please try again.');
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  const debouncedSearchRef = useRef(debounce(performSearch, 300));
+
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(performSearch, 300);
+    return () => {
+      debouncedSearchRef.current.cancel();
+    };
+  }, [performSearch]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = event.target.value;
     setSearchTerm(newSearchTerm);
-    debouncedSearch(newSearchTerm);
+    debouncedSearchRef.current(newSearchTerm);
   };
 
   const handleSubscriptionToggle = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { GraphQLResult } from '@aws-amplify/api';
 import { debounce } from 'lodash';
@@ -30,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResultsFound }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const performSearch = async (term: string) => {
+  const performSearch = useCallback(async (term: string) => {
     if (!term) {
       onResultsFound([]);
       return;
@@ -62,15 +62,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResultsFound }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onResultsFound]);
 
-  // Debounce the search to avoid making too many API calls
-  const debouncedSearch = useCallback(debounce(performSearch, 300), []);
+  const debouncedSearchRef = useRef(debounce(performSearch, 300));
+
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(performSearch, 300);
+  }, [performSearch]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = event.target.value;
     setSearchTerm(newSearchTerm);
-    debouncedSearch(newSearchTerm);
+    debouncedSearchRef.current(newSearchTerm);
   };
 
   return (
