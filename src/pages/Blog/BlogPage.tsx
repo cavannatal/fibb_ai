@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Share2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 interface BlogPost {
@@ -14,7 +14,8 @@ interface BlogPost {
   role: string;
 }
 
-const blogPost: BlogPost = {
+const blogPosts: BlogPost[] = [
+  {
   id: 1,
   title: "Gallery Feature Update: What's New and What's Next",
   excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
@@ -77,14 +78,45 @@ Cheers,`,
   date: "2024-09-30",
   category: "Product",
   author: "Matt Yee",
+  role: "Co-Founder & CEO",
+  },
+  {
+  id: 2,
+  title: "We're Hiring!!",
+  excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
+  content: `# We're Hiring!
+
+Hey everyone,
+Exciting news from fibb.ai! As we prepare to unveil our innovative product on October 11, 2024, we're also planning for significant growth. Starting November 1st, we'll be expanding our talented team to better serve you, our valued customers and partners.
+
+### We're searching for exceptional individuals to join us in key roles:
+- A visionary Head of Sales to lead our outreach across consumer, business, and professional segments
+
+- Skilled Backend Developers to enhance our technological capabilities
+
+- A brilliant AI Researcher to push the boundaries of what's possible with artificial intelligence
+
+These additions to our team reflect our commitment to delivering cutting-edge solutions and unparalleled service to both consumers and businesses. We're dedicated to finding individuals who not only possess top-notch skills but also share our passion for innovation and customer satisfaction.
+
+As we embark on this exciting new chapter, we want to thank you for your continued support. Your trust in fibb.ai drives us to constantly improve and expand our offerings.
+
+If you're passionate about technology and interested in seeing how your skills might be a fit for the fibb.ai team, we'd love to hear from you! Please reach out to hiring@fibb.ai to learn more about these opportunities.
+
+Stay tuned for more updates as we continue to grow and evolve. The future is bright at fibb.ai, and we're thrilled to have you along for the journey!
+
+Cheers,`,
+  date: "2024-10-2",
+  category: "Product",
+  author: "Matt Yee",
   role: "Co-Founder & CEO"
-};
+}
+];
 
 const categories = ["Product", "Dev", "AI Research", "Updates"];
 
 const Blog: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("Product");
-  const [expanded, setExpanded] = useState(false);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const MarkdownComponents: Record<string, React.FC<{ children: React.ReactNode }>> = {
     h1: ({ children }) => children ? <h1 className="text-3xl font-bold mt-8 mb-4 text-[#084248]">{children}</h1> : null,
@@ -98,92 +130,146 @@ const Blog: React.FC = () => {
     em: ({ children }) => <em className="italic">{children}</em>,
   };
 
+
   const handleShare = () => {
     // Implement share functionality
     console.log('Sharing post...');
   };
 
+ 
+  const filteredPosts = blogPosts
+    .filter((post: BlogPost) => post.category === activeCategory)
+    .sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <div className="min-h-screen bg-white py-16">
-      <div className="container mx-auto px-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+      <div className="container mx-auto px-4 max-w-4xl" style={{ fontFamily: 'Nunito, sans-serif' }}>
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto"
+          className="text-center mb-12"
         >
-          <header className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]">
-              fibb.ai Blog
-            </h1>
-            <p className="text-xl text-gray-600">
-              Insights, Updates, and Photography Tips
-            </p>
-          </header>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]">
+            fibb.ai Blog
+          </h1>
+          <p className="text-xl text-gray-600">
+            Insights, Updates, and Photography Tips
+          </p>
+        </motion.header>
 
-          <nav className="mb-8">
-            <ul className="flex flex-wrap justify-center gap-4">
-              {categories.map(category => (
-                <li key={category}>
-                  <button
-                    onClick={() => setActiveCategory(category)}
-                    className={`px-4 py-2 rounded-full ${activeCategory === category ? 'bg-[#084248] text-white' : 'bg-gray-200 text-[#084248]'}`}
-                  >
-                    {category}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="space-y-8">
-            {activeCategory === "Product" && (
-              <motion.article 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+        <nav className="mb-12">
+          <motion.ul
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-4"
+          >
+            {categories.map((category, index) => (
+              <motion.li
+                key={category}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-[#084248]">{blogPost.title}</h2>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>{blogPost.date}</span>
+                <button
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-4 py-2 rounded-full transition-colors duration-300 ${
+                    activeCategory === category
+                      ? 'bg-[#084248] text-white'
+                      : 'bg-gray-200 text-[#084248] hover:bg-gray-300'
+                  }`}
+                >
+                  {category}
+                </button>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </nav>
+
+        <AnimatePresence mode="wait">
+          {filteredPosts.length > 0 ? (
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-8"
+            >
+              {filteredPosts.map((post: BlogPost, index: number) => (
+                <motion.article
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+                >
+                  <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-4 text-[#084248]">{post.title}</h2>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Calendar className="mr-2 h-4 w-4" />
+                        <span>{post.date}</span>
+                      </div>
+                      <button
+                        onClick={handleShare}
+                        className="flex items-center text-[#084248] hover:text-[#0a5761] transition-colors duration-300"
+                      >
+                        <Share2 className="mr-2 h-4 w-4" /> Share
+                      </button>
                     </div>
-                    <button 
-                      onClick={handleShare}
-                      className="flex items-center text-[#084248] hover:text-[#0a5761] transition-colors duration-300"
+                    <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                    <button
+                      onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
+                      className="flex items-center text-[#0a5761] hover:text-[#084248] transition-colors duration-300"
                     >
-                      <Share2 className="mr-2 h-4 w-4" /> Share
+                      {expandedId === post.id ? (
+                        <>
+                          <ChevronUp className="mr-2 h-4 w-4" /> Show Less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="mr-2 h-4 w-4" /> Read More
+                        </>
+                      )}
                     </button>
                   </div>
-                  <p className="text-gray-600 mb-4">{blogPost.excerpt}</p>
-                  <button 
-                    onClick={() => setExpanded(!expanded)}
-                    className="text-[#0a5761] hover:text-[#084248] transition-colors duration-300"
-                  >
-                    {expanded ? "Show Less" : "Read More"}
-                  </button>
-                </div>
-                {expanded && (
-                  <div className="px-6 pb-6">
-                    <div className="prose max-w-none">
-                      <ReactMarkdown components={MarkdownComponents}>{blogPost.content}</ReactMarkdown>
-                    </div>
-                    <div className="mt-8">
-                      <p className="font-semibold">{blogPost.author}</p>
-                      <p className="text-gray-600">{blogPost.role}</p>
-                    </div>
-                  </div>
-                )}
-              </motion.article>
-            )}
-            {activeCategory !== "Product" && (
-              <p className="text-center text-gray-600 py-8">No posts available in this category yet.</p>
-            )}
-          </div>
-        </motion.div>
+                  <AnimatePresence>
+                    {expandedId === post.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-6 pb-6"
+                      >
+                        <div className="prose max-w-none">
+                          <ReactMarkdown components={MarkdownComponents}>{post.content}</ReactMarkdown>
+                        </div>
+                        <div className="mt-8">
+                          <p className="font-semibold">{post.author}</p>
+                          <p className="text-gray-600">{post.role}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.article>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.p
+              key="no-posts"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="text-center text-gray-600 py-8"
+            >
+              No posts available in this category yet.
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
