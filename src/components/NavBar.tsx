@@ -20,7 +20,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
     { name: "Portfolio", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
     { name: "Marketplace", path: "/marketplace" },
-    ...(user ? [{ name: "Create", path: "/cam" }] : []),
+    ...(user ? [{ name: "Create", path: "/get-started" }] : []),
   ];
 
   const handleAuth = () => {
