@@ -83,7 +83,7 @@ Cheers,`,
   {
   id: 2,
   title: "We're Hiring!!",
-  excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
+  excerpt: "We are looking for talented individuals to join our Team and help us achieve our goal of revolutionizing AI Images!",
   content: `# We're Hiring!
 
 Hey everyone,
@@ -143,17 +143,20 @@ const Blog: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white py-16">
-      <div className="container mx-auto px-4 max-w-4xl" style={{ fontFamily: 'Nunito, sans-serif' }}>
+      <div className="container mx-auto px-4 max-w-4xl">
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
+          
         >
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
             fibb.ai Blog
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600"
+          style={{ fontFamily: '"Font1", sans-serif' }}>
             Insights, Updates, and Photography Tips
           </p>
         </motion.header>
@@ -179,6 +182,7 @@ const Blog: React.FC = () => {
                       ? 'bg-[#084248] text-white'
                       : 'bg-gray-200 text-[#084248] hover:bg-gray-300'
                   }`}
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                 >
                   {category}
                 </button>
@@ -206,23 +210,31 @@ const Blog: React.FC = () => {
                   className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
                 >
                   <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-4 text-[#084248]">{post.title}</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-[#084248]"
+                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                    >{post.title}</h2>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center text-sm text-gray-500">
                         <Calendar className="mr-2 h-4 w-4" />
-                        <span>{post.date}</span>
+                        <span
+                        style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                        >{post.date}</span>
                       </div>
                       <button
                         onClick={handleShare}
                         className="flex items-center text-[#084248] hover:text-[#0a5761] transition-colors duration-300"
+                        style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                       >
                         <Share2 className="mr-2 h-4 w-4" /> Share
                       </button>
                     </div>
-                    <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                    <p className="text-gray-600 mb-4"
+                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                    >{post.excerpt}</p>
                     <button
                       onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
                       className="flex items-center text-[#0a5761] hover:text-[#084248] transition-colors duration-300"
+                      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                     >
                       {expandedId === post.id ? (
                         <>
@@ -244,7 +256,9 @@ const Blog: React.FC = () => {
                         transition={{ duration: 0.3 }}
                         className="px-6 pb-6"
                       >
-                        <div className="prose max-w-none">
+                        <div className="prose max-w-none text-lg"
+                        style={{ fontFamily: '"Font1", sans-serif' }}
+                        >
                           <ReactMarkdown components={MarkdownComponents}>{post.content}</ReactMarkdown>
                         </div>
                         <div className="mt-8">

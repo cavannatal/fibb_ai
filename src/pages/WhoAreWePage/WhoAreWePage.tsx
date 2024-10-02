@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaLinkedin } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import matt from "./images/matt.jpg";
 import nick from "./images/nick.jpg";
@@ -15,6 +16,7 @@ interface TeamMember {
   description: string[];
   imageUrl: string;
   imageStyle: string;
+  linkedIn?: string;
 }
 
 const topTeamMembers: TeamMember[] = [
@@ -27,7 +29,8 @@ const topTeamMembers: TeamMember[] = [
       "In addition to his corporate achievements, Matt’s unique experience as a professional athlete, serving as a bullpen catcher for the New York Mets, has profoundly shaped his leadership style. Catching 95+ mph fastballs and mentoring athletes have instilled in him discipline, resilience, and a deep understanding of teamwork. His dual career, bridging professional sports and cutting-edge technology, showcases his adaptability and strategic mindset. Matt's athletic background not only enhances his physical endurance but also influences his leadership, fostering a culture of collaboration, continuous improvement, and excellence in every team he leads.",
     ],
     imageUrl: matt,
-    imageStyle: "object-cover object-center scale-150"
+    imageStyle: "object-cover object-center scale-150",
+    linkedIn: "https://www.linkedin.com/in/mattyee92/",
   },
   { 
     name: "Nick Friesen", 
@@ -37,7 +40,8 @@ const topTeamMembers: TeamMember[] = [
       "With Fibb.ai, he brings the attention to detail and artistic understanding to configure our models to generate the most accurate personal replicas anyone ever has seen.",
     ],
     imageUrl: nick,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/nicholasfriesen/",
   },
   { 
     name: "Jake Metzer", 
@@ -47,7 +51,8 @@ const topTeamMembers: TeamMember[] = [
     'Outside of his consulting work, Jake is a serial entrepreneur, having explored ventures in everything from robotics to consumer products and food & beverage. While not every venture succeeded, each provided valuable learning experiences that fuel his drive for innovation.',
     ],
     imageUrl: jake,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/jake-metzer-718713137/",
   },
   { 
     name: "Cesar Aguilar", 
@@ -58,7 +63,8 @@ const topTeamMembers: TeamMember[] = [
     
   ],
     imageUrl: ceasar,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/cesar-iamboundless/",
   },
   { 
     name: "Michael Thompson", 
@@ -70,7 +76,8 @@ const topTeamMembers: TeamMember[] = [
     
     ],
     imageUrl: Mike,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/mattyee/", 
   },
   { 
     name: "Allie Friesen", 
@@ -79,7 +86,8 @@ const topTeamMembers: TeamMember[] = [
       'Allie has focused much of her efforts in studying great brands and understanding how design impacts our daily life. She is a graphic designer, photographer, and general artist. She obsesses about the framing with images, and has an eye for all the little details. She joined Fibb to ensure an accurate and genuine representation of people and brands, and to keep the future of AI image generation ethical and honest.'
     ],
     imageUrl: allie,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/allieaimone/", 
   },
   { 
     name: "Cavan Natal", 
@@ -89,7 +97,8 @@ const topTeamMembers: TeamMember[] = [
       
     ],
     imageUrl: cavan,
-    imageStyle: "object-cover object-center scale-100" 
+    imageStyle: "object-cover object-center scale-100",
+    linkedIn: "https://www.linkedin.com/in/cavannatal/",
   },
   
   
@@ -118,13 +127,14 @@ const bottomTeamMembers: BottomTeamMember[] = [
 
 const AboutUs: React.FC = () => {
   return (
-    <div className="py-16 bg-[#efedea]  text-[#004948]">
+    <div className="py-16 bg-[#efedea] text-[#004948]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
           className="text-4xl font-bold mb-8 text-center text-[#084248]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
           Our Team 
         </motion.h2>
@@ -134,6 +144,7 @@ const AboutUs: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
+          style={{ fontFamily: '"Font1", sans-serif' }}
         >
           We are dreamers, thinkers, and tinkerers at the forefront of ethical AI in visual media. Our team is driven by a passion for innovation and a commitment to responsible technology.
         </motion.p>
@@ -156,13 +167,20 @@ const AboutUs: React.FC = () => {
                   />
                 </div>
                 <div className="flex-grow text-center md:text-left">
-                  <h3 className="text-2xl font-semibold mb-2">{member.name}</h3>
-                  <p className="text-[#084248] mb-4">{member.role}</p>
-                  <ul className="text-black list-disc list-inside md:list-outside space-y-2">
-                    {member.description.map((item, idx) => (
-                      <li key={idx}>{item}</li>
+                  <div className="flex items-center justify-center md:justify-start mb-2">
+                    <h3 className="text-2xl font-semibold mr-2" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{member.name}</h3>
+                    {member.linkedIn && (
+                      <a href={member.linkedIn} target="_blank" rel="noopener noreferrer" className="text-[#084248] hover:text-blue-800">
+                        <FaLinkedin size={24} />
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-[#084248] mb-4" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{member.role}</p>
+                  <div className="text-black text-lg space-y-4" style={{ fontFamily: '"Font1", sans-serif' }}>
+                    {member.description.map((paragraph, idx) => (
+                      <p key={idx}>{paragraph}</p>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -178,9 +196,9 @@ const AboutUs: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
             >
-              <h3 className="text-xl text-black font-semibold mb-2">{member.name}</h3>
-              <p className="text-[#084248] mb-2">{member.role}</p>
-              <p className="text-black">{member.description}</p>
+              <h3 className="text-xl text-black font-semibold mb-2" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{member.name}</h3>
+              <p className="text-[#084248] mb-2" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{member.role}</p>
+              <p className="text-black text-lg" style={{ fontFamily: '"Font1", sans-serif' }}>{member.description}</p>
             </motion.div>
           ))}
         </div>

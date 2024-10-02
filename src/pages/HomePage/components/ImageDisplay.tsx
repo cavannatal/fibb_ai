@@ -12,7 +12,7 @@ const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const ImageScrollBar: React.FC = () => {
     return (
-      <div className="w-full bg-gradient-to-r from-gray-100 to-gray-200 py-12 overflow-hidden">
+      <div className="w-full  py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative">
             <div className="overflow-hidden" style={{ mask: 'linear-gradient(90deg, transparent, white 10%, white 90%, transparent)' }}>

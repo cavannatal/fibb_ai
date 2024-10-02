@@ -18,7 +18,6 @@ const HomePage: React.FC = () => {
           <HowItWorks />
           <MissionStatement/>
           
-
         </div>
       </main>
     </div>
