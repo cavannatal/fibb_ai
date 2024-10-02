@@ -218,6 +218,18 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   }, [capturedImages.length, currentExpression]);
 
+  const getCurrentTimeStamp = () => {
+    const currentDate = Date.now();
+        const date = new Date(currentDate);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   const handleUpload = async () => {
     if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
       alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
@@ -230,20 +242,14 @@ const PhotoCaptureComponent: React.FC = () => {
       // Get the user sub before proceeding
       const { userId, username } = await getCurrentUser();
       const sub = userId; // or use username if that's what you need
+
+      const startingTimestamp = getCurrentTimeStamp();
   
       const uploadPromises = capturedImages.map(async (image, index) => {
-        const currentDate = Date.now();
-        const date = new Date(currentDate);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); 
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        const timestamp = getCurrentTimeStamp();
   
         // Construct file name using the retrieved 'sub'
-        const fileName = `users/${sub}/photos/${timestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+        const fileName = `users/${sub}/photos/${startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
