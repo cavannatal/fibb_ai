@@ -241,14 +241,14 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       // Get the user sub before proceeding
-      const { userId, username } = await getCurrentUser();
+      const { userId, username, signInDetails } = await getCurrentUser();
       const sub = userId; // or use username if that's what you need
   
       const uploadPromises = capturedImages.map(async (image, index) => {
         const timestamp = getCurrentTimeStamp();
   
         // Construct file name using the retrieved 'sub'
-        const fileName = `users/${sub}/photos/${startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+        const fileName = `users/${sub}/photos/${signInDetails?.loginId ?? 'new'}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
