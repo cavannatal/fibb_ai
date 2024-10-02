@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import img1 from '../images/img1.png';
 import img2 from '../images/img2.png';
 import img3 from '../images/img3.png';
@@ -11,53 +11,37 @@ import img8 from '../images/img8.png';
 const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const ImageScrollBar: React.FC = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement) return;
-
-    const scroll = () => {
-      if (scrollElement.scrollLeft >= scrollElement.scrollWidth / 2) {
-        scrollElement.scrollLeft = 0;
-      } else {
-        scrollElement.scrollLeft += 1;
-      }
-    };
-
-    const animationId = setInterval(scroll, 20);
-
-    return () => clearInterval(animationId);
-  }, []);
-
-  return (
-    <div className="w-full bg- py-12 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div 
-          ref={scrollRef}
-          className="whitespace-nowrap"
-          style={{ 
-            height: '300px',
-            overflow: 'hidden'
-          }}
-        >
-          {[...images, ...images].map((image, index) => (
-            <div 
-              key={index} 
-              className="inline-block mx-4 h-full"
-              style={{ width: '300px' }}
-            >
-              <img 
-                src={image} 
-                alt={`Brand ${index % images.length + 1}`} 
-                className="h-full w-full object-contain"
-              />
+    return (
+      <div className="w-full bg-gradient-to-r from-gray-100 to-gray-200 py-12 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative">
+            <div className="overflow-hidden" style={{ mask: 'linear-gradient(90deg, transparent, white 10%, white 90%, transparent)' }}>
+              <div 
+                className="flex animate-scroll"
+                style={{
+                  width: `${images.length * 300 * 2}px`,
+                  animation: 'scroll 60s linear infinite'
+                }}
+              >
+                {[...images, ...images].map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="flex-shrink-0 mx-4"
+                    style={{ width: '300px', height: '300px' }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Brand ${index % images.length + 1}`} 
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export default ImageScrollBar;
+    );
+  };
+  
+  export default ImageScrollBar;
