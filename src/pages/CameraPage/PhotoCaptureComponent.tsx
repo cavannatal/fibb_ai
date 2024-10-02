@@ -248,7 +248,7 @@ const PhotoCaptureComponent: React.FC = () => {
         const timestamp = getCurrentTimeStamp();
   
         // Construct file name using the retrieved 'sub'
-        const fileName = `users/${sub}/photos/${startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+        const fileName = `users/${sub}/photos/new/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
