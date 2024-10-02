@@ -47,7 +47,7 @@ const Header: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.6 }}
         className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
         onClick={handleButtonClick}
-        style={{ fontFamily: '"Font1", sans-serif' }}
+        style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
       >
         Get Started
       </motion.button>
