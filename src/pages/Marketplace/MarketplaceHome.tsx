@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, Bell, MessageSquare, Tv, TreeDeciduous, Database, Upload, UploadCloud, Grid, List } from 'lucide-react';
+import { Search, Bell, MessageSquare, Tv, TreeDeciduous, Database, Grid, List, Layers, Brush, Cog, FileCode } from 'lucide-react';
 import { debounce } from 'lodash';
 import { generateClient } from 'aws-amplify/api';
 import { GraphQLResult } from '@aws-amplify/api';
@@ -17,8 +17,8 @@ interface Dataset {
 }
 
 const searchDatasets = `
-  query SearchDatasets($filter: SearchableDatasetFilterInput, $sort: [SearchableDatasetSortInput], $limit: Int) {
-    searchDatasets(filter: $filter, sort: $sort, limit: $limit) {
+  query SearchDatasets($filter: SearchableDatasetFilterInput, $sort: [SearchableDatasetSortInput], $limit: Int, $category: String) {
+    searchDatasets(filter: $filter, sort: $sort, limit: $limit, category: $category) {
       items {
         id
         name
@@ -31,12 +31,12 @@ const searchDatasets = `
   }
 `;
 
-interface SubscriptionSwitchProps {
-  isYearly: boolean;
+interface MarketplaceCategorySwitchProps {
+  isBusiness: boolean;
   onToggle: () => void;
 }
 
-const SubscriptionSwitch: React.FC<SubscriptionSwitchProps> = ({ isYearly, onToggle }) => (
+const MarketplaceCategorySwitch: React.FC<MarketplaceCategorySwitchProps> = ({ isBusiness, onToggle }) => (
   <motion.div
     className="w-48 h-10 bg-gray-200 rounded-full p-1 cursor-pointer flex items-center relative"
     onClick={onToggle}
@@ -45,14 +45,14 @@ const SubscriptionSwitch: React.FC<SubscriptionSwitchProps> = ({ isYearly, onTog
       className="w-24 h-8 bg-[#084248] rounded-full absolute"
       layout
       transition={{ type: "spring", stiffness: 700, damping: 30 }}
-      style={{ left: isYearly ? 'calc(50% - 2px)' : '2px' }}
+      style={{ left: isBusiness ? 'calc(50% - 2px)' : '2px' }}
     />
     <div className="w-full h-full flex items-center justify-around relative z-10">
-      <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-gray-600' : 'text-white'}`}>
-        Monthly
+      <span className={`text-sm font-medium transition-colors duration-300 ${isBusiness ? 'text-gray-600' : 'text-white'}`}>
+        Creator
       </span>
-      <span className={`text-sm font-medium transition-colors duration-300 ${isYearly ? 'text-white' : 'text-gray-600'}`}>
-        Annually
+      <span className={`text-sm font-medium transition-colors duration-300 ${isBusiness ? 'text-white' : 'text-gray-600'}`}>
+        Business
       </span>
     </div>
   </motion.div>
@@ -77,8 +77,9 @@ const MarketplaceHome: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isYearlySubscription, setIsYearlySubscription] = useState(false);
+  const [isBusinessSubscription, setIsBusinessSubscription] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const featuredDatasets: Dataset[] = [
     { id: '1', name: 'Urban Imagery Collection', price: 99, imageUrl: '/api/placeholder/400/300', type: 'Computer Vision', description: 'High-resolution urban imagery for object detection and segmentation tasks.' },
@@ -87,7 +88,21 @@ const MarketplaceHome: React.FC = () => {
     { id: '4', name: 'Social Media Trends', price: 129, imageUrl: '/api/placeholder/400/300', type: 'Social Media', description: 'Comprehensive dataset of social media trends and user behavior patterns.' },
   ];
 
-  const categories = [
+  const creatorContent: Dataset[] = [
+    { id: '5', name: 'Artistic Style LoRA', price: 49, imageUrl: '/api/placeholder/400/300', type: 'Style LoRA', description: 'LoRA model for transferring unique artistic styles to images.' },
+    { id: '6', name: 'Efficient Text-to-Image Workflow', price: 89, imageUrl: '/api/placeholder/400/300', type: 'Workflow', description: 'Optimized workflow for generating high-quality images from text descriptions.' },
+    { id: '7', name: 'Character Consistency LoRA', price: 59, imageUrl: '/api/placeholder/400/300', type: 'LoRA Model', description: 'LoRA model for maintaining character consistency across multiple generations.' },
+    { id: '8', name: 'High-Fidelity Audio Dataset', price: 119, imageUrl: '/api/placeholder/400/300', type: 'Dataset', description: 'Curated dataset of high-fidelity audio samples for various applications.' },
+  ];
+
+  const creatorCategories = [
+    { name: 'LoRA Models', icon: <Layers size={20} /> },
+    { name: 'High-Quality Datasets', icon: <Database size={20} /> },
+    { name: 'Workflows', icon: <Cog size={20} /> },
+    { name: 'Style LoRAs', icon: <Brush size={20} /> },
+  ];
+
+  const businessCategories = [
     { name: 'Computer Vision', icon: <Tv size={20} /> },
     { name: 'Natural Language Processing', icon: <MessageSquare size={20} /> },
     { name: 'Environmental', icon: <TreeDeciduous size={20} /> },
@@ -95,8 +110,8 @@ const MarketplaceHome: React.FC = () => {
     { name: 'Bioinformatics', icon: <Database size={20} /> },
   ];
 
-  const performSearch = useCallback(async (term: string) => {
-    if (!term) {
+  const performSearch = useCallback(async (term: string, category: string | null) => {
+    if (!term && !category) {
       setSearchResults([]);
       return;
     }
@@ -108,12 +123,13 @@ const MarketplaceHome: React.FC = () => {
       const response = await client.graphql({
         query: searchDatasets,
         variables: {
-          filter: {
+          filter: term ? {
             or: [
               { name: { matchPhrasePrefix: term } },
               { description: { matchPhrasePrefix: term } }
             ]
-          },
+          } : undefined,
+          category: category || undefined,
           limit: 20
         }
       }) as GraphQLResult<{ searchDatasets: { items: Dataset[] } }>;
@@ -129,37 +145,54 @@ const MarketplaceHome: React.FC = () => {
     }
   }, []);
 
-  const debouncedSearchRef = useRef(debounce(performSearch, 300));
+  const debouncedSearchRef = useRef(debounce((term: string, category: string | null) => performSearch(term, category), 300));
 
   useEffect(() => {
-    debouncedSearchRef.current = debounce(performSearch, 300);
+    debouncedSearchRef.current = debounce((term: string, category: string | null) => performSearch(term, category), 300);
     return () => {
       debouncedSearchRef.current.cancel();
     };
   }, [performSearch]);
 
+  useEffect(() => {
+    debouncedSearchRef.current(searchTerm, selectedCategory);
+  }, [searchTerm, selectedCategory]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = event.target.value;
     setSearchTerm(newSearchTerm);
-    debouncedSearchRef.current(newSearchTerm);
   };
 
   const handleSubscriptionToggle = () => {
-    setIsYearlySubscription(!isYearlySubscription);
+    setIsBusinessSubscription(!isBusinessSubscription);
+    setSelectedCategory(null);
   };
 
-  const displayedDatasets = searchResults.length > 0 ? searchResults : featuredDatasets;
+  const handleCategoryClick = (categoryName: string) => {
+    setSelectedCategory(categoryName === selectedCategory ? null : categoryName);
+  };
+
+  const filterItemsByCategory = (items: Dataset[]) => {
+    if (!selectedCategory) return items;
+    return items.filter(item => item.type === selectedCategory);
+  };
+
+  const displayedItems = searchResults.length > 0 
+    ? filterItemsByCategory(searchResults)
+    : filterItemsByCategory(isBusinessSubscription ? featuredDatasets : creatorContent);
+
+  const currentCategories = isBusinessSubscription ? businessCategories : creatorCategories;
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
       {/* Left Sidebar */}
       <div className="w-64 bg-white p-6 shadow-md">
-        <h1 className="text-2xl font-bold mb-6">Dataset Market</h1>
+        <h1 className="text-2xl font-bold mb-6">AI Content Market</h1>
         <div className="mb-6">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search datasets..."
+              placeholder="Search..."
               value={searchTerm}
               onChange={handleInputChange}
               className="w-full p-2 pl-10 border rounded-md"
@@ -170,25 +203,23 @@ const MarketplaceHome: React.FC = () => {
           {searchError && <p className="text-sm text-red-500 mt-2">{searchError}</p>}
         </div>
         <div className="mb-6">
-          <button className="w-full bg-[#084248] text-white p-2 rounded-md mb-2 flex items-center justify-center">
-            <Upload size={20} className="mr-2" /> Upload Dataset
-          </button>
-          <button className="w-full bg-gray-200 text-gray-700 p-2 rounded-md flex items-center justify-center">
-            <UploadCloud size={20} className="mr-2" /> Batch Upload
-          </button>
-        </div>
-        <div className="mb-6">
-          <h2 className="font-semibold mb-2">Subscription Plan</h2>
-          <SubscriptionSwitch
-            isYearly={isYearlySubscription}
+          <h2 className="font-semibold mb-2">Market Type</h2>
+          <MarketplaceCategorySwitch
+            isBusiness={isBusinessSubscription}
             onToggle={handleSubscriptionToggle}
           />
         </div>
         <div>
           <h2 className="font-semibold mb-2">Categories</h2>
           <ul>
-            {categories.map((category, index) => (
-              <li key={index} className="flex items-center mb-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
+            {currentCategories.map((category, index) => (
+              <li 
+                key={index} 
+                className={`flex items-center mb-2 p-2 hover:bg-gray-100 rounded cursor-pointer ${
+                  selectedCategory === category.name ? 'bg-gray-200' : ''
+                }`}
+                onClick={() => handleCategoryClick(category.name)}
+              >
                 {category.icon}
                 <span className="ml-2">{category.name}</span>
               </li>
@@ -201,7 +232,8 @@ const MarketplaceHome: React.FC = () => {
       <div className="flex-1 p-6">
         <div className="mb-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold">
-            {searchResults.length > 0 ? 'Search Results' : "Featured Datasets"}
+            {searchResults.length > 0 ? 'Search Results' : `Featured ${isBusinessSubscription ? 'Datasets' : 'Creator Content'}`}
+            {selectedCategory && ` - ${selectedCategory}`}
           </h2>
           <div className="flex space-x-2">
             <button 
@@ -218,12 +250,12 @@ const MarketplaceHome: React.FC = () => {
             </button>
           </div>
         </div>
-        {searchResults.length === 0 && searchError === null && !isSearching && searchTerm && (
-          <p className="text-sm text-gray-500 mb-4">No results found. Showing featured datasets.</p>
+        {displayedItems.length === 0 && (
+          <p className="text-sm text-gray-500 mb-4">No items found for the selected category or search term.</p>
         )}
         <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-          {displayedDatasets.map((dataset) => (
-            <DatasetCard key={dataset.id} dataset={dataset} />
+          {displayedItems.map((item) => (
+            <DatasetCard key={item.id} dataset={item} />
           ))}
         </div>
       </div>
