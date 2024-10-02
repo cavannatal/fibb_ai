@@ -207,7 +207,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const [imageError, setImageError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const webcamRef = useRef<Webcam>(null);
-  const startingTimestamp = getCurrentTimeStamp();
+  const [startingTimestamp] = useState(getCurrentTimeStamp());
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
 
@@ -248,7 +248,7 @@ const PhotoCaptureComponent: React.FC = () => {
         const timestamp = getCurrentTimeStamp();
   
         // Construct file name using the retrieved 'sub'
-        const fileName = `users/${sub}/photos/new/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+        const fileName = `users/${sub}/photos/${startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
