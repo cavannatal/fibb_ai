@@ -11,12 +11,14 @@ import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
 import CombinedCaseStudyPage from './pages/CaseStudies/CaseStudiesCombined';
 import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage';
-import CameraPage from './pages/CameraPage/CameraPage';
-import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
+import CameraPage from './pages/CreatePage/CameraPage/CameraPage';
+import PhotoCaptureComponent from './pages/CreatePage/CameraPage/PhotoCaptureComponent';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/HomePage/components/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
+import ImageGen from './pages/CreatePage/ImageGen/ImageGenPage';
+import CreatePage from './pages/CreatePage/CreatePage';
 
 import awsExports from './aws-exports';
 import '@aws-amplify/ui-react/styles.css';
@@ -125,6 +127,22 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute user={user}>
                   <PhotoCaptureComponent />
+                </ProtectedRoute>
+              } 
+            /> 
+            <Route 
+              path="/image-gen" 
+              element={
+                <ProtectedRoute user={user}>
+                  <ImageGen />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/get-started" 
+              element={
+                <ProtectedRoute user={user}>
+                  <CreatePage />
                 </ProtectedRoute>
               } 
             />

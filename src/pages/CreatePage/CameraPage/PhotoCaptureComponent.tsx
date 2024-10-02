@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, Upload, RotateCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import awsconfig from '../../aws-exports';
+import awsconfig from '../../../aws-exports';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
 
@@ -228,7 +228,7 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       // Get the user sub before proceeding
-      const { userId, username } = await getCurrentUser();
+      const { userId } = await getCurrentUser();
       const sub = userId; // or use username if that's what you need
   
       const uploadPromises = capturedImages.map(async (image, index) => {

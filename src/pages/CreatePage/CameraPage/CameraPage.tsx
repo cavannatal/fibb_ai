@@ -64,7 +64,7 @@ const PhotoCollectionIntroPage: React.FC = () => {
             onClick={handleReadyClick}
             className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
           >
-            Are you ready to go?
+            Let's get started!
           </button>
         </motion.div>
       </div>
