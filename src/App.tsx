@@ -18,6 +18,8 @@ import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/HomePage/components/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
 import Marketplace from './pages/Marketplace/index'
+import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
+import CreatePage from './pages/CreatePage/CreatePage';
 
 
 import awsExports from './aws-exports';
@@ -130,6 +132,22 @@ const App: React.FC = () => {
                   <PhotoCaptureComponent />
                 </ProtectedRoute>
               } 
+            />
+            <Route 
+              path="/image-gen" 
+              element={
+                <ProtectedRoute user={user}>
+                  <ImageGen />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/get-started" 
+              element={
+                <ProtectedRoute user={user}>
+                  <CreatePage />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </main>
