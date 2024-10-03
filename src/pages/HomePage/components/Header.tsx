@@ -59,7 +59,7 @@ const Header: React.FC = () => {
         >
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-black leading-tight"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
-            Artificially<br />Authentic
+            Artificiallasdasdasy<br />Authenticdadasdasda
           </h1>
           
           <p className="text-lg sm:text-xl md:text-2xl mb-10 text-gray-700 leading-relaxed"
