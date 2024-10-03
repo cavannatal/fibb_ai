@@ -11,7 +11,7 @@ const SubscriptionSwitch: React.FC<SubscriptionSwitchProps> = ({ isYearly, onTog
     <motion.div
       className="w-64 h-12 bg-gray-200 rounded-full p-1 cursor-pointer flex items-center relative"
       onClick={onToggle}
-      style={{ fontFamily: 'Nunito, sans-serif' }}
+      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
     >
       <motion.div
         className="w-32 h-10 bg-[#084248] rounded-full absolute"
