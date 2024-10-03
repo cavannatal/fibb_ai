@@ -197,6 +197,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
+  const [isMirrored, setIsMirrored] = useState(true);
   const webcamRef = useRef<Webcam>(null);
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
@@ -293,9 +294,12 @@ const PhotoCaptureComponent: React.FC = () => {
   };
 
   const flipCamera = () => {
-    setFacingMode(prevMode => prevMode === 'user' ? 'environment' : 'user');
+    setFacingMode(prevMode => {
+      const newMode = prevMode === 'user' ? 'environment' : 'user';
+      setIsMirrored(newMode === 'user');
+      return newMode;
+    });
   };
-
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
@@ -325,12 +329,12 @@ const PhotoCaptureComponent: React.FC = () => {
       </h2>
       <p className="text-lg mb-4 text-gray-600">{expressionInstructions[currentExpression]}</p>
       <div className="relative">
-        <Webcam
+      <Webcam
           audio={false}
           ref={webcamRef}
           screenshotFormat="image/jpeg"
-          className="rounded-lg shadow-lg scale-x-[-1]"
-          mirrored={facingMode === 'user'}
+          className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
+          mirrored={isMirrored}
           videoConstraints={{ facingMode }}
         />
         <img
