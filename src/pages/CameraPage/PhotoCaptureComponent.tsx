@@ -231,7 +231,7 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       // Get the user sub before proceeding
-      const { userId, username, signInDetails } = await getCurrentUser();
+      const { userId } = await getCurrentUser();
       const sub = userId; // or use username if that's what you need
   
       const uploadPromises = capturedImages.map(async (image, index) => {
