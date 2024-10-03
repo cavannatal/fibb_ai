@@ -1,5 +1,8 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import * as fal from "@fal-ai/serverless-client";
+import { getCurrentUser } from 'aws-amplify/auth';
+
 
 // Define types for form state options
 type Environment = 'urban' | 'nature' | 'space' | 'underwater' | 'fantasy' | 'sci-fi' | 'indoors' | 'outdoors' | 'custom';
@@ -18,19 +21,34 @@ interface FormState {
   colorScheme: ColorScheme;
 }
 
-// Define the expected shape of the API response
-interface ApiResponse {
-  apiKey: string;
+interface FalImage {
+  url: string;
 }
 
-const API_URL = 'https://65bira43y2.execute-api.us-east-2.amazonaws.com/dev/OpenAIKeyMin';
+interface FalImageResult {
+  images?: { url: string }[];
+}
+
+// Define the expected shape of the API response
+interface ApiResponse {
+  apiKeyOpen: string;
+  apiKeyFal: string;
+}
+
+const OPEN_API_URL = 'https://65bira43y2.execute-api.us-east-2.amazonaws.com/dev/OpenAIKeyMin';
+const FAL_API_URL = 'https://sdp7lcn7yf.execute-api.us-east-2.amazonaws.com/dev/FalAIKeyMin';
 
 const ImageGen: React.FC = () => {
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [apiKeyOpen, setApiKeyOpen] = useState<string | null>(null);
+  const [apiKeyFal, setApiKeyFal] = useState<string | null>(null);
+  const [errorOpen, setErrorOpen] = useState<string | null>(null);
+  const [errorFal, setErrorFal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
-
+  const [optimizedPrompt, setoptimizedPrompt] = useState<string | null>(null);
+  const [policyBreak, setpolicyBreak] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  
   const [formState, setFormState] = useState<FormState>({
     subject: '',
     environment: 'urban',
@@ -41,11 +59,11 @@ const ImageGen: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchApiKey = async () => {
+    const fetchApiKeyOpen = async () => {
       try {
         const { accessToken } = (await fetchAuthSession()).tokens ?? {};
 
-        const response = await fetch(API_URL, {
+        const response = await fetch(OPEN_API_URL, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -67,13 +85,49 @@ const ImageGen: React.FC = () => {
           throw new Error("Invalid response format");
         }
 
-        setApiKey(parsedBody.apiKey);
+        setApiKeyOpen(parsedBody.apiKey);
       } catch (error) {
-        setError(`Failed to fetch API key: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setErrorOpen(`Failed to fetch API key: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };
 
-    fetchApiKey();
+    fetchApiKeyOpen();
+  }, []);
+
+  useEffect(() => {
+    const fetchApiKeyFal = async () => {
+      try {
+        const { accessToken } = (await fetchAuthSession()).tokens ?? {};
+
+        const response = await fetch(FAL_API_URL, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching API key: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        const data = JSON.parse(responseText);
+
+        // Parse the body separately since it's a stringified JSON
+        const parsedBody = JSON.parse(data.body);
+
+        if (!parsedBody || typeof parsedBody !== 'object' || !('apiKey' in parsedBody)) {
+          throw new Error("Invalid response format");
+        }
+
+        setApiKeyFal(parsedBody.apiKey);
+      } catch (error) {
+        setErrorFal(`Failed to fetch API key: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    };
+
+    fetchApiKeyFal();
   }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -95,10 +149,12 @@ const ImageGen: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmitOpen = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setErrorOpen(null);
+    setErrorFal(null);
+    setGeneratedImage(null)
 
     const { subject, environment, details, lighting, camera, colorScheme } = formState;
     const detailsStr = details.length > 0 ? details.join(', ') : 'High realism';
@@ -111,8 +167,8 @@ const ImageGen: React.FC = () => {
       Color Scheme: ${colorScheme}
     `;
 
-    if (!apiKey) {
-      setError('OpenAI API key not available');
+    if (!apiKeyOpen) {
+      setErrorOpen('OpenAI API key not available');
       setIsLoading(false);
       return;
     }
@@ -122,12 +178,12 @@ const ImageGen: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${apiKeyOpen}`
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
-            { role: 'system', content: 'You are an expert prompt engineer.' },
+            { role: 'system', content: 'You are a cybersecurity and ethics expert for an image generation engine. You will assess every prompt I give you and assess if there is anything that could pose as a threat to our business or end user. You will also assess every prompt to make sure it does not depict any content that would be deemed unethical, NSFW, or anything that violates OpenAI policy. You will respond ONLY with a YES or NO. No analysis or summary is needed. Make sure every answer you give ends with the word YES or NO. If you cannot assist, just say the word NO'},
             { role: 'user', content: prompt }
           ]
         })
@@ -140,17 +196,100 @@ const ImageGen: React.FC = () => {
 
       const data = await response.json();
       setGeneratedPrompt(data.choices[0].message.content);
+      console.log(generatedPrompt)
+
+      if (generatedPrompt === "NO") {
+        const errorText = "This prompt does not comply with Fibb.ai Use Policy.";
+        setpolicyBreak(errorText);
+
+      } else {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKeyOpen}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: 'You are an expert image generation prompt engineer. Your job is to grab the users prompt and generate a newly optimized prompt that focuses on hyper realism. You will ONLY provide a prompt. Do not specify platform or give any commentary. You are ONLY to provide the prompt' },
+              { role: 'user', content: prompt }
+            ]
+          })
+        });
+  
+        if (!response.ok) {
+          const errorOpenAI = await response.text();
+          throw new Error(`OpenAI API error: ${response.status} ${errorOpenAI}`);
+        }
+  
+        const data = await response.json();
+        setoptimizedPrompt(data.choices[0].message.content);
+        console.log(optimizedPrompt)
+      }
+
     } catch (error) {
-      setError(`Failed to generate improved prompt: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setErrorOpen(`Failed to generate improved prompt: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
+    }
+
+    if (!apiKeyFal) {
+      setErrorFal('Fal API key not available');
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      fal.config({
+        credentials: apiKeyFal
+      });
+    
+      const userId = await getCurrentUser();
+      const sub = userId; // Assuming getCurrentUser returns an object with userId
+    
+      const result = await fal.subscribe("fal-ai/flux-lora", {
+        input: {
+          prompt: optimizedPrompt,
+          image_size: { width: 1024, height: 1024 },
+          path: "LORAFOLDERPLACEHOLDER", // Replace this with the actual path if needed
+          num_inference_steps: 50,
+          guidance_scale: 3.5,
+          num_images: 1,
+          enable_safety_checker: true,
+          output_format: "jpeg",
+          sync_mode: false,
+        },
+        logs: true,
+        onQueueUpdate: (update) => {
+          if (update.status === 'IN_PROGRESS') {
+            console.log('Generation in progress...', update.logs);
+          }
+        },
+      });
+
+      const imageResult = result as FalImageResult;
+
+      if (imageResult.images && imageResult.images.length > 0) {
+        setGeneratedImage(imageResult.images[0].url);
+        console.log('Final generated image URL:', imageResult.images[0].url);
+      } else {
+        setErrorFal('No image was generated');
+      }
+    } catch (error) {
+      console.error('Error in image generation:', error);
+      setErrorFal('Error generating image: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsLoading(false);
     }
   };
+  
+
 
   return (
     <div className="form-container">
       <h1>Image Generator</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmitOpen}>
         <label htmlFor="subject">Subject/Scenario:</label>
         <input
           type="text"
@@ -237,22 +376,46 @@ const ImageGen: React.FC = () => {
           <option value="pastel">Pastel</option>
         </select>
 
-        <button type="submit" disabled={isLoading || !apiKey}>
-          {isLoading ? 'Generating...' : 'Generate Improved Prompt'}
+        <button type="submit" disabled={isLoading || !apiKeyOpen}>
+          {isLoading ? 'Generating...' : 'Generate Image'}
         </button>
       </form>
 
-      {error && (
+      {errorOpen && (
         <div className="error">
           <h3>Error:</h3>
-          <pre>{error}</pre>
+          <pre>{errorOpen}</pre>
         </div>
       )}
 
       {generatedPrompt && (
-        <div className="generated-prompt">
-          <h3>Generated Improved Prompt:</h3>
-          <pre>{generatedPrompt}</pre>
+        <div className="improved-prompt">
+           {generatedPrompt === "NO" ? (
+             <p className="error-text">{policyBreak || "This prompt does not comply with Fibb.ai Use Policy."}</p>
+          ) : (
+            <pre>{optimizedPrompt}</pre>
+        )}
+          <div style={{ margin: '20px 0' }}>
+              {generatedImage ? (
+              <img 
+                src={generatedImage} 
+                alt="Generated image" 
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} 
+              />
+          ) : (
+              <p>Generating Image.</p>
+      )}
+          </div>
+        </div>
+      )}
+      <button type="submit" disabled={isLoading || !apiKeyFal}>
+          {'Save'}
+        </button>
+
+        {errorFal && (
+        <div className="error">
+          <h3>Error:</h3>
+          <pre>{errorOpen}</pre>
         </div>
       )}
     </div>
@@ -260,3 +423,4 @@ const ImageGen: React.FC = () => {
 };
 
 export default ImageGen;
+
