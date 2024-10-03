@@ -299,7 +299,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
-    fetch('https://ec2-3-138-137-227.us-east-2.compute.amazonaws.com:8888/generate-lora', {
+    fetch('https://generate-lora-qf5pfnz9i-fahadfahim13s-projects.vercel.app/generate-lora', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
