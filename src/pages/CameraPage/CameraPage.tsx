@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { uniqueId } from 'lodash';
 import { getCurrentTimeStamp } from '../../utils';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 const PhotoCollectionIntroPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,8 +17,9 @@ const PhotoCollectionIntroPage: React.FC = () => {
     "Receive confirmation of your submission"
   ];
 
-  const handleReadyClick = () => {
-    navigate('/photo-capture', { state: {startingTimestamp: getCurrentTimeStamp()} });
+  const handleReadyClick = async () => {
+    const { userId } = await getCurrentUser();
+    navigate('/photo-capture', { state: {startingTimestamp: getCurrentTimeStamp(), sub: userId} });
   };
 
   return (

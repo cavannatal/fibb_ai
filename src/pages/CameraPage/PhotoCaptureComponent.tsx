@@ -299,6 +299,17 @@ const PhotoCaptureComponent: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
+    const generateLoraResponse = fetch('http://ec2-3-138-137-227.us-east-2.compute.amazonaws.com:8888/generate-lora', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sub: state.sub,
+        "steps": 3500,
+        "photoFolderName": state.startingTimestamp
+      }),
+    });
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
         <h2 className="text-2xl font-bold mb-4 text-[#084248]">All expressions completed!</h2>
