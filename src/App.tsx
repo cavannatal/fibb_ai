@@ -95,7 +95,7 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/signup" element={
-              <div className="my-12">
+              <div>
               <Authenticator
                 //socialProviders={['facebook', 'google']}
                 components={{
