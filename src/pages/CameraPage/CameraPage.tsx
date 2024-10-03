@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { uniqueId } from 'lodash';
+import { getCurrentTimeStamp } from '../../utils';
 
 const PhotoCollectionIntroPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const PhotoCollectionIntroPage: React.FC = () => {
   ];
 
   const handleReadyClick = () => {
-    navigate('/photo-capture');
+    navigate('/photo-capture', { state: {startingTimestamp: getCurrentTimeStamp()} });
   };
 
   return (
