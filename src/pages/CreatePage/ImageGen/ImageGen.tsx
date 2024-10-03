@@ -1,8 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import * as fal from "@fal-ai/serverless-client";
-import { getCurrentUser } from 'aws-amplify/auth';
-
 
 // Define types for form state options
 type Environment = 'urban' | 'nature' | 'space' | 'underwater' | 'fantasy' | 'sci-fi' | 'indoors' | 'outdoors' | 'custom';
@@ -21,18 +19,9 @@ interface FormState {
   colorScheme: ColorScheme;
 }
 
-interface FalImage {
-  url: string;
-}
-
+// Interface for the FAL API response
 interface FalImageResult {
   images?: { url: string }[];
-}
-
-// Define the expected shape of the API response
-interface ApiResponse {
-  apiKeyOpen: string;
-  apiKeyFal: string;
 }
 
 const OPEN_API_URL = 'https://65bira43y2.execute-api.us-east-2.amazonaws.com/dev/OpenAIKeyMin';
@@ -45,9 +34,10 @@ const ImageGen: React.FC = () => {
   const [errorFal, setErrorFal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
-  const [optimizedPrompt, setoptimizedPrompt] = useState<string | null>(null);
+  const [optimizedPrompt, setOptimizedPrompt] = useState<string | null>(null);
   const [policyBreak, setPolicyBreak] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   
   const [formState, setFormState] = useState<FormState>({
     subject: '',
@@ -149,7 +139,9 @@ const ImageGen: React.FC = () => {
     }));
   };
 
-  const handleSubmitOpen = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setErrorOpen(null);
@@ -226,7 +218,7 @@ const ImageGen: React.FC = () => {
 
       const optimizationData = await optimizationResponse.json();
       const optimizedPrompt = optimizationData.choices[0].message.content;
-      setoptimizedPrompt(optimizedPrompt);
+      setOptimizedPrompt(optimizedPrompt);
 
       // FAL image generation
       if (!apiKeyFal) {
@@ -240,9 +232,9 @@ const ImageGen: React.FC = () => {
       });
     
       const userId = await getCurrentUser();
-      const sub = userId.userId;
+      const sub = userId;
     
-      const result = await fal.subscribe("fal-ai/flux-lora", {
+      const result = await fal.subscribe("fal-ai/flux-pro", {
         input: {
           prompt: optimizedPrompt,
           image_size: { width: 1024, height: 1024 },
@@ -278,11 +270,70 @@ const ImageGen: React.FC = () => {
     }
   };
 
+  const getCurrentTimeStamp = () => {
+    return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
+  };
+
+  const handleUpload = async (): Promise<void> => {
+    if (!generatedImage) {
+      setUploadStatus('No image to upload');
+      return;
+    }
+
+    try {
+      const { userId } = await getCurrentUser();
+      const sub = userId;
+
+      const timestamp = getCurrentTimeStamp();
+      const fileName = `users/${sub}/gallery/${timestamp}.jpg`;
+
+      // Fetch the image data
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+
+      // Request the presigned URL
+      const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: fileName,
+          fileType: blob.type,
+        }),
+      });
+
+      if (!presignedUrlResponse.ok) {
+        throw new Error(`Failed to get presigned URL for ${fileName}`);
+      }
+
+      const { uploadUrl } = await presignedUrlResponse.json();
+
+      // Upload to S3
+      const s3UploadResponse = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: blob,
+        headers: {
+          'Content-Type': blob.type,
+        },
+      });
+
+      if (!s3UploadResponse.ok) {
+        throw new Error(`Failed to upload ${fileName}`);
+      }
+
+      setUploadStatus('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setUploadStatus(`Upload failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
 
   return (
     <div className="form-container">
       <h1>Image Generator</h1>
-      <form onSubmit={handleSubmitOpen}>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="subject">Subject/Scenario:</label>
         <input
           type="text"
@@ -403,6 +454,10 @@ const ImageGen: React.FC = () => {
             alt="Generated image" 
             style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} 
           />
+          <button onClick={handleUpload} disabled={!generatedImage}>
+            Save
+          </button>
+          {uploadStatus && <p>{uploadStatus}</p>}
         </div>
       )}
     </div>
