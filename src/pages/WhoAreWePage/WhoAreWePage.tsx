@@ -128,7 +128,7 @@ const bottomTeamMembers: BottomTeamMember[] = [
 const AboutUs: React.FC = () => {
   return (
     <div className="py-16 bg-[#efedea] text-[#004948]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
           className="text-4xl font-bold mb-8 text-center text-[#084248]"
           initial={{ opacity: 0, y: -20 }}
@@ -136,7 +136,7 @@ const AboutUs: React.FC = () => {
           transition={{ duration: 0.5 }}
           style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
-          Our Team 
+          Our Team
         </motion.h2>
         
         <motion.p 
@@ -149,7 +149,7 @@ const AboutUs: React.FC = () => {
           We are dreamers, thinkers, and tinkerers at the forefront of ethical AI in visual media. Our team is driven by a passion for innovation and a commitment to responsible technology.
         </motion.p>
 
-        <div className="space-y-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {topTeamMembers.map((member, index) => (
             <motion.div 
               key={index}
@@ -158,16 +158,16 @@ const AboutUs: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <div className="flex flex-col md:flex-row items-center md:items-start">
-                <div className="w-48 h-48 mb-6 md:mb-0 md:mr-6 flex-shrink-0 overflow-hidden rounded-full">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-48 h-48 mb-6 flex-shrink-0 overflow-hidden rounded-full">
                   <img 
                     src={member.imageUrl} 
                     alt={member.name} 
                     className={`w-full h-full ${member.imageStyle}`}
                   />
                 </div>
-                <div className="flex-grow text-center md:text-left">
-                  <div className="flex items-center justify-center md:justify-start mb-2">
+                <div>
+                  <div className="flex items-center justify-center mb-2">
                     <h3 className="text-2xl font-semibold mr-2" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{member.name}</h3>
                     {member.linkedIn && (
                       <a href={member.linkedIn} target="_blank" rel="noopener noreferrer" className="text-[#084248] hover:text-blue-800">
