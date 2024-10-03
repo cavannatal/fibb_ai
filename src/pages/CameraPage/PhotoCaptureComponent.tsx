@@ -299,7 +299,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
-    fetch('fibb-gen-lora-alb-907826620.us-east-2.elb.amazonaws.com/generate-lora', {
+    fetch('https://api.fibb.ai/generate-lora', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
