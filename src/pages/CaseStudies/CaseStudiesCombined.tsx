@@ -177,13 +177,17 @@ const CombinedCaseStudyPage: React.FC = () => {
     <div className="min-h-screen bg-white text-gray-800" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <header className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-12">
         <AnimatedSection>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-[#084248]">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             Case Studies
           </h1>
         </AnimatedSection>
         
         <AnimatedSection>
-          <p className="text-xl text-gray-600 max-w-2xl mb-8">
+          <p className="text-xl text-gray-600 max-w-2xl mb-8"
+          style={{ fontFamily: '"Font1", sans-serif' }}
+          >
             Discover how our product is transforming experiences across consumer, business, and professional domains.
           </p>
         </AnimatedSection>
@@ -196,6 +200,7 @@ const CombinedCaseStudyPage: React.FC = () => {
                 className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
                 whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(study.id)}
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               >
                 {study.title}
               </motion.button>
@@ -206,12 +211,16 @@ const CombinedCaseStudyPage: React.FC = () => {
 
       <section className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             Our Case Studies
           </h2>
         </AnimatedSection>
         <AnimatedSection>
-          <div className="max-w-5xl mx-auto space-y-8">
+          <div className="max-w-5xl mx-auto space-y-8"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             {caseStudies.map(study => (
               <CaseStudyCard key={study.id} {...study} onClick={scrollToSection} />
             ))}
@@ -222,7 +231,9 @@ const CombinedCaseStudyPage: React.FC = () => {
       {/* Consumer Use Cases Section */}
       <section ref={consumerGalleryRef} className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">Consumer Photo Gallery</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >Consumer Photo Gallery</h2>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {consumerPhotos.map((photo, index) => (
@@ -240,19 +251,28 @@ const CombinedCaseStudyPage: React.FC = () => {
       {/* Product Placement Section */}
       <section ref={productPlacementRef} className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             Product Placement Strategy
           </h2>
           <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow-lg">
-            <p className="text-lg mb-4 text-gray-600">{caseStudies[1].description}</p>
-            <p className="text-lg mb-6 text-gray-600">{caseStudies[1].fullDescription}</p>
+            <p className="text-lg mb-4 text-gray-600"
+            style={{ fontFamily: '"Font1", sans-serif' }}
+            >{caseStudies[1].description}</p>
+            <p className="text-lg mb-6 text-gray-600"
+            style={{ fontFamily: '"Font1", sans-serif' }}
+            >{caseStudies[1].fullDescription}</p>
             
             <div className="bg-gray-100 rounded-2xl p-6 mb-6">
-              <h3 className="text-2xl font-bold mb-4 flex items-center text-[#084248]">
+              <h3 className="text-2xl font-bold mb-4 flex items-center text-[#084248]"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              >
                 <TrendingUp className="mr-2 text-[#084248]" size={24} />
                 How Product Placement Works with Our Solution
               </h3>
-              <ul className="list-disc list-inside space-y-2 text-lg text-gray-600">
+              <ul className="list-disc list-inside space-y-2 text-lg text-gray-600"
+              style={{ fontFamily: '"Font1", sans-serif' }}>
                 <li>Our state-of-the-art model will seamlessly integrate your product in any scene you want</li>
                 <li>Dynamic product rendering ensures natural integration into content</li>
                 <li>Customizable placement strategies tailored to your brand's unique needs</li>
@@ -261,7 +281,9 @@ const CombinedCaseStudyPage: React.FC = () => {
           </div>
         </AnimatedSection>
         <AnimatedSection>
-          <h3 className="text-2xl font-bold mb-4 mt-8 text-center text-[#084248]">Product Placement Gallery</h3>
+          <h3 className="text-2xl font-bold mb-4 mt-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >Product Placement Gallery</h3>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {productPlacementPhotos.map((photo, index) => (
@@ -279,12 +301,18 @@ const CombinedCaseStudyPage: React.FC = () => {
      {/* Professional Use Cases Section */}
      <section ref={professionalUseRef} className="py-16 px-4">
         <AnimatedSection>
-          <h2 className="text-4xl font-bold mb-8 text-center text-[#084248]">
+          <h2 className="text-4xl font-bold mb-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             Professional Use Cases
           </h2>
           <div className="max-w-4xl mx-auto bg-white rounded-2xl p-8 shadow-lg">
-            <p className="text-xl mb-4 text-gray-700">{caseStudies[2].description}</p>
-            <p className="text-lg mb-8 text-gray-600">{caseStudies[2].fullDescription}</p>
+            <p className="text-xl mb-4 text-gray-700"
+            style={{ fontFamily: '"Font1", sans-serif' }}
+            >{caseStudies[2].description}</p>
+            <p className="text-xl mb-8 text-gray-600"
+            style={{ fontFamily: '"Font1", sans-serif' }}
+            >{caseStudies[2].fullDescription}</p>
             
             {userProfiles.map((profile, index) => (
               <motion.div 
@@ -293,12 +321,15 @@ const CombinedCaseStudyPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2 }}
+
               >
                 <div 
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => toggleProfile(profile.name)}
                 >
-                  <h3 className="text-2xl font-bold text-[#084248]">{profile.name}</h3>
+                  <h3 className="text-2xl font-bold text-[#084248]"
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                  >{profile.name}</h3>
                   {expandedProfile === profile.name ? (
                     <ChevronUp className="text-[#084248]" size={24} />
                   ) : (
@@ -313,8 +344,11 @@ const CombinedCaseStudyPage: React.FC = () => {
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
+                      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                     >
-                      <p className="text-lg my-4 text-gray-600">{profile.description}</p>
+                      <p className="text-xl my-4 text-gray-600"
+                      style={{ fontFamily: '"Font1", sans-serif' }}
+                      >{profile.description}</p>
                       <div className="w-full sm:w-64 h-86 mx-auto overflow-hidden rounded-lg mb-6">
                         <img 
                           src={profile.mainImage} 
@@ -322,7 +356,9 @@ const CombinedCaseStudyPage: React.FC = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <h4 className="text-xl font-bold mb-4 text-[#084248]">{profile.name}'s Authentically Artificial Gallery</h4>
+                      <h4 className="text-xl font-bold mb-4 text-[#084248]"
+                      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                      >{profile.name}'s Authentically Artificial Gallery</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {profile.galleryImages.map((image, idx) => (
                           <PhotoCard
@@ -345,13 +381,17 @@ const CombinedCaseStudyPage: React.FC = () => {
               {/* Authentic Generation Section */}
       <section className="py-12 px-4">
         <AnimatedSection>
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]">
+          <h2 className="text-3xl font-bold mb-8 text-center text-[#084248]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >
             Authentic Generation: Unparalleled Quality for Any Use
           </h2>
         </AnimatedSection>
         <AnimatedSection>
           <div className="max-w-4xl mx-auto bg-gray-100 rounded-2xl p-8 shadow-lg">
-            <ul className="space-y-4 text-lg">
+            <ul className="space-y-4 text-lg"
+            style={{ fontFamily: '"Font1", sans-serif' }}
+            >
               <li className="flex items-start">
                 <span className="text-[#084248] mr-2">•</span>
                 <span><strong>Photorealistic Accuracy:</strong> Our AI generates images indistinguishable from high-quality photographs, perfect for professional presentations and marketing materials.</span>

@@ -80,7 +80,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-[#efedee]" style={{ fontFamily: 'Nunito, sans-serif' }}>
+      <div className="flex flex-col min-h-screen bg-[#efedee]">
         <NavBar signOut={handleSignOut} user={user} />
         <main className="flex-grow">
           <Routes>
@@ -95,7 +95,7 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/signup" element={
-              <div className="my-12">
+              <div>
               <Authenticator
                 //socialProviders={['facebook', 'google']}
                 components={{

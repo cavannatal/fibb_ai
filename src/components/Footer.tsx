@@ -3,7 +3,9 @@ import { Linkedin, Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-transparent py-8">
+    <footer className="bg-transparent py-8"
+    style={{ fontFamily: '"Font1", sans-serif' }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center">
           <div className="order-2 md:order-1 mt-4 md:mt-0">

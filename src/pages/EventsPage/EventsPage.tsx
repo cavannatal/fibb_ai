@@ -62,7 +62,7 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
       className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-      style={{ fontFamily: 'Nunito, sans-serif' }}
+      
     >
       <div 
         className="cursor-pointer"
@@ -71,19 +71,21 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
         <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
           <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end p-4">
-            <h3 className="text-xl sm:text-2xl font-bold text-white">{title}</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-white"
+            style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+            >{title}</h3>
           </div>
         </div>
-        <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
           <div className="flex items-center text-gray-600">
             <Calendar className="w-5 h-5 mr-2" />
             <span>{date}</span>
           </div>
-          <div className="flex items-center text-gray-600">
+          <div className="flex items-center text-gray-600" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
             <Clock className="w-5 h-5 mr-2" />
             <span>{time}</span>
           </div>
-          <div className="flex items-center text-gray-600">
+          <div className="flex items-center text-gray-600" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
             <MapPin className="w-5 h-5 mr-2" />
             <span>{location}</span>
           </div>
@@ -96,7 +98,8 @@ const EventCard: React.FC<Event & { isExpanded: boolean; onToggle: () => void }>
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="px-4 pb-4"
+            className="px-4 pb-4 text-lg"
+            style={{ fontFamily: '"Font1", sans-serif' }}
           >
             <p className="text-gray-600 mb-4">{description}</p>
             {isExternalLink ? (
@@ -140,7 +143,7 @@ const EventsPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-8"
-          style={{ fontFamily: 'Nunito, sans-serif' }}
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
           Upcoming Events
         </motion.h1>
@@ -150,7 +153,7 @@ const EventsPage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
           className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto text-center mb-12"
-          style={{ fontFamily: 'Nunito, sans-serif' }}
+          style={{ fontFamily: '"Font1", sans-serif' }}
         >
           Join us for exciting events and be part of the Fibb.ai journey. Experience innovation firsthand and connect with our community.
         </motion.p>

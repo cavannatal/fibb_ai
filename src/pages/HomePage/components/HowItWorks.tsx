@@ -21,7 +21,7 @@ const HowItWorks = () => {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">How It Works</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>How It Works</h2>
         <div className="space-y-4">
           {steps.map((step, index) => (
             <motion.div 
@@ -34,8 +34,8 @@ const HowItWorks = () => {
             >
               <img src={fibbIcon} alt="Fibb Icon" className="flex-shrink-0 w-6 h-6 mt-1" />
               <div>
-                <h3 className="text-[#004948] font-bold mb-1">{step.title}</h3>
-                <span className="text-sm sm:text-base text-gray-700">{step.description}</span>
+                <h3 className="text-[#004948] font-bold mb-1" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{step.title}</h3>
+                <span className="text-l sm:text-base text-gray-700" style={{ fontFamily: '"Font1", sans-serif' }}>{step.description}</span>
               </div>
             </motion.div>
           ))}

@@ -34,7 +34,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <nav className="bg-gray-100 shadow-lg">
+    <nav className="bg-gray-100 shadow-lg" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center">
@@ -45,19 +45,19 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
-          <div className="hidden md:flex md:items-center md:space-x-6">
+          <div className="hidden md:flex md:items-center md:space-x-1 lg:space-x-2 xl:space-x-4 flex-wrap justify-end">
             {navItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.path}
-                className="py-2 px-2 text-gray-600 hover:text-[#084248] transition duration-300"
+                className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 whitespace-nowrap"
               >
                 {item.name}
               </Link>
             ))}
             <button
               onClick={handleAuth}
-              className="py-2 px-2 text-gray-600 hover:text-[#084248] transition duration-300 font-semibold"
+              className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap"
             >
               {user ? 'Log Out' : 'Sign Up'}
             </button>

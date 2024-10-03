@@ -124,7 +124,7 @@ const SubscriptionPage: React.FC = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-[#084248]" style={{ fontFamily: 'Nunito, sans-serif' }}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-[#084248]" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
             Purchase a subscription
           </h2>
           <motion.p
@@ -132,7 +132,7 @@ const SubscriptionPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
             className="mt-4 text-xl text-gray-600"
-            style={{ fontFamily: 'Nunito, sans-serif' }}
+            style={{ fontFamily: '"Font1", sans-serif' }}
           >
             Choose the plan that works for you
           </motion.p>
@@ -143,6 +143,7 @@ const SubscriptionPage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.6 }}
           className="mt-8 flex justify-center items-center"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
           <SubscriptionSwitch isYearly={isYearly} onToggle={handleToggle} />
         </motion.div>
@@ -155,10 +156,14 @@ const SubscriptionPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 * (index + 1) }}
               className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${plan.isPopular ? 'ring-2 ring-[#084248]' : ''}`}
-              style={{ fontFamily: 'Nunito, sans-serif' }}
+
             >
-              <div className="p-6">
-                <h2 className="text-2xl font-semibold text-[#084248]">{plan.name}</h2>
+              <div className="p-6"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              >
+                <h2 className="text-2xl font-semibold text-[#084248]"
+
+                >{plan.name}</h2>
                 <p className="mt-4">
                   {isYearly && (
                     <span className="text-lg line-through text-gray-400">${plan.monthlyPrice}</span>
@@ -180,13 +185,15 @@ const SubscriptionPage: React.FC = () => {
                   Subscribe
                 </motion.button>
               </div>
-              <div className="pt-6 pb-8 px-6">
-                <h3 className="text-xs font-medium text-gray-500 tracking-wide uppercase">What's included</h3>
+              <div className="pt-6 pb-8 px-6"
+              style={{ fontFamily: '"Font1", sans-serif' }}
+              >
+                <h3 className="text-m font-medium text-gray-500 tracking-wide uppercase">What's included</h3>
                 <ul className="mt-6 space-y-4">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex space-x-3">
                       <Check className="flex-shrink-0 h-5 w-5 text-[#084248]" aria-hidden="true" />
-                      <span className="text-sm text-gray-600">{feature}</span>
+                      <span className="text-m text-gray-600">{feature}</span>
                     </li>
                   ))}
                 </ul>

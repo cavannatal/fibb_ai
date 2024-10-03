@@ -44,7 +44,7 @@ const LaunchBanner: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full bg-[#024751] text-white">
+    <div className="w-full bg-[#024751] text-white" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
       <div className="max-w-6xl mx-auto py-3 px-4">
         <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
           <div className="flex items-center">
