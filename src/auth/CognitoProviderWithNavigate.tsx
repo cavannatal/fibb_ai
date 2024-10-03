@@ -30,10 +30,6 @@ const getClientId = () => {
 const userPoolId = getUserPoolId();
 const clientId = getClientId();
 
-console.log('Cognito Configuration:');
-console.log('UserPoolId:', userPoolId);
-console.log('ClientId:', clientId);
-
 if (!userPoolId || !clientId) {
   console.error('Missing Cognito configuration. Please check your environment variables or global configuration.');
   throw new Error('Cognito configuration is incomplete. Check your setup.');
@@ -47,9 +43,7 @@ const poolData = {
 let userPool: CognitoUserPool;
 try {
   userPool = new CognitoUserPool(poolData);
-  console.log('Cognito User Pool initialized successfully');
 } catch (error) {
-  console.error('Error initializing Cognito User Pool:', error);
   throw error;
 }
 
