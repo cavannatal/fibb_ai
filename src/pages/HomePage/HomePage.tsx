@@ -11,11 +11,11 @@ const HomePage: React.FC = () => {
     <div className="">
       <LaunchBanner/>
       <Header />
-      <ImageDisplay/>
-      <main className="py-12">
+      <main className="py-2">
         <div className="space-y-20">
           <Features />
           <HowItWorks />
+          <ImageDisplay/>
           <MissionStatement/>
           
         </div>
