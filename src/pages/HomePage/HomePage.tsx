@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
       <LaunchBanner/>
       <Header />
       <main className="py-2">
-        <div className="space-y-20">
+        <div className="space-y-16">
           <Features />
           <HowItWorks />
           <ImageDisplay/>
