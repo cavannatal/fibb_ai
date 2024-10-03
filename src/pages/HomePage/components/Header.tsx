@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   const handleButtonClick = () => {
     if (isAuthenticated) {
       // Navigate to the creation page if authenticated
-      navigate("/get-started");
+      navigate("/cam");
     } else {
       // Redirect to login if not authenticated
       window.location.href = '/signup'; // Assuming you have a login route
