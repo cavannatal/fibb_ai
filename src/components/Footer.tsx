@@ -1,6 +1,6 @@
 import React from 'react';
 import { Linkedin, Instagram } from 'lucide-react';
-import EmailSignup from './EmailSignup';  // Import the new EmailSignup component
+import EmailSignup from './EmailSignupFooter';  // Import the new EmailSignup component
 
 const Footer: React.FC = () => {
   return (
