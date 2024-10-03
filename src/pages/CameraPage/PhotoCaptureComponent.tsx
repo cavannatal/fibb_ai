@@ -29,6 +29,8 @@ import bodyTurnaround from './images/body_turnaround.png';
 import bodyLeft from './images/body_left.png';
 import bodyHandsUp from './images/body_arms_up.png';
 import bodyHandsDown from './images/body_arms_down.png';
+import { getCurrentTimeStamp } from '../../utils';
+import { useLocation } from 'react-router-dom';
 
 Amplify.configure(awsconfig)
 
@@ -188,26 +190,14 @@ const expressionDisplayNames: Record<Expression, string> = {
   'left_leg': "Left Leg"
 };
 
-const getCurrentTimeStamp = () => {
-  const currentDate = Date.now();
-  const date = new Date(currentDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); 
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
 const PhotoCaptureComponent: React.FC = () => {
+  const { state } = useLocation();
   const [capturedImages, setCapturedImages] = useState<CapturedImage[]>([]);
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const webcamRef = useRef<Webcam>(null);
-  const [startingTimestamp] = useState(getCurrentTimeStamp());
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
 
@@ -241,14 +231,14 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       // Get the user sub before proceeding
-      const { userId, username, signInDetails } = await getCurrentUser();
+      const { userId } = await getCurrentUser();
       const sub = userId; // or use username if that's what you need
   
       const uploadPromises = capturedImages.map(async (image, index) => {
         const timestamp = getCurrentTimeStamp();
   
         // Construct file name using the retrieved 'sub'
-        const fileName = `users/${sub}/photos/${signInDetails?.loginId ?? 'new'}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
+        const fileName = `users/${sub}/photos/${state.startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
@@ -309,6 +299,17 @@ const PhotoCaptureComponent: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
+    fetch('http://ec2-3-138-137-227.us-east-2.compute.amazonaws.com:8888/generate-lora', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sub: state.sub,
+        "steps": 3500,
+        "photoFolderName": state.startingTimestamp
+      }),
+    });
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
         <h2 className="text-2xl font-bold mb-4 text-[#084248]">All expressions completed!</h2>
