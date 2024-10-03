@@ -13,20 +13,30 @@ const EmailSignupFooter: React.FC = () => {
     setStatus('idle');
 
     try {
-      // Replace this with your actual API call to subscribe the user
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch('CavinOrCesarFILLMEIN', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': 'CavinOrCesarFILLMEIN',
+        },
+        body: JSON.stringify({
+          email,
+          listId: 'CavinOrCesarFILLMEIN',
+          region: 'CavinOrCesarFILLMEIN',
+        }),
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log('Subscription successful:', data);
         setStatus('success');
         setEmail('');
       } else {
+        console.error('Subscription failed:', await response.text());
         setStatus('error');
       }
     } catch (error) {
+      console.error('Error during subscription:', error);
       setStatus('error');
     }
   };
