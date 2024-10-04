@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Amplify } from 'aws-amplify';
 import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
 import { Camera } from 'lucide-react';
 import { list, getUrl } from 'aws-amplify/storage';
-import { Amplify } from 'aws-amplify';
 import awsExports from '../../../aws-exports';
 
+// Configure Amplify
 Amplify.configure(awsExports);
 
 interface Photo {
   key: string;
   url: string;
-}
-
-interface S3ListItem {
-  key: string;
 }
 
 const PhotoGallery: React.FC = () => {
@@ -26,25 +23,35 @@ const PhotoGallery: React.FC = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
+        console.log("Starting fetchPhotos...");
+        
+        // Ensure user is authenticated
         const user = await getCurrentUser();
         if (!user) {
           throw new Error("User is not authenticated");
         }
+        console.log("User authenticated:", user);
 
+        // Fetch current session
         const session = await fetchAuthSession();
-        if (!session.tokens) {
-          throw new Error("No valid session tokens");
+        console.log("Session fetched:", session);
+
+        if (!session.tokens?.accessToken) {
+          throw new Error("No valid access token");
         }
 
-        const sub = session.tokens.accessToken.payload.sub;
+        // Get user sub from access token
+        const payload = session.tokens.accessToken.payload;
+        const sub = payload.sub;
         if (!sub) {
           throw new Error("Unable to retrieve user sub");
         }
-
         console.log("User sub:", sub);
 
         const s3Path = `users/${sub}/gallery/`;
-        
+        console.log("S3 path:", s3Path);
+
+        // List objects in S3
         const s3List = await list({
           prefix: s3Path,
           options: {
@@ -54,7 +61,7 @@ const PhotoGallery: React.FC = () => {
 
         console.log("S3 List Result:", s3List);
 
-        const photoPromises = s3List.items.map(async (item: S3ListItem) => {
+        const photoPromises = s3List.items.map(async (item) => {
           const { url } = await getUrl({
             key: item.key,
             options: {
@@ -67,12 +74,18 @@ const PhotoGallery: React.FC = () => {
         
         const photoList = await Promise.all(photoPromises);
         setPhotos(photoList);
+        console.log("Photos fetched successfully:", photoList.length);
       } catch (err) {
-        console.error("Error fetching photos:", err);
+        console.error("Error in fetchPhotos:", err);
         setError(`Error: ${err instanceof Error ? err.message : String(err)}`);
         
         if (err instanceof Error && err.message.includes("authenticated")) {
-          window.location.href = `https://${awsExports.Auth.Cognito.hostedUI?.domain}/login?client_id=${awsExports.Auth.Cognito.userPoolClientId}&response_type=code&scope=email+openid+profile&redirect_uri=${encodeURIComponent(awsExports.Auth.Cognito.hostedUI?.redirectSignIn || '')}`;
+          console.log("Redirecting to login...");
+          if (awsExports.Auth?.Cognito?.hostedUI?.domain && awsExports.Auth?.Cognito?.userPoolClientId) {
+            window.location.href = `https://${awsExports.Auth.Cognito.hostedUI.domain}/login?client_id=${awsExports.Auth.Cognito.userPoolClientId}&response_type=code&scope=email+openid+profile&redirect_uri=${encodeURIComponent(awsExports.Auth.Cognito.hostedUI.redirectSignIn)}`;
+          } else {
+            console.error("Missing Cognito configuration");
+          }
         }
       } finally {
         setLoading(false);
@@ -81,11 +94,6 @@ const PhotoGallery: React.FC = () => {
 
     fetchPhotos();
   }, [navigate]);
-
-  
-  const handleStartGenerating = () => {
-    navigate('/get-started');
-  };
 
   if (loading) {
     return (
@@ -105,8 +113,8 @@ const PhotoGallery: React.FC = () => {
             {error ? `An error occurred: ${error}` : "Start capturing moments and see your gallery come to life!"}
           </p>
           <button 
-            onClick={handleStartGenerating}
-            className="bg-[#084248] text-white font-bold py-2 px-4 rounded transition duration-300"
+            onClick={() => navigate('/get-started')}
+            className="bg-[#084248] text-white font-bold py-2 px-4 rounded transition duration-300 hover:bg-[#0a565d]"
           >
             Start Generating
           </button>
@@ -123,7 +131,7 @@ const PhotoGallery: React.FC = () => {
           <img 
             key={photo.key} 
             src={photo.url} 
-            alt={`User ${index + 1}`} 
+            alt={`User  ${index + 1}`} 
             className="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition duration-300"
           />
         ))}
