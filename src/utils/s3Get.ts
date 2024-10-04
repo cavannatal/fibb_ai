@@ -48,6 +48,7 @@ export const getGalleryImages = async (sub: string) => {
       // Parse the JSON response
       const responseData = await response.json();
       console.log('Response:', responseData);
+      return responseData
     } catch (error) {
       console.error('Error calling API:', error);
     }
