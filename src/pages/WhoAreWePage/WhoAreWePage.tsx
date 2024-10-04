@@ -45,7 +45,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Jake Metzer", 
-    role: "Chief Operating Officer", 
+    role: "COO", 
     description: [
       "Jake is the Chief Operating Officer at fibb, bringing a deep passion for building innovative solutions and a wealth of experience in both technology and entrepreneurship. A proud graduate of Ohio State University, where he majored in Computer Engineering and played as a punter for the football team, Jake has since built a diverse career as a tech consultant. He specializes in leading large-scale software implementations, serving as a solutions architect, and designing functional systems that solve complex problems.",
     'Outside of his consulting work, Jake is a serial entrepreneur, having explored ventures in everything from robotics to consumer products and food & beverage. While not every venture succeeded, each provided valuable learning experiences that fuel his drive for innovation.',
@@ -56,7 +56,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Cesar Aguilar", 
-    role: "Head of Engineering", 
+    role: "CTO", 
     description: [
     "An expert in the convergence of technology and strategic business applications, Cesar has carved a niche in spearheading initiatives that transform complex data into actionable business insights. With a solid academic background with degrees in Computer Science and Management Information Systems, Cesar has consistently leveraged his deep expertise to make significant impacts across various sectors.",
     "At the heart of his career, Cesar has played pivotal roles in developing advanced machine learning models and predictive analytics solutions, significantly enhancing productivity and sales for major players such as Raytheon Technologies, the Department of Defense, DARPA, and Lockheed Martin. His tenure at Infor is particularly notable, where he led a dynamic team in applying AI to revolutionize financial and supply chain management analytics.",
@@ -68,7 +68,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Michael Thompson", 
-    role: "Lead Software Engineer", 
+    role: "Senior Software Engineer", 
     description: [
       'Michael is the Senior Software Engineer at fibb. He has worked over 5 years in the industry, with experience developing a wide variety of apps and websites. ',
       ' In addition, Michael has been deepening his knowledge in infrastructure and architecture at IBM.',
