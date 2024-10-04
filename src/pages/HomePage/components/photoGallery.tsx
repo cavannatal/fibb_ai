@@ -3,7 +3,6 @@ import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
 import { Camera } from 'lucide-react';
-import { list, getUrl } from 'aws-amplify/storage';
 import awsExports from '../../../aws-exports';
 import { getGalleryImages } from '../../../utils/s3Get';
 
@@ -22,7 +21,6 @@ const PhotoGallery: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("AWS Exports:", JSON.stringify(awsExports, null, 2));
     fetchPhotos();
   }, []);
 
@@ -33,75 +31,17 @@ const PhotoGallery: React.FC = () => {
 
       const { userId: sub } = await getCurrentUser();
       console.log("Cognito Identity ID:", sub);
-      const galleryresult = await getGalleryImages(sub)
-      console.log("adfasdsad")
-      console.log({galleryresult})
+      
+      const galleryResult = await getGalleryImages(sub);
+      console.log("Gallery Result:", galleryResult);
 
-      // Test with both the user-specific path and the root path
-      const paths = [`users/${sub}/gallery/`, ''];
-
-      for (const s3Path of paths) {
-        console.log(`Fetching photos from path: ${s3Path}`);
-
-        try {
-          const s3List = await list({
-            prefix: s3Path,
-            options: {
-              accessLevel: 'private'
-            }
-          });
-
-          console.log(`Full S3 list result for ${s3Path}:`, JSON.stringify(s3List, null, 2));
-          console.log(`S3 list items for ${s3Path}:`, s3List.items);
-          console.log(`S3 list items length for ${s3Path}:`, s3List.items.length);
-
-          if (s3List.items.length > 0) {
-            const photoList = await Promise.all(
-              s3List.items.map(async (item) => {
-                try {
-                  const { url } = await getUrl({
-                    key: item.key,
-                    options: {
-                      accessLevel: 'private',
-                      validateObjectExistence: true,
-                      expiresIn: 3600 // URL will be valid for 1 hour
-                    }
-                  });
-                  console.log(`Generated URL for ${item.key}:`, url);
-                  return { key: item.key, url: url.toString() };
-                } catch (error) {
-                  console.error(`Error getting URL for ${item.key}:`, error);
-                  return null;
-                }
-              })
-            );
-
-            const filteredPhotos = photoList.filter((photo): photo is Photo => photo !== null);
-            console.log("Filtered photos:", filteredPhotos);
-            setPhotos(filteredPhotos);
-            return; // Exit the loop if we found photos
-          } else {
-            console.log(`No items found in S3 list for path: ${s3Path}`);
-          }
-        } catch (listError) {
-          console.error(`Error listing S3 objects for path ${s3Path}:`, listError);
-          if (listError instanceof Error) {
-            console.error("Error name:", listError.name);
-            console.error("Error message:", listError.message);
-            console.error("Error stack:", listError.stack);
-          }
-        }
+      if (galleryResult && galleryResult.files) {
+        setPhotos(galleryResult.files);
+      } else {
+        setPhotos([]);
       }
-
-      // If we've reached this point, no photos were found in any path
-      setPhotos([]);
     } catch (err) {
       console.error("Error in fetchPhotos:", err);
-      if (err instanceof Error) {
-        console.error("Error name:", err.name);
-        console.error("Error message:", err.message);
-        console.error("Error stack:", err.stack);
-      }
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
