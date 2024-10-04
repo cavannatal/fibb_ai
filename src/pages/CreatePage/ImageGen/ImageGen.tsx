@@ -46,7 +46,7 @@ const ImageGen: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [optimizedPrompt, setoptimizedPrompt] = useState<string | null>(null);
-  const [policyBreak, setpolicyBreak] = useState<string | null>(null);
+  const [policyBreak, setPolicyBreak] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   
   const [formState, setFormState] = useState<FormState>({
@@ -154,7 +154,8 @@ const ImageGen: React.FC = () => {
     setIsLoading(true);
     setErrorOpen(null);
     setErrorFal(null);
-    setGeneratedImage(null)
+    setGeneratedImage(null);
+    setPolicyBreak(null);
 
     const { subject, environment, details, lighting, camera, colorScheme } = formState;
     const detailsStr = details.length > 0 ? details.join(', ') : 'High realism';
@@ -174,7 +175,8 @@ const ImageGen: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      // Policy compliance check
+      const policyResponse = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -189,70 +191,62 @@ const ImageGen: React.FC = () => {
         })
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+      if (!policyResponse.ok) {
+        throw new Error(`OpenAI API error: ${policyResponse.status}`);
       }
 
-      const data = await response.json();
-      setGeneratedPrompt(data.choices[0].message.content);
-      console.log(generatedPrompt)
+      const policyData = await policyResponse.json();
+      const policyCheck = policyData.choices[0].message.content.trim();
 
-      if (generatedPrompt === "NO") {
-        const errorText = "This prompt does not comply with Fibb.ai Use Policy.";
-        setpolicyBreak(errorText);
-
-      } else {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKeyOpen}`
-          },
-          body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [
-              { role: 'system', content: 'You are an expert image generation prompt engineer. Your job is to grab the users prompt and generate a newly optimized prompt that focuses on hyper realism. You will ONLY provide a prompt. Do not specify platform or give any commentary. You are ONLY to provide the prompt' },
-              { role: 'user', content: prompt }
-            ]
-          })
-        });
-  
-        if (!response.ok) {
-          const errorOpenAI = await response.text();
-          throw new Error(`OpenAI API error: ${response.status} ${errorOpenAI}`);
-        }
-  
-        const data = await response.json();
-        setoptimizedPrompt(data.choices[0].message.content);
-        console.log(optimizedPrompt)
+      if (policyCheck === "NO") {
+        setPolicyBreak("This prompt does not comply with Fibb.ai Use Policy.");
+        setIsLoading(false);
+        return; // Stop the workflow here
       }
 
-    } catch (error) {
-      setErrorOpen(`Failed to generate improved prompt: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setIsLoading(false);
-    }
+      // If policy check passes, continue with prompt optimization and image generation
+      const optimizationResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKeyOpen}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: 'You are an expert image generation prompt engineer. Your job is to grab the users prompt and generate a newly optimized prompt that focuses on hyper realism. You will ONLY provide a prompt. Do not specify platform or give any commentary. You are ONLY to provide the prompt' },
+            { role: 'user', content: prompt }
+          ]
+        })
+      });
 
-    if (!apiKeyFal) {
-      setErrorFal('Fal API key not available');
-      setIsLoading(false);
-      return;
-    }
+      if (!optimizationResponse.ok) {
+        throw new Error(`OpenAI API error: ${optimizationResponse.status}`);
+      }
+
+      const optimizationData = await optimizationResponse.json();
+      const optimizedPrompt = optimizationData.choices[0].message.content;
+      setoptimizedPrompt(optimizedPrompt);
+
+      // FAL image generation
+      if (!apiKeyFal) {
+        setErrorFal('Fal API key not available');
+        setIsLoading(false);
+        return;
+      }
     
-    try {
       fal.config({
         credentials: apiKeyFal
       });
     
       const userId = await getCurrentUser();
-      const sub = userId; // Assuming getCurrentUser returns an object with userId
+      const sub = userId.userId;
     
       const result = await fal.subscribe("fal-ai/flux-lora", {
         input: {
           prompt: optimizedPrompt,
           image_size: { width: 1024, height: 1024 },
-          path: "LORAFOLDERPLACEHOLDER", // Replace this with the actual path if needed
+          path: "LORAFOLDERPLACEHOLDER",
           num_inference_steps: 50,
           guidance_scale: 3.5,
           num_images: 1,
@@ -277,13 +271,12 @@ const ImageGen: React.FC = () => {
         setErrorFal('No image was generated');
       }
     } catch (error) {
-      console.error('Error in image generation:', error);
-      setErrorFal('Error generating image: ' + (error instanceof Error ? error.message : String(error)));
+      console.error('Error in workflow:', error);
+      setErrorFal('Error in workflow: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsLoading(false);
     }
   };
-  
 
 
   return (
@@ -376,46 +369,40 @@ const ImageGen: React.FC = () => {
           <option value="pastel">Pastel</option>
         </select>
 
-        <button type="submit" disabled={isLoading || !apiKeyOpen}>
+        <button type="submit" disabled={isLoading || !apiKeyOpen || !apiKeyFal}>
           {isLoading ? 'Generating...' : 'Generate Image'}
         </button>
       </form>
 
+      {policyBreak && (
+        <div className="error policy-break">
+          <h3>Policy Violation:</h3>
+          <p>{policyBreak}</p>
+        </div>
+      )}
+
       {errorOpen && (
         <div className="error">
-          <h3>Error:</h3>
+          <h3>OpenAI Error:</h3>
           <pre>{errorOpen}</pre>
         </div>
       )}
 
-      {generatedPrompt && (
-        <div className="improved-prompt">
-           {generatedPrompt === "NO" ? (
-             <p className="error-text">{policyBreak || "This prompt does not comply with Fibb.ai Use Policy."}</p>
-          ) : (
-            <pre>{optimizedPrompt}</pre>
-        )}
-          <div style={{ margin: '20px 0' }}>
-              {generatedImage ? (
-              <img 
-                src={generatedImage} 
-                alt="Generated src" 
-                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} 
-              />
-          ) : (
-              <p>Generating Image.</p>
-      )}
-          </div>
-        </div>
-      )}
-      <button type="submit" disabled={isLoading || !apiKeyFal}>
-          {'Save'}
-        </button>
-
-        {errorFal && (
+      {errorFal && (
         <div className="error">
-          <h3>Error:</h3>
-          <pre>{errorOpen}</pre>
+          <h3>FAL Error:</h3>
+          <pre>{errorFal}</pre>
+        </div>
+      )}
+
+      {generatedImage && (
+        <div className="generated-image">
+          <h3>Generated Image:</h3>
+          <img 
+            src={generatedImage} 
+            alt="Generated " 
+            style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} 
+          />
         </div>
       )}
     </div>
