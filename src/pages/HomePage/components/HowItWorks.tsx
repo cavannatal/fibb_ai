@@ -44,7 +44,7 @@ const HowItWorks = () => {
                 >
                   
                   <div>
-                    <h3 className="text-[#ed312e] text-lg font-bold mb-1" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{step.title}</h3>
+                    <h3 className="text-[#F79302] text-lg font-bold mb-1" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{step.title}</h3>
                     <span className="text-base text-gray-700" style={{ fontFamily: '"Font1", sans-serif' }}>{step.description}</span>
                   </div>
                 </motion.div>

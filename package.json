@@ -9,6 +9,7 @@
     "@aws-amplify/ui-react": "^6.5.1",
     "@aws-sdk/client-s3": "^3.664.0",
     "@aws-sdk/s3-request-presigner": "^3.663.0",
+    "@aws-sdk/types": "^3.664.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fal-ai/serverless-client": "^0.14.3",

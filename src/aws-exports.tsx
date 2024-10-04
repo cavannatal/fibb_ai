@@ -3,15 +3,6 @@ import { ResourcesConfig } from 'aws-amplify';
 type ExtendedResourcesConfig = ResourcesConfig & {
   Auth: {
     Cognito: {
-      userPoolId: string;
-      userPoolClientId: string;
-      identityPoolId: string;
-      signUpVerificationMethod: string;
-      loginWith: {
-        email: boolean;
-        phone: boolean;
-        username: boolean;
-      };
       hostedUI?: {
         domain: string;
         redirectSignIn: string;
