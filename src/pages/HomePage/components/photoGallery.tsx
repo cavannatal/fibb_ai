@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera } from 'lucide-react';
 import { list, getUrl } from 'aws-amplify/storage';
 import awsExports from '../../../aws-exports';
+import { getGalleryImages } from '../../../utils/s3Get';
 
 // Configure Amplify
 Amplify.configure(awsExports);
@@ -32,6 +33,9 @@ const PhotoGallery: React.FC = () => {
 
       const { userId: sub } = await getCurrentUser();
       console.log("Cognito Identity ID:", sub);
+      const galleryresult = await getGalleryImages(sub)
+      console.log("adfasdsad")
+      console.log({galleryresult})
 
       // Test with both the user-specific path and the root path
       const paths = [`users/${sub}/gallery/`, ''];

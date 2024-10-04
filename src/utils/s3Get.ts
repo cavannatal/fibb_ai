@@ -23,3 +23,32 @@ export async function getAllFilesInFolder(BUCKET_NAME:string, FOLDER_NAME:string
   }
 }
 
+export const getGalleryImages = async (sub: string) => {
+    const url = 'https://lfpv4n1ffc.execute-api.us-east-2.amazonaws.com/api/getS3alleryFiles';
+    
+    const data = {
+      FOLDER_NAME: "users/{sub}/gallery/"
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST', // HTTP method to use
+        headers: {
+          'Content-Type': 'application/json', // Setting the content type to JSON
+        },
+        body: JSON.stringify(data), // Converting the data object to a JSON string
+      });
+  
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        
+      }
+  
+      // Parse the JSON response
+      const responseData = await response.json();
+      console.log('Response:', responseData);
+    } catch (error) {
+      console.error('Error calling API:', error);
+    }
+  };
