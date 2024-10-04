@@ -24,6 +24,7 @@ const PhotoGallery: React.FC = () => {
     const fetchPhotos = async () => {
       try {
         console.log("Starting fetchPhotos...");
+        console.log("AWS Exports:", awsExports);
         
         // Ensure user is authenticated
         const user = await getCurrentUser();
@@ -42,11 +43,16 @@ const PhotoGallery: React.FC = () => {
 
         // Get user sub from access token
         const payload = session.tokens.accessToken.payload;
+        console.log("Access Token Payload:", payload);
+
         const sub = payload.sub;
         if (!sub) {
           throw new Error("Unable to retrieve user sub");
         }
         console.log("User sub:", sub);
+
+        // Log Identity Pool ID
+        console.log("Identity Pool ID:", awsExports.Auth?.Cognito?.identityPoolId);
 
         const s3Path = `users/${sub}/gallery/`;
         console.log("S3 path:", s3Path);
@@ -77,15 +83,16 @@ const PhotoGallery: React.FC = () => {
         console.log("Photos fetched successfully:", photoList.length);
       } catch (err) {
         console.error("Error in fetchPhotos:", err);
+        if (err instanceof Error) {
+          console.error("Error name:", err.name);
+          console.error("Error message:", err.message);
+          console.error("Error stack:", err.stack);
+        }
         setError(`Error: ${err instanceof Error ? err.message : String(err)}`);
         
         if (err instanceof Error && err.message.includes("authenticated")) {
           console.log("Redirecting to login...");
-          if (awsExports.Auth?.Cognito?.hostedUI?.domain && awsExports.Auth?.Cognito?.userPoolClientId) {
-            window.location.href = `https://${awsExports.Auth.Cognito.hostedUI.domain}/login?client_id=${awsExports.Auth.Cognito.userPoolClientId}&response_type=code&scope=email+openid+profile&redirect_uri=${encodeURIComponent(awsExports.Auth.Cognito.hostedUI.redirectSignIn)}`;
-          } else {
-            console.error("Missing Cognito configuration");
-          }
+          // Handle login redirect if necessary
         }
       } finally {
         setLoading(false);
@@ -108,7 +115,7 @@ const PhotoGallery: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
           <Camera className="mx-auto mb-4 text-gray-400" size={64} />
-          <h2 className="text-2xl font-bold mb-2">No Images Generated Yet</h2>
+          <h2 className="text-2xl font-bold mb-2">No Images Found</h2>
           <p className="text-gray-600 mb-6">
             {error ? `An error occurred: ${error}` : "Start capturing moments and see your gallery come to life!"}
           </p>

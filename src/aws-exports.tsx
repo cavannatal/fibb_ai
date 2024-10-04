@@ -30,9 +30,9 @@ type ExtendedResourcesConfig = ResourcesConfig & {
 const awsExports: ExtendedResourcesConfig = {
   Auth: {
     Cognito: {
-      userPoolId: process.env.REACT_APP_USER_POOL_ID || '',
-      userPoolClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID || '',
-      identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID || '',
+      userPoolId: process.env.REACT_APP_USER_POOL_ID as string,
+      userPoolClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID as string,
+      identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID as string,
       signUpVerificationMethod: 'code',
       loginWith: {
         email: true,
@@ -40,16 +40,16 @@ const awsExports: ExtendedResourcesConfig = {
         username: false
       },
       hostedUI: {
-        domain: process.env.REACT_APP_COGNITO_DOMAIN || '',
-        redirectSignIn: process.env.REACT_APP_COGNITO_REDIRECT_URI || '',
-        redirectSignOut: process.env.REACT_APP_COGNITO_REDIRECT_URI || '',
+        domain: process.env.REACT_APP_COGNITO_DOMAIN as string,
+        redirectSignIn: process.env.REACT_APP_COGNITO_REDIRECT_URI as string,
+        redirectSignOut: process.env.REACT_APP_COGNITO_REDIRECT_URI as string,
       },
     },
   },
   Storage: {
     S3: {
-      bucket: process.env.REACT_APP_S3_BUCKET || '',
-      region: process.env.REACT_APP_AWS_REGION || '',
+      bucket: process.env.REACT_APP_S3_BUCKET as string,
+      region: process.env.REACT_APP_AWS_REGION as string,
     },
   },
 };
