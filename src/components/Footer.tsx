@@ -1,12 +1,14 @@
 import React from 'react';
 import { Linkedin, Instagram } from 'lucide-react';
+import EmailSignup from './EmailSignupFooter';  // Import the new EmailSignup component
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-transparent py-8"
-    style={{ fontFamily: '"Font1", sans-serif' }}
-    >
+    <footer className="bg-transparent py-8" style={{ fontFamily: '"Font1", sans-serif' }}>
       <div className="container mx-auto px-4">
+        <div className="mb-8">
+          <EmailSignup />  {/* Use the EmailSignup component here */}
+        </div>
         <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center">
           <div className="order-2 md:order-1 mt-4 md:mt-0">
             <p className="text-gray-600 text-sm">&copy; 2024 fibb.ai. All rights reserved.</p>
