@@ -28,6 +28,18 @@ import pers5 from './DemPhotos/personalbrand_5.jpeg';
 import pers6 from './DemPhotos/personalbrand_6.jpeg';
 import pers7 from './DemPhotos/personalbrand_7.jpeg';
 
+import ls1 from './DemPhotos/ls1.png';
+import ls2 from './DemPhotos/ls2.png';
+import ls3 from './DemPhotos/ls3.png';
+import ls4 from './DemPhotos/ls4.png';
+import ls5 from './DemPhotos/ls5.png';
+import ls6 from './DemPhotos/ls6.png';
+import ls7 from './DemPhotos/ls7.png';
+import ls8 from './DemPhotos/ls8.png';
+import ls9 from './DemPhotos/ls9.png';
+
+
+
 
 
 
@@ -191,15 +203,15 @@ const PortfolioScreen: React.FC = () => {
       description: "We're on our phones too much already. Stay in the moment, create photos later.",
       color: "bg-purple-600",
       images: [
-        "/path/to/personal-brand-image-1.jpg",
-        "/path/to/personal-brand-image-2.jpg",
-        "/path/to/personal-brand-image-3.jpg",
-        "/path/to/personal-brand-image-4.jpg",
-        "/path/to/personal-brand-image-5.jpg",
-        "/path/to/personal-brand-image-6.jpg",
-        "/path/to/personal-brand-image-7.jpg",
-        "/path/to/personal-brand-image-8.jpg",
-        "/path/to/personal-brand-image-9.jpg",
+        ls1,
+        ls2,
+        ls3,
+        ls4,
+        ls5,
+        ls6,
+        ls7,
+        ls8,
+        ls9,
       ],
     },
   ];

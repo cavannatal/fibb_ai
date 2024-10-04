@@ -15,11 +15,11 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const navItems = [
     { name: "Our Team", path: "/team" },
     { name: "Events", path: "/events" },
-    ...(user ? [{ name: "Your Gallery", path: "/photo-gallery" }] : []),
     { name: "Blog", path: "/blog" },
-    { name: "Portfolio", path: '/portfolio' },
+    { name: "Services", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
     { name: "Marketplace", path: "/marketplace" },
+    ...(user ? [{ name: "Gallery", path: "/photo-gallery" }] : []),
     ...(user ? [{ name: "Create", path: "/get-started" }] : []),
   ];
 
