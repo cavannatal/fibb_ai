@@ -27,7 +27,7 @@ export const getGalleryImages = async (sub: string) => {
     const url = 'https://lfpv4n1ffc.execute-api.us-east-2.amazonaws.com/api/getS3alleryFiles';
     
     const data = {
-      FOLDER_NAME: "users/{sub}/gallery/"
+      FOLDER_NAME: `users/${sub}/gallery`
     };
   
     try {
