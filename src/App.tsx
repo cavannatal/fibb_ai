@@ -20,6 +20,7 @@ import TOSPage from './pages/TOSPage/TOSPage';
 import Marketplace from './pages/Marketplace/index'
 import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
 import CreatePage from './pages/CreatePage/CreatePage';
+import Portfolio from './pages/CaseStudies/TempCaseStudies';
 
 
 import awsExports from './aws-exports';
@@ -94,6 +95,7 @@ const App: React.FC = () => {
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/testing1" element={<Portfolio />} />
             <Route path="/signup" element={
               <div>
               <Authenticator

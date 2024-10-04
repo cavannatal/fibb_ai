@@ -1,0 +1,240 @@
+import React, { useState } from 'react';
+
+import market1 from './DemPhotos/marketing_1.jpeg';
+import market2 from './DemPhotos/marketing_2.jpeg';
+import market3 from './DemPhotos/marketing_3.jpeg';
+import market4 from './DemPhotos/marketing_4.jpeg';
+import market5 from './DemPhotos/marketing_5.jpg';
+import market6 from './DemPhotos/marketing_6.jpg';
+import market7 from './DemPhotos/marketing_7.jpeg';
+import market8 from './DemPhotos/marketing_3.jpg';
+import market9 from './DemPhotos/marketing_9.jpeg';
+
+import profess1 from './DemPhotos/professional_1.jpeg';
+import profess2 from './DemPhotos/professional_2.jpeg';
+import profess3 from './DemPhotos/professional_3.jpeg';
+import profess4 from './DemPhotos/professional_4.jpeg';
+import profess5 from './DemPhotos/professional_5.jpeg';
+import profess6 from './DemPhotos/professional_6.jpeg';
+import profess7 from './DemPhotos/professional_7.jpeg';
+import profess8 from './DemPhotos/professional_8.jpeg';
+import profess9 from './DemPhotos/professional_9.jpeg';
+
+import pers1 from './DemPhotos/personalbrand_1.jpeg';
+import pers2 from './DemPhotos/personalbrand_2.jpg';
+import pers3 from './DemPhotos/personalbrand_3.jpeg';
+import pers4 from './DemPhotos/personalbrand_4.jpeg';
+import pers5 from './DemPhotos/personalbrand_5.jpeg';
+import pers6 from './DemPhotos/personalbrand_6.jpeg';
+import pers7 from './DemPhotos/personalbrand_7.jpeg';
+
+
+
+
+
+
+interface CardProps {
+  title: string;
+  description: string;
+  color: string;
+  onClick: () => void;
+}
+
+const Card: React.FC<CardProps> = ({ title, description, color, onClick }) => (
+  <div 
+    className="flex bg-white shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full cursor-pointer"
+    onClick={onClick}
+  >
+    <div className={`w-3 ${color} flex-shrink-0`}></div>
+    <div className="flex-grow p-4 pt-8 flex flex-col">
+      <h3 
+        className="text-2xl font-bold mb-4" 
+        style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+      >
+        {title}
+      </h3>
+      <p 
+        className="text-xl text-gray-600 mb-16 flex-grow"
+        style={{ fontFamily: '"Font1", sans-serif' }}
+      >
+        {description}
+      </p>
+      <button className="bg-orange-500 text-black px-12 py-2 rounded-2xl hover:bg-orange-600 transition-colors text-md self-start mt-4"
+      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+      >
+        View
+      </button>
+    </div>
+  </div>
+);
+
+interface SectionProps {
+  title: string;
+  description: string;
+  color: string;
+  images: string[];
+}
+
+const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ src, alt, onClose }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="max-w-4xl max-h-[90vh] overflow-auto">
+        <img src={src} alt={alt} className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
+      </div>
+    </div>
+  );
+  
+  const Section: React.FC<SectionProps> = ({ title, description, color, images }) => {
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+    return (
+      <div id={title.toLowerCase().replace(/\s+/g, '-')} className="flex flex-col lg:flex-row w-full min-h-[600px] bg-gray-100 py-8 lg:py-12">
+        <div className="w-full lg:w-1/3 p-4 lg:p-6">
+          <div className="flex bg-white shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full">
+            <div className={`w-3 ${color} flex-shrink-0`}></div>
+            <div className="flex-grow p-4 pt-6 flex flex-col">
+              <h3 
+                className="text-xl lg:text-2xl font-bold mb-2 lg:mb-4" 
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              >
+                {title}
+              </h3>
+              <p 
+                className="text-lg lg:text-xl text-gray-600 mb-4 lg:mb-6"
+                style={{ fontFamily: '"Font1", sans-serif' }}
+              >
+                {description}
+              </p>
+              <div className="mt-auto mb-4 lg:mb-8">
+                <button 
+                  className={`${color.replace('bg-', 'bg-opacity-20 ')} text-black px-6 py-1.5 lg:px-8 lg:py-2 rounded-full border-2 border-black hover:bg-opacity-30 transition-colors text-sm lg:text-md`}
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full lg:w-3/4 p-4 lg:p-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
+            {images.map((src, index) => (
+              <div key={index} className="aspect-square cursor-pointer" onClick={() => setSelectedImage(src)}>
+                <img src={src} alt={`${title} ${index + 1}`} className="w-full h-full object-cover rounded-lg hover:opacity-80 transition-opacity" />
+              </div>
+            ))}
+          </div>
+        </div>
+        {selectedImage && (
+          <Modal 
+            src={selectedImage} 
+            alt={title} 
+            onClose={() => setSelectedImage(null)} 
+          />
+        )}
+      </div>
+    );
+  };
+
+const PortfolioScreen: React.FC = () => {
+  const sections: SectionProps[] = [
+    {
+      title: "Professional",
+      description: "Generate headshots so realistic you'd fool your mother.",
+      color: "bg-teal-600",
+      images:  [
+        profess1,
+        profess2,
+        profess3,
+        profess4,
+        profess5,
+        profess6,
+        profess7,
+        profess8,
+        profess9,
+
+      ],
+
+    },
+    {
+      title: "Personal Brand",
+      description: "Skip endless and exhausting photoshoots. See yourself anywhere with a few clicks.",
+      color: "bg-red-600",
+      images: [
+        pers1,
+        pers2,
+        pers3,
+        pers4,
+        pers5,
+        pers6,
+        pers7,
+      ],
+    },
+    {
+      title: "Product & Brand Marketing",
+      description: "Instead of wrangling models and photographers, spend your time making your brand even better than it already is.",
+      color: "bg-lime-400",
+      images: [
+        market1,
+        market2,
+        market3,
+        market4,
+        market5,
+        market6,
+        market7,
+        market8,
+        market9,
+
+      ],
+    },
+    {
+      title: "Lifestyle",
+      description: "We're on our phones too much already. Stay in the moment, create photos later.",
+      color: "bg-purple-600",
+      images: [
+        "/path/to/personal-brand-image-1.jpg",
+        "/path/to/personal-brand-image-2.jpg",
+        "/path/to/personal-brand-image-3.jpg",
+        "/path/to/personal-brand-image-4.jpg",
+        "/path/to/personal-brand-image-5.jpg",
+        "/path/to/personal-brand-image-6.jpg",
+        "/path/to/personal-brand-image-7.jpg",
+        "/path/to/personal-brand-image-8.jpg",
+        "/path/to/personal-brand-image-9.jpg",
+      ],
+    },
+  ];
+
+  const scrollToSection = (title: string) => {
+    const element = document.getElementById(title.toLowerCase().replace(/\s+/g, '-'));
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <div className="bg-gray-100 min-h-screen p-4 md:p-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mt-8 md:mt-16 mb-16 md:mb-32">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          >Services</h1>
+          <p className="text-gray-600 text-lg md:text-xl"
+          style={{ fontFamily: '"Font1", sans-serif' }}
+          >What our advanced technology can do for you.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {sections.map((section, index) => (
+            <Card 
+              key={index}
+              {...section}
+              onClick={() => scrollToSection(section.title)}
+            />
+          ))}
+        </div>
+        {sections.map((section, index) => (
+          <Section key={index} {...section} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default PortfolioScreen;
