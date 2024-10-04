@@ -68,7 +68,7 @@ const topTeamMembers: TeamMember[] = [
   },
   { 
     name: "Michael Thompson", 
-    role: "Lead Software Engineer", 
+    role: "Senior Software Engineer", 
     description: [
       'Michael is the Senior Software Engineer at fibb. He has worked over 5 years in the industry, with experience developing a wide variety of apps and websites. ',
       ' In addition, Michael has been deepening his knowledge in infrastructure and architecture at IBM.',
