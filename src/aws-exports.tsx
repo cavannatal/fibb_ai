@@ -10,6 +10,12 @@ type ExtendedResourcesConfig = ResourcesConfig & {
       };
     };
   };
+  Storage: {
+    S3: {
+      bucket: string;
+      region: string;
+    };
+  };
 };
 
 const awsExports: ExtendedResourcesConfig = {
@@ -28,6 +34,12 @@ const awsExports: ExtendedResourcesConfig = {
         redirectSignIn: process.env.REACT_APP_COGNITO_REDIRECT_URI as string,
         redirectSignOut: process.env.REACT_APP_COGNITO_REDIRECT_URI as string,
       },
+    },
+  },
+  Storage: {
+    S3: {
+      bucket: process.env.REACT_APP_S3_BUCKET as string,
+      region: process.env.REACT_APP_AWS_REGION as string,
     },
   },
 };

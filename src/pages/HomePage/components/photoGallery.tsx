@@ -1,34 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser } from 'aws-amplify/auth';
-import { post } from 'aws-amplify/api';
+import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import { useNavigate } from 'react-router-dom';
 import { Camera } from 'lucide-react';
+import { list, getUrl } from 'aws-amplify/storage';
+import { Amplify } from 'aws-amplify';
+import awsExports from '../../../aws-exports';
+
+Amplify.configure(awsExports);
 
 interface Photo {
   key: string;
   url: string;
 }
 
-interface ApiResponse {
-  photos: Photo[];
-}
-
-// Type guard function
-function isApiResponse(data: any): data is ApiResponse {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'photos' in data &&
-    Array.isArray(data.photos) &&
-    data.photos.every((photo: any) => 
-      typeof photo === 'object' &&
-      photo !== null &&
-      'key' in photo &&
-      'url' in photo &&
-      typeof photo.key === 'string' &&
-      typeof photo.url === 'string'
-    )
-  );
+interface S3ListItem {
+  key: string;
 }
 
 const PhotoGallery: React.FC = () => {
@@ -38,67 +24,65 @@ const PhotoGallery: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const initializeAuthAndFetchPhotos = async () => {
+    const fetchPhotos = async () => {
       try {
-        console.log("Initializing Auth...");
-        await getCurrentUser();
-        console.log("Auth initialized successfully");
-        await fetchPhotos();
+        const user = await getCurrentUser();
+        if (!user) {
+          throw new Error("User is not authenticated");
+        }
+
+        const session = await fetchAuthSession();
+        if (!session.tokens) {
+          throw new Error("No valid session tokens");
+        }
+
+        const sub = session.tokens.accessToken.payload.sub;
+        if (!sub) {
+          throw new Error("Unable to retrieve user sub");
+        }
+
+        console.log("User sub:", sub);
+
+        const s3Path = `users/${sub}/gallery/`;
+        
+        const s3List = await list({
+          prefix: s3Path,
+          options: {
+            accessLevel: 'private'
+          }
+        });
+
+        console.log("S3 List Result:", s3List);
+
+        const photoPromises = s3List.items.map(async (item: S3ListItem) => {
+          const { url } = await getUrl({
+            key: item.key,
+            options: {
+              accessLevel: 'private',
+              validateObjectExistence: true
+            }
+          });
+          return { key: item.key, url: url.toString() };
+        });
+        
+        const photoList = await Promise.all(photoPromises);
+        setPhotos(photoList);
       } catch (err) {
-        console.error("Error initializing Auth:", err);
-        setError("Failed to initialize authentication. Please try signing in again.");
+        console.error("Error fetching photos:", err);
+        setError(`Error: ${err instanceof Error ? err.message : String(err)}`);
+        
+        if (err instanceof Error && err.message.includes("authenticated")) {
+          window.location.href = `https://${awsExports.Auth.Cognito.hostedUI?.domain}/login?client_id=${awsExports.Auth.Cognito.userPoolClientId}&response_type=code&scope=email+openid+profile&redirect_uri=${encodeURIComponent(awsExports.Auth.Cognito.hostedUI?.redirectSignIn || '')}`;
+        }
+      } finally {
         setLoading(false);
       }
     };
 
-    initializeAuthAndFetchPhotos();
-  }, []);
+    fetchPhotos();
+  }, [navigate]);
 
-  const fetchPhotos = async () => {
-    try {
-      console.log("Starting to fetch photos...");
-      
-      const user = await getCurrentUser();
-      console.log("Current user:", user);
-
-      const postOperation = post({
-        apiName: 'getGalleryPhotos', // Replace with your actual API name
-        path: 'https://xdjzp63cti.execute-api.us-east-2.amazonaws.com/photos/dev', // Replace with your actual API path
-        options: {
-          body: { userId: user.userId } // Pass the userId to the Lambda if needed
-        }
-      });
-
-      const response = await postOperation.response;
-      console.log("API response:", response);
-
-      if (response.body) {
-        const responseData = await response.body.json();
-        console.log("Parsed response data:", responseData);
-
-        if (isApiResponse(responseData)) {
-          if (responseData.photos.length > 0) {
-            setPhotos(responseData.photos);
-          } else {
-            console.log("No photos found");
-            setPhotos([]);
-          }
-        } else {
-          console.error("Unexpected response format from API:", responseData);
-          setError("Unexpected response format from server");
-        }
-      } else {
-        console.error("No body in API response");
-        setError("No data received from server");
-      }
-    } catch (err) {
-      console.error("Error in fetchPhotos:", err);
-      setError(`Error: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  
   const handleStartGenerating = () => {
     navigate('/get-started');
   };
@@ -149,10 +133,3 @@ const PhotoGallery: React.FC = () => {
 };
 
 export default PhotoGallery;
-// DEVELOPER NOTE: Consider adding undo functionality for deleted photos??
-// DEVELOPER NOTE: For iPhone users,we provide instructions on how to save the downloaded image to their photo album
-// DEVELOPER NOTE: Ensure that the Instagram sharing feature is thoroughly tested on various devices and browsers... 
-// TODO: Implement pagination or infinite scrolling for large collections
-// TODO: Add search and filtering options
-// TODO: Implement error boundary to catch and display errors gracefully
-// DEVELOPER NOTE: For AWS accessibility, ensure that all buttons are properly labeled and can be accessed via keyboard navigation
