@@ -67,7 +67,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
       {/* Mobile menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          isMenuOpen ? 'max-h-108 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50">
