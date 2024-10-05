@@ -158,7 +158,7 @@ Cheers,
 Matt Yee
 Co-Founder & CEO, fibb.ai`,
     date: "2024-10-05",
-    category: "Company News",
+    category: "Product",
     author: "Matt Yee",
     role: "Co-Founder & CEO"
   }
