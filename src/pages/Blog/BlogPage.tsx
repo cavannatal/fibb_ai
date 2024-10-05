@@ -109,6 +109,61 @@ Cheers,`,
   category: "Product",
   author: "Matt Yee",
   role: "Co-Founder & CEO"
+},
+{
+---
+id: 3
+title: "Epic Launch Party and Exciting New Opportunities!"
+excerpt: "Join us for our pre-launch extravaganza and learn about our expanded hiring initiative as we gear up for an incredible future at fibb.ai!"
+date: "2024-10-05"
+category: "Company News"
+author: "Matt Yee"
+role: "Co-Founder & CEO"
+---
+
+# The One Where We Have an Epic Launch Party!
+
+Hey fibb.ai community,
+
+We've got some thrilling updates to share with you all! As we approach our big launch, the excitement is building, and we can't wait to celebrate with you. Plus, we're expanding our team even further to meet the incredible demand we're seeing. Let's dive into the details!
+
+## Pre-Launch Party Extravaganza
+
+Mark your calendars for this coming Wednesday! We're hosting an epic pre-launch party, and you're all invited. This is your chance to:
+
+- Get hands-on experience with our patented technology before anyone else
+- Enjoy live music and a DJ spinning the latest hits
+- Indulge in delicious free food (because who doesn't love that?)
+- Network with the fibb.ai team and fellow tech enthusiasts
+
+We're beyond excited to meet everyone and give you a sneak peek into the future of AI imaging. It's going to be a night to remember!
+
+## We're Growing Even More!
+
+The response to our upcoming launch has been overwhelming, and to meet the demand, we're expanding our team even further. We're thrilled to announce that we're hiring for an additional 8 roles in our sales department:
+
+- 2 Enterprise Sales Representatives
+- 2 Small and Medium Business Sales Representatives
+- 2 Professional Segment Sales Representatives
+- 2 Consumer Sales Representatives
+
+This expansion of our sales team reflects our commitment to serving all segments of the market with the attention and expertise they deserve. Whether you're a seasoned sales pro or a rising star looking to make your mark in the AI industry, we want to hear from you!
+
+If you're passionate about technology, have a knack for building relationships, and want to be part of a revolutionary product launch, please reach out to us at hiring@fibb.ai. We can't wait to meet the talented individuals who will help drive fibb.ai's success across all market segments.
+
+## What's Next?
+
+As we count down the days to our official launch, the energy at fibb.ai is electric. We're working around the clock to ensure that our product not only meets but exceeds your expectations.
+
+Stay tuned for more updates, and don't forget to join us at the pre-launch party next Wednesday. It's going to be an incredible opportunity to experience the future of AI imaging firsthand.
+
+Thank you for your continued support and enthusiasm. We couldn't be more excited about what's to come, and we're thrilled to have you all along for the ride!
+
+See you at the party!
+
+Cheers,
+Matt Yee
+Co-Founder & CEO
 }
 ];
 
