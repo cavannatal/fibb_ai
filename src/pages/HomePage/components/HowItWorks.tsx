@@ -4,7 +4,7 @@ import fibbIcon from '../fibbIconBlack.svg';
 
 const steps = [
   {
-    title: "Step 1: Sign Up & SelfSync",
+    title: "Step 1: Upload your Photos",
     description: "Create an account and get ready to use our patented SelfSync technology, follow our guided photoshoot and train your AI."
   },
   {
@@ -12,7 +12,7 @@ const steps = [
     description: "If you can think it, you can generate it. Put yourself anywhere in the world."
   },
   {
-    title: "Step 3: Share & Utilize",
+    title: "Step 3: Download & Use",
     description: "Download your photos for social media, a new LinkedIn headshot, to send to friends, or product marketing for your business."
   }
 ];
