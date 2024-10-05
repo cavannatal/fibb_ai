@@ -198,13 +198,50 @@ const PhotoCaptureComponent: React.FC = () => {
   const [imageError, setImageError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [isMirrored, setIsMirrored] = useState(true);
+  const [is4KSupported, setIs4KSupported] = useState(false);
   const webcamRef = useRef<Webcam>(null);
 
   const currentExpression = EXPRESSIONS[currentExpressionIndex];
 
   useEffect(() => {
     setImageError(null);
+    checkCameraCapabilities();
   }, [currentExpression]);
+
+  const checkCameraCapabilities = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 3840 },
+          height: { ideal: 2160 }
+        }
+      });
+      const videoTrack = stream.getVideoTracks()[0];
+      const capabilities = videoTrack.getCapabilities();
+      
+      const maxWidth = capabilities.width?.max;
+      const maxHeight = capabilities.height?.max;
+
+      setIs4KSupported(
+        typeof maxWidth === 'number' &&
+        typeof maxHeight === 'number' &&
+        maxWidth >= 3840 &&
+        maxHeight >= 2160
+      );
+
+      stream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+      console.error('Error checking camera capabilities:', error);
+      setIs4KSupported(false);
+    }
+  };
+
+  const videoConstraints = {
+    width: is4KSupported ? 3840 : 1920,
+    height: is4KSupported ? 2160 : 1080,
+    facingMode: facingMode,
+  };
+
 
   const capture = useCallback(() => {
     if (capturedImages.length >= PHOTOS_PER_EXPRESSION) {
@@ -231,19 +268,15 @@ const PhotoCaptureComponent: React.FC = () => {
     setIsUploading(true);
   
     try {
-      // Get the user sub before proceeding
       const { userId } = await getCurrentUser();
-      const sub = userId; // or use username if that's what you need
+      const sub = userId;
   
       const uploadPromises = capturedImages.map(async (image, index) => {
         const timestamp = getCurrentTimeStamp();
-  
-        // Construct file name using the retrieved 'sub'
         const fileName = `users/${sub}/photos/${state.startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
         const response = await fetch(image.src);
         const blob = await response.blob();
   
-        // Requesting the presigned URL from the Lambda function
         const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
           method: 'POST',
           headers: {
@@ -261,7 +294,6 @@ const PhotoCaptureComponent: React.FC = () => {
   
         const { uploadUrl } = await presignedUrlResponse.json();
   
-        // Upload to S3
         const s3UploadResponse = await fetch(uploadUrl, {
           method: 'PUT',
           body: blob,
@@ -300,6 +332,7 @@ const PhotoCaptureComponent: React.FC = () => {
       return newMode;
     });
   };
+
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
@@ -329,13 +362,13 @@ const PhotoCaptureComponent: React.FC = () => {
       </h2>
       <p className="text-lg mb-4 text-gray-600">{expressionInstructions[currentExpression]}</p>
       <div className="relative">
-      <Webcam
+        <Webcam
           audio={false}
           ref={webcamRef}
           screenshotFormat="image/jpeg"
           className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
           mirrored={isMirrored}
-          videoConstraints={{ facingMode }}
+          videoConstraints={videoConstraints}
         />
         <img
           src={expressionImageMap[currentExpression]}
