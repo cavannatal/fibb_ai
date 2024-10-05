@@ -5,15 +5,15 @@ import fibbIcon from '../fibbIconBlack.svg';
 const steps = [
   {
     title: "Step 1: Sign Up & SelfSync",
-    description: "Create an account and sync your likeness with our guided photoshoot."
+    description: "Create an account and get ready to use our patented SelfSync technology, follow our guided photoshoot and train your AI."
   },
   {
     title: "Step 2: Customize & Create",
-    description: "Choose settings, outfits, and backgrounds to generate your images."
+    description: "If you can think it, you can generate it. Put yourself anywhere in the world."
   },
   {
     title: "Step 3: Share & Utilize",
-    description: "Download your images for personal or professional use."
+    description: "Download your photos for social media, a new LinkedIn headshot, to send to friends, or product marketing for your business."
   }
 ];
 
