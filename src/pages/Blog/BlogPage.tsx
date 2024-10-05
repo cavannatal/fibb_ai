@@ -16,10 +16,10 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
-  id: 1,
-  title: "Gallery Feature Update: What's New and What's Next",
-  excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
-  content: `# Gallery Feature Update: What's New and What's Next
+    id: 1,
+    title: "Gallery Feature Update: What's New and What's Next",
+    excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
+    content: `# Gallery Feature Update: What's New and What's Next
 
 Hey everyone,
 
@@ -75,16 +75,16 @@ Here are some fun things we're considering for the future:
 We hope you're as excited about the updates as we are! Got ideas? Let us know—this is all about making your photo experience better!
 
 Cheers,`,
-  date: "2024-09-30",
-  category: "Product",
-  author: "Matt Yee",
-  role: "Co-Founder & CEO",
+    date: "2024-09-30",
+    category: "Product",
+    author: "Matt Yee",
+    role: "Co-Founder & CEO",
   },
   {
-  id: 2,
-  title: "We're Hiring!!",
-  excerpt: "We are looking for talented individuals to join our Team and help us achieve our goal of revolutionizing AI Images!",
-  content: `# We're Hiring!
+    id: 2,
+    title: "We're Hiring!!",
+    excerpt: "We are looking for talented individuals to join our Team and help us achieve our goal of revolutionizing AI Images!",
+    content: `# We're Hiring!
 
 Hey everyone,
 Exciting news from fibb.ai! As we prepare to unveil our innovative product on October 11, 2024, we're also planning for significant growth. Starting November 1st, we'll be expanding our talented team to better serve you, our valued customers and partners.
@@ -105,23 +105,16 @@ If you're passionate about technology and interested in seeing how your skills m
 Stay tuned for more updates as we continue to grow and evolve. The future is bright at fibb.ai, and we're thrilled to have you along for the journey!
 
 Cheers,`,
-  date: "2024-10-2",
-  category: "Product",
-  author: "Matt Yee",
-  role: "Co-Founder & CEO"
-},
-{
----
-id: 3
-title: "Epic Launch Party and Exciting New Opportunities!"
-excerpt: "Join us for our pre-launch extravaganza and learn about our expanded hiring initiative as we gear up for an incredible future at fibb.ai!"
-date: "2024-10-05"
-category: "Company News"
-author: "Matt Yee"
-role: "Co-Founder & CEO"
----
-
-# The One Where We Have an Epic Launch Party!
+    date: "2024-10-2",
+    category: "Product",
+    author: "Matt Yee",
+    role: "Co-Founder & CEO"
+  },
+  {
+    id: 3,
+    title: "Epic Launch Party and Exciting New Opportunities!",
+    excerpt: "Join us for our pre-launch extravaganza and learn about our expanded hiring initiative as we gear up for an incredible future at fibb.ai!",
+    content: `# The One Where We Have an Epic Launch Party!
 
 Hey fibb.ai community,
 
@@ -163,8 +156,12 @@ See you at the party!
 
 Cheers,
 Matt Yee
-Co-Founder & CEO
-}
+Co-Founder & CEO, fibb.ai`,
+    date: "2024-10-05",
+    category: "Company News",
+    author: "Matt Yee",
+    role: "Co-Founder & CEO"
+  }
 ];
 
 const categories = ["Product", "Dev", "AI Research", "Updates"];
