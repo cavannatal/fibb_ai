@@ -55,7 +55,7 @@ const Header: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="lg:w-5/12 text-left mb-12 lg:mb-0 lg:self-center"
+          className="lg:w-5/12 text-left mb-12 lg:mb-0 lg:self-center md:pl-8 lg:pl-4 xl:pl-8 2xl:pl-16"
         >
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-black leading-tight"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
