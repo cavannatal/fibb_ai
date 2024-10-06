@@ -98,6 +98,13 @@ const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ sr
   const Section: React.FC<SectionProps> = ({ title, description, color, images }) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
+    const getImageClass = (index: number) => {
+      if (title === "Personal Brand" && (index === 0 || index === 4)) {
+        return "col-span-1 row-span-2 aspect-[1/2]";
+      }
+      return "aspect-square";
+    };
+  
     return (
       <div id={title.toLowerCase().replace(/\s+/g, '-')} className="flex flex-col lg:flex-row w-full min-h-[600px] bg-gray-100 py-8 lg:py-12">
         <div className="w-full lg:w-1/3 p-4 lg:p-6">
@@ -128,9 +135,9 @@ const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ sr
           </div>
         </div>
         <div className="w-full lg:w-3/4 p-4 lg:p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4 auto-rows-auto">
             {images.map((src, index) => (
-              <div key={index} className="aspect-square cursor-pointer" onClick={() => setSelectedImage(src)}>
+              <div key={index} className={`cursor-pointer ${getImageClass(index)}`} onClick={() => setSelectedImage(src)}>
                 <img src={src} alt={`${title} ${index + 1}`} className="w-full h-full object-cover rounded-lg hover:opacity-80 transition-opacity" />
               </div>
             ))}
@@ -172,12 +179,12 @@ const PortfolioScreen: React.FC = () => {
       description: "Skip endless and exhausting photoshoots. See yourself anywhere with a few clicks.",
       color: "bg-[#ee4036]",
       images: [
+        pers3, //2x1
         pers1,
         pers2,
-        pers3,
         pers4,
+        pers6, //2x1
         pers5,
-        pers6,
         pers7,
       ],
     },
