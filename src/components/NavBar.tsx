@@ -18,7 +18,6 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
     { name: "Blog", path: "/blog" },
     { name: "Services", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
-    { name: "Marketplace", path: "/marketplace" },
     ...(user ? [{ name: "Gallery", path: "/photo-gallery" }] : []),
     ...(user ? [{ name: "Create", path: "/get-started" }] : []),
   ];

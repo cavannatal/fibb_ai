@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
     <div className="">
       <LaunchBanner/>
       <Header />
-      <main className="py-2">
+      <main className="py-0">
         <div className="space-y-16">
           <Features />
           <HowItWorks />

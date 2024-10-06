@@ -74,7 +74,7 @@ const Header: React.FC = () => {
             onClick={handleButtonClick}
             style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
           >
-            Get Started!!
+            Get Started
           </motion.button>
         </motion.div>
         
