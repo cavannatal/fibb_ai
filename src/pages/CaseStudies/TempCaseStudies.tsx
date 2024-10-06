@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 import market1 from './DemPhotos/marketing_1.jpeg';
 import market2 from './DemPhotos/marketing_2.jpeg';
@@ -231,14 +232,22 @@ const PortfolioScreen: React.FC = () => {
   return (
     <div className="bg-gray-100 min-h-screen p-4 md:p-16">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mt-8 md:mt-16 mb-16 md:mb-32">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+          
+        >
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]"
-          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-          >Services</h1>
-          <p className="text-gray-600 text-lg md:text-xl"
-          style={{ fontFamily: '"Font1", sans-serif' }}
-          >What our advanced technology can do for you.</p>
-        </div>
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
+            Services
+          </h1>
+          <p className="text-xl text-gray-600 mb-32"
+          style={{ fontFamily: '"Font1", sans-serif' }}>
+            What our advanced technology can do for
+          </p>
+        </motion.header>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {sections.map((section, index) => (
             <Card 
