@@ -1,46 +1,71 @@
-import React, { useContext, useEffect, useState } from 'react';
-import awsconfig from '../../aws-exports'; 
-import { Amplify } from 'aws-amplify'; // No Auth import here
-import { motion } from 'framer-motion';
+import React, { useContext } from 'react';
+import { Amplify } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
-import { CognitoContext } from '../../auth/CognitoProviderWithNavigate'; 
+import { motion } from 'framer-motion';
+import { CognitoContext } from '../../auth/CognitoProviderWithNavigate';
+import awsconfig from '../../aws-exports';
+import fibbLogo from '../../components/images/FibbLogoWhite.svg'
 
 Amplify.configure(awsconfig);
 
 const CreatePage: React.FC = () => {
-  const { isAuthenticated } = useContext(CognitoContext); // Get auth status from Cognito context
+  const { isAuthenticated } = useContext(CognitoContext);
   const navigate = useNavigate();
 
   const handleButtonClick1 = () => {
-      navigate("/cam");
+    navigate("/cam");
   };
 
   const handleButtonClick2 = () => {
-      navigate("/image-gen");
+    navigate("/image-gen");
   };
 
   return (
-    <header className="h-[60vh] flex flex-col items-center justify-center text-center px-4">
-      <motion.button
-        initial={{ opacity: 0 ,y: 0 }}
-        animate={{ opacity: 1, y: 10 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
-        onClick={handleButtonClick1}
-      >
-        Add a new subject
-      </motion.button>
-
-      <motion.button
-        initial={{ opacity: 0, y: 0 }}
-        animate={{ opacity: 1, y: 10 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
-        onClick={handleButtonClick2}
-      >
-        Generate Images
-      </motion.button>
-    </header>
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
+      <header className="flex justify-center p-4">
+        <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
+      </header>
+      <main className="flex flex-col items-center flex-grow p-4 mt-16 sm:mt-64">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 w-full max-w-3xl">
+          <motion.button
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: 1, y: 10 }}
+            transition={{ duration: 0.1, delay: 0.2 }}
+            className="flex-1 bg-[#144a53] p-6 sm:p-8 rounded-lg hover:bg-[#285a62] transition-all duration-300 transform hover:scale-105 h-auto sm:h-80 flex flex-col justify-between"
+            onClick={handleButtonClick1}
+          >
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-16"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              >Create Your <span className='text-[#cbf59a]'>fibb</span></h2>
+              <p className="text-base sm:text-lg"
+              style={{ fontFamily: '"Font1", sans-serif' }}
+              >
+                Go through our guided photo experience so we can learn what you look like. After the training is finished, you'll be able to bring your fibb to life.
+              </p>
+            </div>
+          </motion.button>
+          <motion.button
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: 1, y: 10 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex-1 bg-[#144a53] p-6 sm:p-8 rounded-lg hover:bg-[#285a62] transition-all duration-300 transform hover:scale-105 h-auto sm:h-80 flex flex-col justify-between"
+            onClick={handleButtonClick2}
+          >
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-8"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              >Bring Your <span className='text-[#cbf59a]'>fibb</span> to Life</h2>
+              <p className="text-base sm:text-lg"
+              style={{ fontFamily: '"Font1", sans-serif' }}
+              >
+                When your fibb is finished, generate yourself wherever you want to be. If you can think it, we'll help you build it.
+              </p>
+            </div>
+          </motion.button>
+        </div>
+      </main>
+    </div>
   );
 };
 

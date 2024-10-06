@@ -1,77 +1,76 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import fibbLogo from '../../components/images/FibbLogoWhite.svg';
 import { useNavigate } from 'react-router-dom';
-import { uniqueId } from 'lodash';
-import { getCurrentTimeStamp } from '../../utils';
-import { getCurrentUser } from 'aws-amplify/auth';
 
 const PhotoCollectionIntroPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const steps = [
-    "Enter our photo collection portal",
-    "Review and accept our photo submission guidelines",
-    "Upload your photos using our secure uploader",
-    "Add relevant tags and descriptions to your photos",
-    "Submit your photos for review",
-    "Receive confirmation of your submission"
-  ];
-
-  const handleReadyClick = async () => {
-    const { userId } = await getCurrentUser();
-    navigate('/photo-capture', { state: {startingTimestamp: getCurrentTimeStamp(), sub: userId} });
+  const handleContinue = () => {
+    navigate('/photo-capture');
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 py-16 px-4 sm:px-6 lg:px-8" style={{ fontFamily: 'Nunito, sans-serif' }}>
-      <div className="max-w-4xl mx-auto">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
+      <header className="flex justify-center p-4">
+        <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
+      </header>
+      <main className="flex flex-col items-center flex-grow p-4 sm:p-6 pb-16 sm:pb-6">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-3xl sm:text-4xl font-bold mb-8 text-center text-[#084248]"
+          transition={{ duration: 0.5 }}
+          className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-16 mt-8 sm:mt-16 text-center"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
-          Photo Collection Process
+          Ready to create your <span className="text-[#cbf59a]">fibb</span>?
+        </motion.h1>
+        <motion.h2
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-2xl sm:text-3xl font-semibold mb-8 sm:mb-16 text-center"
+          style={{ fontFamily: '"Sofia Pro", sans-serif' }}
+        >
+          Here's how it works.
         </motion.h2>
-        
-        <motion.div
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 w-full max-w-5xl mb-8 sm:mb-16">
+          {[
+            { title: "Prep", content: "Find a few places in your area where you can take photos. A tripod or something to set your phone on will be helpful." },
+            { title: "Guided Photo Experience", content: "Follow our guided photo experience. Sample images and instructions for each shot will appear." },
+            { title: "Submit", content: "Submit your photos and grab a beer or a cup of coffee while our top-of-line computers get to work." }
+          ].map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 0 }}
+              animate={{ opacity: 1, y: 10 }}
+              transition={{ duration: 0.2 + index * 0.1, delay: 0.6 }}
+              className="flex-1 bg-[#144a53] p-6 sm:p-8 rounded-lg hover:bg-[#285a62] transition-all duration-300 transform hover:scale-105 h-auto sm:h-80 flex flex-col justify-between"
+            >
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-16"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >{step.title}</h2>
+                <p className="text-base sm:text-lg"
+                style={{ fontFamily: '"Font1", sans-serif' }}
+                >
+                  {step.content}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-gray-100 rounded-2xl shadow-lg p-6 sm:p-8 mb-8"
+          transition={{ duration: 0.5, delay: 1 }}
+          className="bg-[#f79302] text-black font-bold py-3 px-8 rounded-lg text-xl hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+          onClick={handleContinue}
         >
-          <h3 className="text-xl font-semibold mb-4 text-[#084248]">
-            Follow these steps to submit your photos:
-          </h3>
-          <ol className="list-decimal list-inside space-y-2">
-            {steps.map((step, index) => (
-              <motion.li
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="text-lg text-gray-600"
-              >
-                {step}
-              </motion.li>
-            ))}
-          </ol>
-        </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-center"
-        >
-          <button
-            onClick={handleReadyClick}
-            className="px-9 py-4 bg-[#084248] text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105"
-          >
-            Are you ready to go?
-          </button>
-        </motion.div>
-      </div>
+          Continue
+        </motion.button>
+      </main>
     </div>
   );
 };
