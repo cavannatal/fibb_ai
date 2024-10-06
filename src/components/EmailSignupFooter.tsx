@@ -68,7 +68,9 @@ const EmailSignupFooter: React.FC = () => {
 
   return (
     <div className="w-full max-w-md mx-auto text-center">
-      <h2 className="text-2xl font-bold mb-2 text-[#084248]">Stay Connected</h2>
+      <h2 className="text-2xl font-bold mb-2 text-[#084248]"
+      style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+      >Stay Connected</h2>
       <p className="text-sm text-[#084248]/80 mb-4">Join our community for exclusive updates and offers.</p>
       <form onSubmit={handleSubmit} className="mb-4">
         <div className="flex">

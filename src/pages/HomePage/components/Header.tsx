@@ -49,7 +49,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="min-h-screen flex flex-col justify-start pt-16 lg:pt-24 px-4 bg-[#F5F5F5]">
+    <header className="min-h-screen flex flex-col justify-start pt-8 lg:pt-2 px-4 bg-[#F5F5F5]">
       <div className="container mx-auto flex flex-col lg:flex-row items-center lg:items-start justify-between">
         <motion.div
           initial={{ opacity: 0, x: -20 }}

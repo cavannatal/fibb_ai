@@ -54,7 +54,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, description, color, onClick }) => (
   <div 
-    className="flex bg-white shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full cursor-pointer"
+    className="flex bg-[#efedea] shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full cursor-pointer"
     onClick={onClick}
   >
     <div className={`w-3 ${color} flex-shrink-0`}></div>
@@ -71,7 +71,7 @@ const Card: React.FC<CardProps> = ({ title, description, color, onClick }) => (
       >
         {description}
       </p>
-      <button className="bg-orange-500 text-black px-12 py-2 rounded-2xl hover:bg-orange-600 transition-colors text-md self-start mt-4"
+      <button className="bg-[#f79e07] text-black px-12 py-2 rounded-2xl hover:bg-orange-600 transition-colors text-md self-start mt-4"
       style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
       >
         View
@@ -101,7 +101,7 @@ const Modal: React.FC<{ src: string; alt: string; onClose: () => void }> = ({ sr
     return (
       <div id={title.toLowerCase().replace(/\s+/g, '-')} className="flex flex-col lg:flex-row w-full min-h-[600px] bg-gray-100 py-8 lg:py-12">
         <div className="w-full lg:w-1/3 p-4 lg:p-6">
-          <div className="flex bg-white shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full">
+          <div className="flex bg-[#efedea] shadow-md rounded-tl-xl rounded-bl-lg rounded-br-[10rem] overflow-hidden h-full">
             <div className={`w-3 ${color} flex-shrink-0`}></div>
             <div className="flex-grow p-4 pt-6 flex flex-col">
               <h3 
@@ -152,7 +152,7 @@ const PortfolioScreen: React.FC = () => {
     {
       title: "Professional",
       description: "Generate headshots so realistic you'd fool your mother.",
-      color: "bg-teal-600",
+      color: "bg-[#093f48]",
       images:  [
         profess1,
         profess2,
@@ -170,7 +170,7 @@ const PortfolioScreen: React.FC = () => {
     {
       title: "Personal Brand",
       description: "Skip endless and exhausting photoshoots. See yourself anywhere with a few clicks.",
-      color: "bg-red-600",
+      color: "bg-[#ee4036]",
       images: [
         pers1,
         pers2,
@@ -184,7 +184,7 @@ const PortfolioScreen: React.FC = () => {
     {
       title: "Product & Brand Marketing",
       description: "Instead of wrangling models and photographers, spend your time making your brand even better than it already is.",
-      color: "bg-lime-400",
+      color: "bg-[#cbf59a]",
       images: [
         market1,
         market2,
@@ -201,7 +201,7 @@ const PortfolioScreen: React.FC = () => {
     {
       title: "Lifestyle",
       description: "We're on our phones too much already. Stay in the moment, create photos later.",
-      color: "bg-purple-600",
+      color: "bg-[#581a3a]",
       images: [
         ls1,
         ls2,
@@ -225,7 +225,7 @@ const PortfolioScreen: React.FC = () => {
     <div className="bg-gray-100 min-h-screen p-4 md:p-16">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mt-8 md:mt-16 mb-16 md:mb-32">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2"
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]"
           style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
           >Services</h1>
           <p className="text-gray-600 text-lg md:text-xl"
