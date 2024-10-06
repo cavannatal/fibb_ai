@@ -336,7 +336,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (currentExpressionIndex >= EXPRESSIONS.length) {
-    fetch('https://api.fibb.ai/generate-lora', {
+    await fetch('https://2hohe1gynf.execute-api.us-east-2.amazonaws.com/api/modelTrainFibb', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
