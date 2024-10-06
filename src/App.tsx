@@ -96,7 +96,7 @@ const App: React.FC = () => {
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/signup" element={
-              <div className='min-h-screen bg-red-600'>
+              <div className='min-h-screen'>
               <Authenticator
                 //socialProviders={['facebook', 'google']}
                 components={{
