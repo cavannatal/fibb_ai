@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 
 const MissionStatement = () => {
   return (
-    <section className="py-12 bg-[#084248] "> {/* Increased vertical padding */}
+    <section className="py-12 bg-[#084248]">
       <div className="container mx-auto px-5">
-        <div className="flex flex-col md:flex-row items-center justify-between"> {/* Changed to items-center */}
+        <div className="flex flex-col md:flex-row items-start justify-between">
           {/* Left column - Our Mission */}
-          <div className="md:w-1/3 mb-8 md:mb-0">
+          <div className="md:w-1/3 mb-8 md:mb-0 md:pt-6 sm:pt-8"> {/* Added padding top to align with right column content */}
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

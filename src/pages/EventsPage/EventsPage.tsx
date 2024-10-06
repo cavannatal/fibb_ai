@@ -142,7 +142,7 @@ const EventsPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-8"
+          className="text-4xl sm:text-5xl font-bold mb-4 text-center text-[#084248]"
           style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
           Upcoming Events

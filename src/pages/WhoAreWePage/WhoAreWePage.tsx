@@ -127,10 +127,10 @@ const bottomTeamMembers: BottomTeamMember[] = [
 
 const AboutUs: React.FC = () => {
   return (
-    <div className="py-16 bg-[#efedea] text-[#004948]">
+    <div className="py-16 bg-white text-[#004948]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
-          className="text-4xl font-bold mb-8 text-center text-[#084248]"
+          className="text-4xl sm:text-5xl font-bold mb-4 text-center text-[#084248]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

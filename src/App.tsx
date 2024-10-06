@@ -81,7 +81,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-[#efedee]">
+      <div className="flex flex-col min-h-screen bg-white">
         <NavBar signOut={handleSignOut} user={user} />
         <main className="flex-grow">
           <Routes>
@@ -96,7 +96,7 @@ const App: React.FC = () => {
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/signup" element={
-              <div>
+              <div className='min-h-screen bg-red-600'>
               <Authenticator
                 //socialProviders={['facebook', 'google']}
                 components={{
