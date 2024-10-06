@@ -183,11 +183,31 @@ const Blog: React.FC = () => {
   };
 
 
-  const handleShare = () => {
-    // Implement share functionality
-    console.log('Sharing post...');
+  const handleShare = (post: BlogPost) => {
+  const postUrl = window.location.href; // The current URL
+
+  // LinkedIn Share URL
+  const shareToLinkedIn = () => {
+    const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
+    window.open(linkedInShareUrl, '_blank');
   };
 
+  // Instagram Stories Share (works on mobile)
+  const shareToInstagram = () => {
+    const instagramShareUrl = `instagram://story-camera`; // Deep linking to Instagram
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      window.open(instagramShareUrl, '_blank');
+    } else {
+      alert("Instagram Stories sharing works on mobile devices only.");
+    }
+  };
+
+  // Display options or direct share based on your logic
+  // Example: Open a modal or show share options
+  console.log('Sharing post...');
+  shareToLinkedIn();  // For LinkedIn share
+  shareToInstagram(); // For Instagram Stories share
+};
  
   const filteredPosts = blogPosts
     .filter((post: BlogPost) => post.category === activeCategory)
