@@ -168,33 +168,33 @@ const ImageGen: React.FC = () => {
 
     try {
       // Policy compliance check
-      const policyResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKeyOpen}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: 'You are a cybersecurity and ethics expert for an image generation engine. You will assess every prompt I give you and assess if there is anything that could pose as a threat to our business or end user. You will also assess every prompt to make sure it does not depict any content that would be deemed unethical, NSFW, or anything that violates OpenAI policy. You will respond ONLY with a YES or NO. No analysis or summary is needed. Make sure every answer you give ends with the word YES or NO. If you cannot assist, just say the word NO'},
-            { role: 'user', content: prompt }
-          ]
-        })
-      });
+      //const policyResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        //method: 'POST',
+        //headers: {
+          //'Content-Type': 'application/json',
+          //'Authorization': `Bearer ${apiKeyOpen}`
+        //},
+        //body: JSON.stringify({
+          //model: 'gpt-4o-mini',
+          //messages: [
+            //{ role: 'system', content: 'ou  a cybersecurity and ethics expert for an image generation engine. You will assess every prompt I give you and assess if there is anything that could pose as a threat to our business or end user. You will also assess every prompt to make sure it does not depict any content that would be deemed unethical, NSFW, or anything that violates OpenAI policy. You will respond ONLY with a YES or NO. No analysis or summary is needed. Make sure every answer you give ends with the word YES or NO. If you cannot assist, just say the word NO'},
+            //{ role: 'user', content: prompt }
+          //]
+        //})
+      //});
 
-      if (!policyResponse.ok) {
-        throw new Error(`OpenAI API error: ${policyResponse.status}`);
-      }
+      //if (!policyResponse.ok) {
+        //throw new Error(`OpenAI API error: ${policyResponse.status}`);
+      //}
 
-      const policyData = await policyResponse.json();
-      const policyCheck = policyData.choices[0].message.content.trim();
+      //const policyData = await policyResponse.json();
+      //const policyCheck = policyData.choices[0].message.content.trim();
 
-      if (policyCheck === "NO") {
-        setPolicyBreak("This prompt does not comply with Fibb.ai Use Policy.");
-        setIsLoading(false);
-        return; // Stop the workflow here
-      }
+      //if (policyCheck === "NO") {
+        //setPolicyBreak("This prompt does not comply with Fibb.ai Use Policy.");
+        //setIsLoading(false);
+        //return; // Stop the workflow here
+      //}
 
       // If policy check passes, continue with prompt optimization and image generation
       const optimizationResponse = await fetch('https://api.openai.com/v1/chat/completions', {
