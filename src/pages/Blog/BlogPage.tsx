@@ -15,7 +15,7 @@ interface BlogPost {
 }
 
 const blogPosts: BlogPost[] = [
-  {
+{
     id: 1,
     title: "Gallery Feature Update: What's New and What's Next",
     excerpt: "We've been working hard on improving the new Gallery feature. Here's a quick rundown of what's ready and what's coming up!",
@@ -171,9 +171,8 @@ const Blog: React.FC = () => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const MarkdownComponents: Record<string, React.FC<{ children: React.ReactNode }>> = {
-    h1: ({ children }) => children ? <h1 className="text-3xl font-bold mt-8 mb-4 text-[#084248]">{children}</h1> : null,
-    h2: ({ children }) => children ? <h2 className="text-2xl font-semibold mt-6 mb-3 text-[#084248]">{children}</h2> : null,
-    h3: ({ children }) => children ? <h3 className="text-xl font-semibold mt-4 mb-2 text-[#0a5761]">{children}</h3> : null,
+    h1: ({ children }) => <h1 className="text-3xl font-bold mt-8 mb-4 text-[#084248]">{children}</h1>,
+    h2: ({ children }) => <h2 className="text-2xl font-semibold mt-6 mb-3 text-[#084248]">{children}</h2>,
     p: ({ children }) => <p className="mb-4">{children}</p>,
     ul: ({ children }) => <ul className="list-disc pl-6 mb-4">{children}</ul>,
     ol: ({ children }) => <ol className="list-decimal pl-6 mb-4">{children}</ol>,
@@ -182,33 +181,30 @@ const Blog: React.FC = () => {
     em: ({ children }) => <em className="italic">{children}</em>,
   };
 
-
   const handleShare = (post: BlogPost) => {
-  const postUrl = window.location.href; // The current URL
+    const postUrl = window.location.href; // Capture the current post URL
 
-  // LinkedIn Share URL
-  const shareToLinkedIn = () => {
-    const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
-    window.open(linkedInShareUrl, '_blank');
+    // LinkedIn Share URL
+    const shareToLinkedIn = () => {
+      const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
+      window.open(linkedInShareUrl, '_blank');
+    };
+
+    // Instagram Stories Share (works on mobile)
+    const shareToInstagram = () => {
+      const instagramShareUrl = `instagram://story-camera`; // Instagram deep linking
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        window.open(instagramShareUrl, '_blank');
+      } else {
+        alert("Instagram Stories sharing works on mobile devices only.");
+      }
+    };
+
+    // Trigger share options
+    shareToLinkedIn();  // LinkedIn share
+    shareToInstagram(); // Instagram Stories share
   };
 
-  // Instagram Stories Share (works on mobile)
-  const shareToInstagram = () => {
-    const instagramShareUrl = `instagram://story-camera`; // Deep linking to Instagram
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-      window.open(instagramShareUrl, '_blank');
-    } else {
-      alert("Instagram Stories sharing works on mobile devices only.");
-    }
-  };
-
-  // Display options or direct share based on your logic
-  // Example: Open a modal or show share options
-  console.log('Sharing post...');
-  shareToLinkedIn();  // For LinkedIn share
-  shareToInstagram(); // For Instagram Stories share
-};
- 
   const filteredPosts = blogPosts
     .filter((post: BlogPost) => post.category === activeCategory)
     .sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -221,14 +217,12 @@ const Blog: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
-          
         >
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#084248]"
-          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
+            style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
             fibb.ai Blog
           </h1>
-          <p className="text-xl text-gray-600"
-          style={{ fontFamily: '"Font1", sans-serif' }}>
+          <p className="text-xl text-gray-600" style={{ fontFamily: '"Font1", sans-serif' }}>
             Insights, Updates, and Photography Tips
           </p>
         </motion.header>
@@ -241,18 +235,11 @@ const Blog: React.FC = () => {
             className="flex flex-wrap justify-center gap-4"
           >
             {categories.map((category, index) => (
-              <motion.li
-                key={category}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
+              <motion.li key={category} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: index * 0.1 }}>
                 <button
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 rounded-full transition-colors duration-300 ${
-                    activeCategory === category
-                      ? 'bg-[#084248] text-white'
-                      : 'bg-gray-200 text-[#084248] hover:bg-gray-300'
+                    activeCategory === category ? 'bg-[#084248] text-white' : 'bg-gray-200 text-[#084248] hover:bg-gray-300'
                   }`}
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                 >
@@ -265,44 +252,25 @@ const Blog: React.FC = () => {
 
         <AnimatePresence mode="wait">
           {filteredPosts.length > 0 ? (
-            <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
+            <motion.div key={activeCategory} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }} className="space-y-8">
               {filteredPosts.map((post: BlogPost, index: number) => (
-                <motion.article
-                  key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
-                >
+                <motion.article key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                   <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-4 text-[#084248]"
-                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                    >{post.title}</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-[#084248]" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{post.title}</h2>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center text-sm text-gray-500">
                         <Calendar className="mr-2 h-4 w-4" />
-                        <span
-                        style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                        >{post.date}</span>
+                        <span style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{post.date}</span>
                       </div>
                       <button
-                        onClick={handleShare}
+                        onClick={() => handleShare(post)} // Updated share button
                         className="flex items-center text-[#084248] hover:text-[#0a5761] transition-colors duration-300"
                         style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                       >
                         <Share2 className="mr-2 h-4 w-4" /> Share
                       </button>
                     </div>
-                    <p className="text-gray-600 mb-4"
-                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                    >{post.excerpt}</p>
+                    <p className="text-gray-600 mb-4" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{post.excerpt}</p>
                     <button
                       onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
                       className="flex items-center text-[#0a5761] hover:text-[#084248] transition-colors duration-300"
@@ -321,16 +289,8 @@ const Blog: React.FC = () => {
                   </div>
                   <AnimatePresence>
                     {expandedId === post.id && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="px-6 pb-6"
-                      >
-                        <div className="prose max-w-none text-lg"
-                        style={{ fontFamily: '"Font1", sans-serif' }}
-                        >
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="px-6 pb-6">
+                        <div className="prose max-w-none text-lg" style={{ fontFamily: '"Font1", sans-serif' }}>
                           <ReactMarkdown components={MarkdownComponents}>{post.content}</ReactMarkdown>
                         </div>
                         <div className="mt-8">
@@ -344,14 +304,7 @@ const Blog: React.FC = () => {
               ))}
             </motion.div>
           ) : (
-            <motion.p
-              key="no-posts"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="text-center text-gray-600 py-8"
-            >
+            <motion.p key="no-posts" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }} className="text-center text-gray-600 py-8">
               No posts available in this category yet.
             </motion.p>
           )}
