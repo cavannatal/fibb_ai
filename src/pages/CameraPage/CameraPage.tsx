@@ -2,12 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import fibbLogo from '../../components/images/FibbLogoWhite.svg';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentTimeStamp } from '../../utils';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 const PhotoCollectionIntroPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleContinue = () => {
-    navigate('/photo-capture');
+  const handleContinue = async () => {
+    const { userId } = await getCurrentUser();
+    navigate('/photo-capture', { state: {
+      sub: userId,
+      startingTimestamp: getCurrentTimeStamp()
+    }});
   };
 
   return (
