@@ -84,7 +84,7 @@ const Header: React.FC = () => {
           transition={{ duration: 1, delay: 0.3 }}
           className="lg:w-7/12 lg:flex lg:items-center lg:justify-end"
         >
-          <div className="grid grid-cols-3 gap-3 max-w-xl w-full">
+          <div className="grid grid-cols-3 gap-1 max-w-xl w-full">
             {galleryItems.map((item, index) => (
               <motion.div
                 key={index}
