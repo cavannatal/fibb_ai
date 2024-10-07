@@ -94,8 +94,7 @@ const PhotoCaptureComponent: React.FC = () => {
     width: isMobile ? (is4KSupported ? 1080 : 720) : (is4KSupported ? 3840 : 1920),
     height: isMobile ? (is4KSupported ? 1920 : 1280) : (is4KSupported ? 2160 : 1080),
     facingMode: facingMode,
-    zoom: 1, // Set zoom to 1 (no zoom)
-    aspectRatio: isMobile ? 9 / 16 : 16 / 9, // Adjust aspect ratio for mobile
+    aspectRatio: isMobile ? 9 / 16 : 16 / 9,
   };
 
   const capture = useCallback(() => {
@@ -220,26 +219,39 @@ const PhotoCaptureComponent: React.FC = () => {
           <p className="text-lg mb-4 text-gray-600">
             {is4KSupported ? "4K resolution supported" : "Standard HD resolution"}
           </p>
-          <div className={`relative ${isMobile ? 'w-full' : ''}`}>
+          <div className={`relative ${isMobile ? 'w-full max-w-sm' : ''}`}>
             {!capturedImage && isCameraReady ? (
               <Webcam
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
                 videoConstraints={videoConstraints}
-                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''} ${isMobile ? 'w-full h-auto' : ''}`}
+                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
                 mirrored={isMirrored}
-                style={isMobile ? { aspectRatio: '9/16', maxHeight: '80vh', width: 'auto', maxWidth: '100%' } : {}}
+                style={{
+                  width: '100%',
+                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
+                  objectFit: 'cover',
+                }}
               />
             ) : capturedImage ? (
               <img 
                 src={capturedImage} 
                 alt="captured" 
-                className={`rounded-lg shadow-lg ${isMobile ? 'w-full h-auto' : ''}`} 
-                style={isMobile ? { aspectRatio: '9/16', maxHeight: '80vh', width: 'auto', maxWidth: '100%' } : {}}
+                className="rounded-lg shadow-lg w-full"
+                style={{
+                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
+                  objectFit: 'cover',
+                }}
               />
             ) : (
-              <div className="flex items-center justify-center bg-gray-200 rounded-lg" style={{height: isMobile ? '80vh' : '480px', width: isMobile ? '100%' : '640px', aspectRatio: isMobile ? '9/16' : '16/9'}}>
+              <div 
+                className="flex items-center justify-center bg-gray-200 rounded-lg"
+                style={{
+                  width: '100%',
+                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
+                }}
+              >
                 <p>Initializing camera...</p>
               </div>
             )}
