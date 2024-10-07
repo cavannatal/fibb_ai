@@ -225,14 +225,16 @@ const PhotoCaptureComponent: React.FC = () => {
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
                 videoConstraints={videoConstraints}
-                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''} ${isMobile ? 'h-[70vh] w-full object-cover' : ''}`}
+                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''} ${isMobile ? 'w-full object-cover' : ''}`}
                 mirrored={isMirrored}
+                style={isMobile ? { height: '70vh', width: 'auto', maxWidth: '100%' } : {}}
               />
             ) : capturedImage ? (
               <img 
                 src={capturedImage} 
                 alt="captured" 
-                className={`rounded-lg shadow-lg ${isMobile ? 'h-[70vh] w-full object-cover' : ''}`} 
+                className={`rounded-lg shadow-lg ${isMobile ? 'w-full object-cover' : ''}`} 
+                style={isMobile ? { height: '70vh', width: 'auto', maxWidth: '100%' } : {}}
               />
             ) : (
               <div className="flex items-center justify-center bg-gray-200 rounded-lg" style={{height: isMobile ? '70vh' : '480px', width: isMobile ? '100%' : '640px'}}>
