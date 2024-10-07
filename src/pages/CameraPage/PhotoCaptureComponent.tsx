@@ -26,7 +26,6 @@ const PhotoCaptureComponent: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [isMirrored, setIsMirrored] = useState(true);
-  const [is4KSupported, setIs4KSupported] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showTemplateCard, setShowTemplateCard] = useState(true);
@@ -47,37 +46,8 @@ const PhotoCaptureComponent: React.FC = () => {
   ];
 
   useEffect(() => {
-    checkCameraCapabilities();
     initializeCamera();
   }, []);
-
-  const checkCameraCapabilities = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 2560 },
-          height: { ideal: 1440 }
-        }
-      });
-      const videoTrack = stream.getVideoTracks()[0];
-      const capabilities = videoTrack.getCapabilities();
-      
-      const maxWidth = capabilities.width?.max;
-      const maxHeight = capabilities.height?.max;
-
-      setIs4KSupported(
-        typeof maxWidth === 'number' &&
-        typeof maxHeight === 'number' &&
-        maxWidth >= 2560 &&
-        maxHeight >= 1440
-      );
-
-      stream.getTracks().forEach(track => track.stop());
-    } catch (error) {
-      console.error('Error checking camera capabilities:', error);
-      setIs4KSupported(false);
-    }
-  };
 
   const initializeCamera = async () => {
     try {
@@ -91,10 +61,8 @@ const PhotoCaptureComponent: React.FC = () => {
   };
 
   const videoConstraints = {
-    width: isMobile ? (is4KSupported ? 1080 : 720) : (is4KSupported ? 3840 : 1920),
-    height: isMobile ? (is4KSupported ? 1920 : 1280) : (is4KSupported ? 2160 : 1080),
     facingMode: facingMode,
-    aspectRatio: isMobile ? 9 / 16 : 16 / 9,
+    aspectRatio: isMobile ? 4 / 3 : 16 / 9,
   };
 
   const capture = useCallback(() => {
@@ -216,10 +184,7 @@ const PhotoCaptureComponent: React.FC = () => {
           <h2 className="text-2xl font-bold mb-4 text-[#084248]">
             Capture Photo
           </h2>
-          <p className="text-lg mb-4 text-gray-600">
-            {is4KSupported ? "4K resolution supported" : "Standard HD resolution"}
-          </p>
-          <div className={`relative ${isMobile ? 'w-full max-w-sm' : ''}`}>
+          <div className={`relative ${isMobile ? 'w-full' : ''}`}>
             {!capturedImage && isCameraReady ? (
               <Webcam
                 audio={false}
@@ -230,8 +195,8 @@ const PhotoCaptureComponent: React.FC = () => {
                 mirrored={isMirrored}
                 style={{
                   width: '100%',
-                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
-                  objectFit: 'cover',
+                  height: isMobile ? 'auto' : '480px',
+                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
                 }}
               />
             ) : capturedImage ? (
@@ -240,7 +205,8 @@ const PhotoCaptureComponent: React.FC = () => {
                 alt="captured" 
                 className="rounded-lg shadow-lg w-full"
                 style={{
-                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
+                  height: isMobile ? 'auto' : '480px',
+                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
                   objectFit: 'cover',
                 }}
               />
@@ -249,7 +215,8 @@ const PhotoCaptureComponent: React.FC = () => {
                 className="flex items-center justify-center bg-gray-200 rounded-lg"
                 style={{
                   width: '100%',
-                  height: isMobile ? 'calc(100vh - 250px)' : '480px',
+                  height: isMobile ? '0' : '480px',
+                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
                 }}
               >
                 <p>Initializing camera...</p>
