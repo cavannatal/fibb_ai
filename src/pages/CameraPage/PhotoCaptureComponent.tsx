@@ -1,212 +1,55 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import { Camera, Upload, RotateCw } from 'lucide-react';
-import { motion } from 'framer-motion';
-import awsconfig from '../../aws-exports';
+import { Camera, Upload, RotateCw, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
-
-// Import images
-import neutralImage from './images/neutral.png';
-import smileNoTeethImage from './images/smile_noteeth.png';
-import mysSmile from './images/smirk_mysterious.png';
-import mysSmileLeft from './images/smirk_mysterious_left.png';
-import mysSmileRight from './images/smirk_mysterious_right.png';
-import smileTeethImage from './images/smile_teeth.png';
-import smileteethLeft from './images/smile_teeth_left.png';
-import smileteethRight from './images/smile_teeth_right.png';
-import confidenteyes from './images/confident_eyes.png';
-import excitedLeft from './images/excited_left.png';
-import excitedRight from './images/excited_right.png';
-import leftHandBack from './images/left_hand_back.png';
-import leftHandPalm from './images/left_hand_palm.png';
-import rightHandBack from './images/right_hand_back.png';
-import rightHandPalm from './images/right_hand_palm.png';
-import clenchedFist from './images/fist_clench.png';
-import bodyFront from './images/body_confident.png';
-import bodyRight from './images/body_right.png';
-import bodyTurnaround from './images/body_turnaround.png';
-import bodyLeft from './images/body_left.png';
-import bodyHandsUp from './images/body_arms_up.png';
-import bodyHandsDown from './images/body_arms_down.png';
 import { getCurrentTimeStamp } from '../../utils';
 import { useLocation } from 'react-router-dom';
+import awsconfig from '../../aws-exports';
 
-Amplify.configure(awsconfig)
+import neu_front from './images/solo_shots/neutral_confident_front.png';
+import neu_right from './images/solo_shots/neutral_confident_right.png';
+import neu_left from './images/solo_shots/neutral_confident_left.png';
+import smirk_front from './images/solo_shots/smirk_closed_front.png';
+import smirk_left from './images/solo_shots/smirk_closed_left.png';
+import smirk_right from './images/solo_shots/smirk_closed_right.png';
+import smile_front from './images/solo_shots/smile_laugh_front.png';
+import smile_left from './images/solo_shots/smile_laugh_front.png';
+import smile_right from './images/solo_shots/smile_laugh_front.png';
 
-type Expression = 
-  | 'neutral'
-  | 'smile_noteeth'
-  | 'smile_noteeth_left'
-  | 'smile_noteeth_right'
-  | 'smile_teeth'
-  | 'smile_teeth_left'
-  | 'smile_teeth_right'
-  | 'smirk_mysterious'
-  | 'smirk_mysterious_left'
-  | 'smirk_mysterious_right'
-  | 'confident_eyes'
-  | 'excited_left'
-  | 'excited_right'
-  | 'step_back_confident'
-  | 'body_turn_right'
-  | 'body_turn_left'
-  | 'body_turn_around'
-  | 'body_arms_up'
-  | 'body_arms_down'
-  | 'right_hand_palm'
-  | 'right_hand_top'
-  | 'left_hand_palm'
-  | 'left_hand_top'
-  | 'clench_fist'
-  | 'both_legs'
-  | 'right_leg'
-  | 'left_leg';
-
-interface CapturedImage {
-  src: string;
-  expression: Expression;
-  position: number;
-}
-
-const PHOTOS_PER_EXPRESSION = 5;
-const EXPRESSIONS: Expression[] = [
-  'neutral',
-  'smile_noteeth',
-  'smile_noteeth_left',
-  'smile_noteeth_right',
-  'smile_teeth',
-  'smile_teeth_left',
-  'smile_teeth_right',
-  'smirk_mysterious',
-  'smirk_mysterious_left',
-  'smirk_mysterious_right',
-  'confident_eyes',
-  'excited_left',
-  'excited_right',
-  'step_back_confident',
-  'body_turn_right',
-  'body_turn_left',
-  'body_turn_around',
-  'body_arms_up',
-  'body_arms_down',
-  'right_hand_palm',
-  'right_hand_top',
-  'left_hand_palm',
-  'left_hand_top',
-  'clench_fist',
-  'both_legs',
-  'right_leg',
-  'left_leg'
-];
-
-const expressionImageMap: Record<Expression, string> = {
-  'neutral': neutralImage,
-  'smile_noteeth': smileNoTeethImage,
-  'smile_noteeth_left': smileNoTeethImage,
-  'smile_noteeth_right': smileNoTeethImage, 
-  'smile_teeth': smileTeethImage,
-  'smile_teeth_left': smileteethLeft,
-  'smile_teeth_right': smileteethRight,
-  'smirk_mysterious': mysSmile,
-  'smirk_mysterious_left': mysSmileLeft,
-  'smirk_mysterious_right': mysSmileRight,
-  'confident_eyes': confidenteyes,
-  'excited_left': excitedLeft,
-  'excited_right': excitedRight,
-  'step_back_confident': bodyFront,
-  'body_turn_right': bodyRight,
-  'body_turn_left': bodyLeft,
-  'body_turn_around': bodyTurnaround,
-  'body_arms_up': bodyHandsUp,
-  'body_arms_down': bodyHandsDown,
-  'right_hand_palm': rightHandPalm,
-  'right_hand_top': rightHandBack,
-  'left_hand_palm': leftHandPalm,
-  'left_hand_top': leftHandBack,
-  'clench_fist': clenchedFist,
-  'both_legs': bodyFront, 
-  'right_leg': bodyFront, 
-  'left_leg': bodyFront 
-};
-
-const expressionInstructions: Record<Expression, string> = {
-  'neutral': "Keep a neutral expression",
-  'smile_noteeth': "Smile naturally without showing teeth",
-  'smile_noteeth_left': "Smile without teeth, turning slightly to your left",
-  'smile_noteeth_right': "Smile without teeth, turning slightly to your right",
-  'smile_teeth': "Smile broadly, showing your teeth",
-  'smile_teeth_left': "Smile showing teeth, turning slightly to your left",
-  'smile_teeth_right': "Smile showing teeth, turning slightly to your right",
-  'smirk_mysterious': "Give a slight, mysterious smirk",
-  'smirk_mysterious_left': "Smirk mysteriously, turning slightly to your left",
-  'smirk_mysterious_right': "Smirk mysteriously, turning slightly to your right",
-  'confident_eyes': "Look directly at the camera with confident eyes",
-  'excited_left': "Look excited, turning to your left",
-  'excited_right': "Look excited, turning to your right",
-  'step_back_confident': "Take a step back and stand confidently",
-  'body_turn_right': "Turn your body slightly to the right",
-  'body_turn_left': "Turn your body slightly to the left",
-  'body_turn_around': "Turn your body around, showing your back",
-  'body_arms_up': "Raise both arms up",
-  'body_arms_down': "Keep both arms down by your sides",
-  'right_hand_palm': "Show your right hand palm to the camera",
-  'right_hand_top': "Show the top of your right hand to the camera",
-  'left_hand_palm': "Show your left hand palm to the camera",
-  'left_hand_top': "Show the top of your left hand to the camera",
-  'clench_fist': "Clench your fist and show it to the camera",
-  'both_legs': "Show both of your legs to the camera",
-  'right_leg': "Show your right leg to the camera",
-  'left_leg': "Show your left leg to the camera"
-};
-
-const expressionDisplayNames: Record<Expression, string> = {
-  'neutral': "Neutral",
-  'smile_noteeth': "Smile (No Teeth)",
-  'smile_noteeth_left': "Smile No Teeth (Left)",
-  'smile_noteeth_right': "Smile No Teeth (Right)",
-  'smile_teeth': "Smile (Teeth)",
-  'smile_teeth_left': "Smile Teeth (Left)",
-  'smile_teeth_right': "Smile Teeth (Right)",
-  'smirk_mysterious': "Mysterious Smirk",
-  'smirk_mysterious_left': "Mysterious Smirk (Left)",
-  'smirk_mysterious_right': "Mysterious Smirk (Right)",
-  'confident_eyes': "Confident Eyes",
-  'excited_left': "Excited (Left)",
-  'excited_right': "Excited (Right)",
-  'step_back_confident': "Step Back Confident",
-  'body_turn_right': "Body Turn Right",
-  'body_turn_left': "Body Turn Left",
-  'body_turn_around': "Body Turn Around",
-  'body_arms_up': "Arms Up",
-  'body_arms_down': "Arms Down",
-  'right_hand_palm': "Right Hand Palm",
-  'right_hand_top': "Right Hand Top",
-  'left_hand_palm': "Left Hand Palm",
-  'left_hand_top': "Left Hand Top",
-  'clench_fist': "Clenched Fist",
-  'both_legs': "Both Legs",
-  'right_leg': "Right Leg",
-  'left_leg': "Left Leg"
-};
+Amplify.configure(awsconfig);
 
 const PhotoCaptureComponent: React.FC = () => {
   const { state } = useLocation();
-  const [capturedImages, setCapturedImages] = useState<CapturedImage[]>([]);
-  const [currentExpressionIndex, setCurrentExpressionIndex] = useState(0);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageError, setImageError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [isMirrored, setIsMirrored] = useState(true);
   const [is4KSupported, setIs4KSupported] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showTemplateCard, setShowTemplateCard] = useState(true);
   const webcamRef = useRef<Webcam>(null);
 
-  const currentExpression = EXPRESSIONS[currentExpressionIndex];
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  const cards = [
+    { title: "Neutral Front", image: neu_front },
+    { title: "Neutral Right", image: neu_right },
+    { title: "Neutral Left", image: neu_left },
+    { title: "Smirk Front", image: smirk_front },
+    { title: "Smirk Left", image: smirk_left },
+    { title: "Smirk Right", image: smirk_right },
+    { title: "Smile Front", image: smile_front },
+    { title: "Smile Left", image: smile_left },
+    { title: "Smile Right", image: smile_right },
+  ];
 
   useEffect(() => {
-    setImageError(null);
     checkCameraCapabilities();
-  }, [currentExpression]);
+    initializeCamera();
+  }, []);
 
   const checkCameraCapabilities = async () => {
     try {
@@ -236,32 +79,37 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   };
 
+  const initializeCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop());
+      setIsCameraReady(true);
+    } catch (error) {
+      console.error('Error initializing camera:', error);
+      alert('Failed to initialize camera. Please check your camera permissions and try again.');
+    }
+  };
+
   const videoConstraints = {
-    width: is4KSupported ? 3840 : 1920,
-    height: is4KSupported ? 2160 : 1080,
+    width: isMobile ? (is4KSupported ? 1080 : 720) : (is4KSupported ? 3840 : 1920),
+    height: isMobile ? (is4KSupported ? 1920 : 1280) : (is4KSupported ? 2160 : 1080),
     facingMode: facingMode,
   };
 
-
   const capture = useCallback(() => {
-    if (capturedImages.length >= PHOTOS_PER_EXPRESSION) {
-      alert("You've captured all photos for this expression!");
-      return;
-    }
-
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-      setCapturedImages(prev => [...prev, { 
-        src: imageSrc, 
-        expression: currentExpression, 
-        position: prev.length + 1 
-      }]);
+      setCapturedImage(imageSrc);
     }
-  }, [capturedImages.length, currentExpression]);
+  }, []);
+
+  const removePhoto = () => {
+    setCapturedImage(null);
+  };
 
   const handleUpload = async () => {
-    if (capturedImages.length !== PHOTOS_PER_EXPRESSION) {
-      alert(`Please capture exactly ${PHOTOS_PER_EXPRESSION} photos before uploading.`);
+    if (!capturedImage) {
+      alert("Please capture a photo before uploading.");
       return;
     }
   
@@ -271,58 +119,49 @@ const PhotoCaptureComponent: React.FC = () => {
       const { userId } = await getCurrentUser();
       const sub = userId;
   
-      const uploadPromises = capturedImages.map(async (image, index) => {
-        const timestamp = getCurrentTimeStamp();
-        const fileName = `users/${sub}/photos/${state.startingTimestamp}/${currentExpression}/${timestamp}_${index + 1}.jpg`;
-        const response = await fetch(image.src);
-        const blob = await response.blob();
+      const timestamp = getCurrentTimeStamp();
+      const fileName = `users/${sub}/photos/${state.startingTimestamp}/${timestamp}.jpg`;
+      const response = await fetch(capturedImage);
+      const blob = await response.blob();
   
-        const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            fileName: fileName,
-            fileType: blob.type,
-          }),
-        });
-  
-        if (!presignedUrlResponse.ok) {
-          throw new Error(`Failed to get presigned URL for ${fileName}`);
-        }
-  
-        const { uploadUrl } = await presignedUrlResponse.json();
-  
-        const s3UploadResponse = await fetch(uploadUrl, {
-          method: 'PUT',
-          body: blob,
-          headers: {
-            'Content-Type': blob.type,
-          },
-        });
-  
-        if (!s3UploadResponse.ok) {
-          throw new Error(`Failed to upload ${fileName}`);
-        }
-  
-        return { success: true };
+      const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: fileName,
+          fileType: blob.type,
+        }),
       });
   
-      await Promise.all(uploadPromises);
-      setCapturedImages([]);
-      setCurrentExpressionIndex((prev) => prev + 1);
+      if (!presignedUrlResponse.ok) {
+        throw new Error(`Failed to get presigned URL for ${fileName}`);
+      }
+  
+      const { uploadUrl } = await presignedUrlResponse.json();
+  
+      const s3UploadResponse = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: blob,
+        headers: {
+          'Content-Type': blob.type,
+        },
+      });
+  
+      if (!s3UploadResponse.ok) {
+        throw new Error(`Failed to upload ${fileName}`);
+      }
+  
+      setCapturedImage(null);
+      setCurrentCardIndex(prevIndex => (prevIndex + 1) % cards.length);
+      setShowTemplateCard(true);
     } catch (error) {
-      console.error('Error uploading photos:', error);
-      alert('Failed to upload photos. Please try again.');
+      console.error('Error uploading photo:', error);
+      alert('Failed to upload photo. Please try again.');
     } finally {
       setIsUploading(false);
     }
-  };
-  
-  const handleImageError = () => {
-    setImageError(`Failed to load overlay image for ${expressionDisplayNames[currentExpression]}`);
-    console.error(`Image load error for: ${currentExpression}.png`);
   };
 
   const flipCamera = () => {
@@ -333,100 +172,120 @@ const PhotoCaptureComponent: React.FC = () => {
     });
   };
 
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-  if (currentExpressionIndex >= EXPRESSIONS.length) {
-    fetch('https://2hohe1gynf.execute-api.us-east-2.amazonaws.com/api/modelTrainFibb', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sub: state.sub,
-        "steps": 3500,
-        "photoFolderName": state.startingTimestamp
-      }),
-    });
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
-        <h2 className="text-2xl font-bold mb-4 text-[#084248]">All expressions completed!</h2>
-        <p className="text-lg text-gray-600">Thank you for participating.</p>
+  const TemplateCard = ({ card, onClose }: { card: { title: string; image: string }; onClose: () => void }) => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+    >
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <img 
+          src={card.image} 
+          alt={card.title} 
+          className="w-full h-96 object-cover rounded-lg mb-4"
+        />
+        <h2 className="text-2xl font-bold mb-4 text-[#084248]">{card.title}</h2>
+        <p className="text-gray-600 mb-6">
+          For the best results, please try your best to match the template above.
+        </p>
+        <button
+          onClick={onClose}
+          className="w-full bg-[#084248] text-white px-6 py-3 rounded-2xl transition-all duration-300 hover:bg-[#0a5761]"
+        >
+          Start Capturing
+        </button>
       </div>
-    );
-  }
+    </motion.div>
+  );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
-      <h2 className="text-2xl font-bold mb-4 text-[#084248]">
-        Capture {expressionDisplayNames[currentExpression]} - Photo {capturedImages.length} of {PHOTOS_PER_EXPRESSION}
-      </h2>
-      <p className="text-lg mb-4 text-gray-600">{expressionInstructions[currentExpression]}</p>
-      <div className="relative">
-        <Webcam
-          audio={false}
-          ref={webcamRef}
-          screenshotFormat="image/jpeg"
-          className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
-          mirrored={isMirrored}
-          videoConstraints={videoConstraints}
-        />
-        <img
-          src={expressionImageMap[currentExpression]}
-          alt={`${expressionDisplayNames[currentExpression]} overlay`}
-          className="absolute top-0 left-0 w-full h-full opacity-50 pointer-events-none"
-          onError={handleImageError}
-        />
-        {imageError && (
-          <div className="absolute top-0 left-0 w-full bg-red-500 text-white p-2 text-sm">
-            {imageError}
+      <AnimatePresence>
+        {showTemplateCard && (
+          <TemplateCard 
+            card={cards[currentCardIndex]} 
+            onClose={() => setShowTemplateCard(false)} 
+          />
+        )}
+      </AnimatePresence>
+
+      {!showTemplateCard && (
+        <>
+          <h2 className="text-2xl font-bold mb-4 text-[#084248]">
+            Capture Photo
+          </h2>
+          <p className="text-lg mb-4 text-gray-600">
+            {is4KSupported ? "4K resolution supported" : "Standard HD resolution"}
+          </p>
+          <div className={`relative ${isMobile ? 'w-full max-w-sm' : ''}`}>
+            {!capturedImage && isCameraReady ? (
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={videoConstraints}
+                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''} ${isMobile ? 'h-[70vh] w-full object-cover' : ''}`}
+                mirrored={isMirrored}
+              />
+            ) : capturedImage ? (
+              <img 
+                src={capturedImage} 
+                alt="captured" 
+                className={`rounded-lg shadow-lg ${isMobile ? 'h-[70vh] w-full object-cover' : ''}`} 
+              />
+            ) : (
+              <div className="flex items-center justify-center bg-gray-200 rounded-lg" style={{height: isMobile ? '70vh' : '480px', width: isMobile ? '100%' : '640px'}}>
+                <p>Initializing camera...</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div className="flex mt-4 space-x-4">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={capture}
-          disabled={capturedImages.length >= PHOTOS_PER_EXPRESSION}
-          className={`bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${capturedImages.length >= PHOTOS_PER_EXPRESSION ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
-        >
-          <Camera className="mr-2" /> Capture Photo ({capturedImages.length} of {PHOTOS_PER_EXPRESSION})
-        </motion.button>
-        {isMobile && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={flipCamera}
-            className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
-          >
-            <RotateCw className="mr-2" /> Flip Camera
-          </motion.button>
-        )}
-      </div>
-      
-      <div className="w-full max-w-4xl mt-8">
-        <h3 className="text-xl font-bold mb-2 text-[#084248]">Captured Photos for {expressionDisplayNames[currentExpression]}</h3>
-        <div className="grid grid-cols-4 gap-2">
-          {capturedImages.map((img, index) => (
-            <div key={index} className="relative">
-              <img src={img.src} alt={`captured ${index}`} className="w-full h-24 object-cover rounded-lg" />
-              <span className="absolute bottom-0 right-0 bg-[#084248] bg-opacity-75 text-white text-xs p-1 rounded-bl-lg">
-                {img.position}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleUpload}
-        disabled={isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION}
-        className={`mt-4 bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${(isUploading || capturedImages.length !== PHOTOS_PER_EXPRESSION) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
-      >
-        <Upload className="mr-2" /> {isUploading ? 'Uploading...' : `Upload ${expressionDisplayNames[currentExpression]} Photos & Continue`}
-      </motion.button>
+          <div className="flex mt-4 space-x-4">
+            {!capturedImage && isCameraReady ? (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={capture}
+                  className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                >
+                  <Camera className="mr-2" /> Capture Photo
+                </motion.button>
+                {isMobile && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={flipCamera}
+                    className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                  >
+                    <RotateCw className="mr-2" /> Flip Camera
+                  </motion.button>
+                )}
+              </>
+            ) : capturedImage ? (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={removePhoto}
+                  className="bg-red-500 text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-red-600"
+                >
+                  <X className="mr-2" /> Remove
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleUpload}
+                  disabled={isUploading}
+                  className={`bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
+                >
+                  <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload Photo'}
+                </motion.button>
+              </>
+            ) : null}
+          </div>
+        </>
+      )}
     </div>
   );
 };
