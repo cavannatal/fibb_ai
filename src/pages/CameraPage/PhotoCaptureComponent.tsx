@@ -46,14 +46,17 @@ const PhotoCaptureComponent: React.FC = () => {
     { title: "Smile Right", image: smile_right },
   ];
 
-  const initCameraWithAutofocus = useCallback(async () => {
+  const initCameraWithQuality = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const constraints: MediaStreamConstraints = {
         video: {
           facingMode: facingMode,
-          aspectRatio: isMobile ? 4 / 3 : 16 / 9
+          width: { ideal: 4096 },
+          height: { ideal: 2160 },
         }
-      });
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
       if (webcamRef.current && webcamRef.current.video) {
         webcamRef.current.video.srcObject = stream;
@@ -61,22 +64,38 @@ const PhotoCaptureComponent: React.FC = () => {
       }
 
       const videoTrack = stream.getVideoTracks()[0];
-      
-      try {
-        await videoTrack.applyConstraints({ advanced: [{ focusMode: 'continuous' } as any] });
-      } catch (focusError) {
-        console.warn('Continuous focus mode not supported:', focusError);
+      const capabilities = videoTrack.getCapabilities();
+      const settings = videoTrack.getSettings();
+
+      console.log('Current camera settings:', settings);
+      console.log('Camera capabilities:', capabilities);
+
+      // Attempt to apply the highest resolution available
+      if (capabilities.width && capabilities.height) {
+        await videoTrack.applyConstraints({
+          width: { ideal: capabilities.width.max },
+          height: { ideal: capabilities.height.max }
+        });
       }
 
-      if (videoRef.current) {
-        videoRef.current.addEventListener('click', async () => {
-          try {
-            await videoTrack.applyConstraints({ advanced: [{ focusMode: 'manual' } as any] });
-            setTimeout(() => videoTrack.applyConstraints({ advanced: [{ focusMode: 'continuous' } as any] }), 100);
-          } catch (error) {
-            console.error('Error applying focus:', error);
-          }
-        });
+      // Attempt to improve image quality if supported
+      const advancedConstraints: { [key: string]: number } = {};
+      
+      if ('brightness' in capabilities) {
+        advancedConstraints.brightness = (capabilities as any).brightness.max;
+      }
+      if ('contrast' in capabilities) {
+        advancedConstraints.contrast = (capabilities as any).contrast.max;
+      }
+      if ('saturation' in capabilities) {
+        advancedConstraints.saturation = (capabilities as any).saturation.max;
+      }
+      if ('sharpness' in capabilities) {
+        advancedConstraints.sharpness = (capabilities as any).sharpness.max;
+      }
+
+      if (Object.keys(advancedConstraints).length > 0) {
+        await videoTrack.applyConstraints({ advanced: [advancedConstraints] } as MediaTrackConstraints);
       }
 
       setIsCameraReady(true);
@@ -84,13 +103,13 @@ const PhotoCaptureComponent: React.FC = () => {
       console.error('Error accessing camera:', error);
       alert('Failed to initialize camera. Please check your camera permissions and try again.');
     }
-  }, [facingMode, isMobile]);
+  }, [facingMode]);
 
   useEffect(() => {
-    initCameraWithAutofocus();
-  }, [initCameraWithAutofocus]);
+    initCameraWithQuality();
+  }, [initCameraWithQuality]);
 
-  const videoConstraints = {
+  const videoConstraints: MediaTrackConstraints = {
     facingMode: facingMode,
     aspectRatio: isMobile ? 4 / 3 : 16 / 9,
   };
