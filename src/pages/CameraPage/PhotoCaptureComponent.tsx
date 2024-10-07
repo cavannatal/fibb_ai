@@ -55,8 +55,8 @@ const PhotoCaptureComponent: React.FC = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 3840 },
-          height: { ideal: 2160 }
+          width: { ideal: 2560 },
+          height: { ideal: 1440 }
         }
       });
       const videoTrack = stream.getVideoTracks()[0];
@@ -68,8 +68,8 @@ const PhotoCaptureComponent: React.FC = () => {
       setIs4KSupported(
         typeof maxWidth === 'number' &&
         typeof maxHeight === 'number' &&
-        maxWidth >= 3840 &&
-        maxHeight >= 2160
+        maxWidth >= 2560 &&
+        maxHeight >= 1440
       );
 
       stream.getTracks().forEach(track => track.stop());
