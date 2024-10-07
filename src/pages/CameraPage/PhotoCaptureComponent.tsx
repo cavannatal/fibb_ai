@@ -1,11 +1,11 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Camera, Upload, RotateCw, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { getCurrentTimeStamp } from '../../utils';
-import { useLocation } from 'react-router-dom';
 import awsconfig from '../../aws-exports';
 
 import neu_front from './images/solo_shots/neutral_confident_front.png';
@@ -15,12 +15,13 @@ import smirk_front from './images/solo_shots/smirk_closed_front.png';
 import smirk_left from './images/solo_shots/smirk_closed_left.png';
 import smirk_right from './images/solo_shots/smirk_closed_right.png';
 import smile_front from './images/solo_shots/smile_laugh_front.png';
-import smile_left from './images/solo_shots/smile_laugh_front.png';
-import smile_right from './images/solo_shots/smile_laugh_front.png';
+import smile_left from './images/solo_shots/smile_laugh_left.png';
+import smile_right from './images/solo_shots/smile_laugh_right.png';
 
 Amplify.configure(awsconfig);
 
 const PhotoCaptureComponent: React.FC = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -48,12 +49,18 @@ const PhotoCaptureComponent: React.FC = () => {
 
   const initCameraWithQuality = useCallback(async () => {
     try {
+      const standardConstraints: MediaTrackConstraints = {
+        facingMode: facingMode,
+        width: { ideal: 4096 },
+        height: { ideal: 2160 },
+      };
+
+      const advancedConstraints: any = {
+        focusMode: ['continuous', 'auto'],
+      };
+
       const constraints: MediaStreamConstraints = {
-        video: {
-          facingMode: facingMode,
-          width: { ideal: 4096 },
-          height: { ideal: 2160 },
-        }
+        video: { ...standardConstraints, ...advancedConstraints }
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -70,7 +77,6 @@ const PhotoCaptureComponent: React.FC = () => {
       console.log('Current camera settings:', settings);
       console.log('Camera capabilities:', capabilities);
 
-      // Attempt to apply the highest resolution available
       if (capabilities.width && capabilities.height) {
         await videoTrack.applyConstraints({
           width: { ideal: capabilities.width.max },
@@ -78,24 +84,23 @@ const PhotoCaptureComponent: React.FC = () => {
         });
       }
 
-      // Attempt to improve image quality if supported
-      const advancedConstraints: { [key: string]: number } = {};
+      const imageQualityConstraints: { [key: string]: number } = {};
       
       if ('brightness' in capabilities) {
-        advancedConstraints.brightness = (capabilities as any).brightness.max;
+        imageQualityConstraints.brightness = (capabilities as any).brightness.max;
       }
       if ('contrast' in capabilities) {
-        advancedConstraints.contrast = (capabilities as any).contrast.max;
+        imageQualityConstraints.contrast = (capabilities as any).contrast.max;
       }
       if ('saturation' in capabilities) {
-        advancedConstraints.saturation = (capabilities as any).saturation.max;
+        imageQualityConstraints.saturation = (capabilities as any).saturation.max;
       }
       if ('sharpness' in capabilities) {
-        advancedConstraints.sharpness = (capabilities as any).sharpness.max;
+        imageQualityConstraints.sharpness = (capabilities as any).sharpness.max;
       }
 
-      if (Object.keys(advancedConstraints).length > 0) {
-        await videoTrack.applyConstraints({ advanced: [advancedConstraints] } as MediaTrackConstraints);
+      if (Object.keys(imageQualityConstraints).length > 0) {
+        await videoTrack.applyConstraints({ advanced: [imageQualityConstraints] } as MediaTrackConstraints);
       }
 
       setIsCameraReady(true);
@@ -104,7 +109,7 @@ const PhotoCaptureComponent: React.FC = () => {
       alert('Failed to initialize camera. Please check your camera permissions and try again.');
     }
   }, [facingMode]);
-
+  
   useEffect(() => {
     initCameraWithQuality();
   }, [initCameraWithQuality]);
@@ -172,8 +177,15 @@ const PhotoCaptureComponent: React.FC = () => {
       }
   
       setCapturedImage(null);
-      setCurrentCardIndex(prevIndex => (prevIndex + 1) % cards.length);
-      setShowTemplateCard(true);
+      
+      if (currentCardIndex === cards.length - 1) {
+        // All photos have been taken, redirect to completion screen
+        navigate('/completion');
+      } else {
+        // Move to the next card
+        setCurrentCardIndex(prevIndex => prevIndex + 1);
+        setShowTemplateCard(true);
+      }
     } catch (error) {
       console.error('Error uploading photo:', error);
       alert('Failed to upload photo. Please try again.');
