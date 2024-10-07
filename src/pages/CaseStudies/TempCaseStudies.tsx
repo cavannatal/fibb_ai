@@ -17,7 +17,7 @@ import profess3 from './DemPhotos/professional_3.jpeg';
 import profess4 from './DemPhotos/professional_4.jpeg';
 import profess5 from './DemPhotos/professional_5.jpeg';
 import profess6 from './DemPhotos/professional_6.jpeg';
-import profess7 from './DemPhotos/professional_7.jpeg';
+import profess7 from './DemPhotos/professional7.jpg';
 import profess8 from './DemPhotos/professional_8.jpeg';
 import profess9 from './DemPhotos/professional_9.jpeg';
 
