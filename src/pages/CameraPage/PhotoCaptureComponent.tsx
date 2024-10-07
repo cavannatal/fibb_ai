@@ -30,6 +30,7 @@ const PhotoCaptureComponent: React.FC = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showTemplateCard, setShowTemplateCard] = useState(true);
   const webcamRef = useRef<Webcam>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -45,20 +46,49 @@ const PhotoCaptureComponent: React.FC = () => {
     { title: "Smile Right", image: smile_right },
   ];
 
-  useEffect(() => {
-    initializeCamera();
-  }, []);
-
-  const initializeCamera = async () => {
+  const initCameraWithAutofocus = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: facingMode,
+          aspectRatio: isMobile ? 4 / 3 : 16 / 9
+        }
+      });
+
+      if (webcamRef.current && webcamRef.current.video) {
+        webcamRef.current.video.srcObject = stream;
+        videoRef.current = webcamRef.current.video;
+      }
+
+      const videoTrack = stream.getVideoTracks()[0];
+      
+      try {
+        await videoTrack.applyConstraints({ advanced: [{ focusMode: 'continuous' } as any] });
+      } catch (focusError) {
+        console.warn('Continuous focus mode not supported:', focusError);
+      }
+
+      if (videoRef.current) {
+        videoRef.current.addEventListener('click', async () => {
+          try {
+            await videoTrack.applyConstraints({ advanced: [{ focusMode: 'manual' } as any] });
+            setTimeout(() => videoTrack.applyConstraints({ advanced: [{ focusMode: 'continuous' } as any] }), 100);
+          } catch (error) {
+            console.error('Error applying focus:', error);
+          }
+        });
+      }
+
       setIsCameraReady(true);
     } catch (error) {
-      console.error('Error initializing camera:', error);
+      console.error('Error accessing camera:', error);
       alert('Failed to initialize camera. Please check your camera permissions and try again.');
     }
-  };
+  }, [facingMode, isMobile]);
+
+  useEffect(() => {
+    initCameraWithAutofocus();
+  }, [initCameraWithAutofocus]);
 
   const videoConstraints = {
     facingMode: facingMode,
@@ -133,13 +163,13 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   };
 
-  const flipCamera = () => {
+  const flipCamera = useCallback(() => {
     setFacingMode(prevMode => {
       const newMode = prevMode === 'user' ? 'environment' : 'user';
       setIsMirrored(newMode === 'user');
       return newMode;
     });
-  };
+  }, []);
 
   const TemplateCard = ({ card, onClose }: { card: { title: string; image: string }; onClose: () => void }) => (
     <motion.div
