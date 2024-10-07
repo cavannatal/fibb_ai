@@ -90,8 +90,9 @@ const App: React.FC = () => {
               }
             />
           </Routes>
-          <Footer />
+          
         </main>
+        <Footer />
       </div>
     </Router>
   );
