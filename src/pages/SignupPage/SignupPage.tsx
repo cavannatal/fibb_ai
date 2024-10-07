@@ -276,23 +276,7 @@ export const Signup: React.FC<SignupProps> = ({ onUserChange }) => {
           </View>
         </View>
         
-        {/* Footer */}
-        {isSmallScreen && (
-          <View
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              backgroundColor: '#f0f0f0',
-              padding: '1rem',
-              textAlign: 'center',
-              borderTop: '1px solid #ddd',
-            }}
-          >
-            <p>© 2024 fibb.ai All rights reserved.</p>
-          </View>
-        )}
+       
       </View>
     </ThemeProvider>
   );
