@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import { Camera, Upload, RotateCw, X } from 'lucide-react';
+import { Camera, Upload, RotateCw, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
@@ -181,9 +181,17 @@ const PhotoCaptureComponent: React.FC = () => {
 
       {!showTemplateCard && (
         <>
-          <h2 className="text-2xl font-bold mb-4 text-[#084248]">
-            Capture Photo
-          </h2>
+          <div className="flex items-center justify-center w-full mb-4">
+            <h2 className="text-2xl font-bold text-[#084248] mr-2">
+              {cards[currentCardIndex].title}
+            </h2>
+            <button
+              onClick={() => setShowTemplateCard(true)}
+              className="text-[#084248] hover:text-[#0a5761] transition-colors duration-300 flex items-center justify-center"
+            >
+              <Info size={24} />
+            </button>
+          </div>
           <div className={`relative ${isMobile ? 'w-full' : ''}`}>
             {!capturedImage && isCameraReady ? (
               <Webcam
