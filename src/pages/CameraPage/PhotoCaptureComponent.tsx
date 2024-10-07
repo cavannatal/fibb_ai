@@ -1,11 +1,11 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import Webcam from 'react-webcam';
-import { Camera, Upload, RotateCw, X, Info } from 'lucide-react';
+import { Camera, Upload, RotateCw, X, Info, Timer } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { getCurrentTimeStamp } from '../../utils';
+import { useLocation } from 'react-router-dom';
 import awsconfig from '../../aws-exports';
 
 import neu_front from './images/solo_shots/neutral_confident_front.png';
@@ -15,13 +15,12 @@ import smirk_front from './images/solo_shots/smirk_closed_front.png';
 import smirk_left from './images/solo_shots/smirk_closed_left.png';
 import smirk_right from './images/solo_shots/smirk_closed_right.png';
 import smile_front from './images/solo_shots/smile_laugh_front.png';
-import smile_left from './images/solo_shots/smile_laugh_left.png';
-import smile_right from './images/solo_shots/smile_laugh_right.png';
+import smile_left from './images/solo_shots/smile_laugh_front.png';
+import smile_right from './images/solo_shots/smile_laugh_front.png';
 
 Amplify.configure(awsconfig);
 
 const PhotoCaptureComponent: React.FC = () => {
-  const navigate = useNavigate();
   const { state } = useLocation();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -30,8 +29,9 @@ const PhotoCaptureComponent: React.FC = () => {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showTemplateCard, setShowTemplateCard] = useState(true);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const webcamRef = useRef<Webcam>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -47,74 +47,22 @@ const PhotoCaptureComponent: React.FC = () => {
     { title: "Smile Right", image: smile_right },
   ];
 
-  const initCameraWithQuality = useCallback(async () => {
+  useEffect(() => {
+    initializeCamera();
+  }, []);
+
+  const initializeCamera = async () => {
     try {
-      const standardConstraints: MediaTrackConstraints = {
-        facingMode: facingMode,
-        width: { ideal: 4096 },
-        height: { ideal: 2160 },
-      };
-
-      const advancedConstraints: any = {
-        focusMode: ['continuous', 'auto'],
-      };
-
-      const constraints: MediaStreamConstraints = {
-        video: { ...standardConstraints, ...advancedConstraints }
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-      if (webcamRef.current && webcamRef.current.video) {
-        webcamRef.current.video.srcObject = stream;
-        videoRef.current = webcamRef.current.video;
-      }
-
-      const videoTrack = stream.getVideoTracks()[0];
-      const capabilities = videoTrack.getCapabilities();
-      const settings = videoTrack.getSettings();
-
-      console.log('Current camera settings:', settings);
-      console.log('Camera capabilities:', capabilities);
-
-      if (capabilities.width && capabilities.height) {
-        await videoTrack.applyConstraints({
-          width: { ideal: capabilities.width.max },
-          height: { ideal: capabilities.height.max }
-        });
-      }
-
-      const imageQualityConstraints: { [key: string]: number } = {};
-      
-      if ('brightness' in capabilities) {
-        imageQualityConstraints.brightness = (capabilities as any).brightness.max;
-      }
-      if ('contrast' in capabilities) {
-        imageQualityConstraints.contrast = (capabilities as any).contrast.max;
-      }
-      if ('saturation' in capabilities) {
-        imageQualityConstraints.saturation = (capabilities as any).saturation.max;
-      }
-      if ('sharpness' in capabilities) {
-        imageQualityConstraints.sharpness = (capabilities as any).sharpness.max;
-      }
-
-      if (Object.keys(imageQualityConstraints).length > 0) {
-        await videoTrack.applyConstraints({ advanced: [imageQualityConstraints] } as MediaTrackConstraints);
-      }
-
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop());
       setIsCameraReady(true);
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error('Error initializing camera:', error);
       alert('Failed to initialize camera. Please check your camera permissions and try again.');
     }
-  }, [facingMode]);
-  
-  useEffect(() => {
-    initCameraWithQuality();
-  }, [initCameraWithQuality]);
+  };
 
-  const videoConstraints: MediaTrackConstraints = {
+  const videoConstraints = {
     facingMode: facingMode,
     aspectRatio: isMobile ? 4 / 3 : 16 / 9,
   };
@@ -177,15 +125,8 @@ const PhotoCaptureComponent: React.FC = () => {
       }
   
       setCapturedImage(null);
-      
-      if (currentCardIndex === cards.length - 1) {
-        // All photos have been taken, redirect to completion screen
-        navigate('/completion');
-      } else {
-        // Move to the next card
-        setCurrentCardIndex(prevIndex => prevIndex + 1);
-        setShowTemplateCard(true);
-      }
+      setCurrentCardIndex(prevIndex => (prevIndex + 1) % cards.length);
+      setShowTemplateCard(true);
     } catch (error) {
       console.error('Error uploading photo:', error);
       alert('Failed to upload photo. Please try again.');
@@ -194,13 +135,29 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   };
 
-  const flipCamera = useCallback(() => {
+  const flipCamera = () => {
     setFacingMode(prevMode => {
       const newMode = prevMode === 'user' ? 'environment' : 'user';
       setIsMirrored(newMode === 'user');
       return newMode;
     });
-  }, []);
+  };
+
+  const startTimer = () => {
+    setIsTimerActive(true);
+    setCountdown(5);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isTimerActive && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (isTimerActive && countdown === 0) {
+      capture();
+      setIsTimerActive(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isTimerActive, countdown, capture]);
 
   const TemplateCard = ({ card, onClose }: { card: { title: string; image: string }; onClose: () => void }) => (
     <motion.div
@@ -255,19 +212,26 @@ const PhotoCaptureComponent: React.FC = () => {
           </div>
           <div className={`relative ${isMobile ? 'w-full' : ''}`}>
             {!capturedImage && isCameraReady ? (
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints}
-                className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
-                mirrored={isMirrored}
-                style={{
-                  width: '100%',
-                  height: isMobile ? 'auto' : '480px',
-                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
-                }}
-              />
+              <>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={videoConstraints}
+                  className={`rounded-lg shadow-lg ${isMirrored ? 'scale-x-[-1]' : ''}`}
+                  mirrored={isMirrored}
+                  style={{
+                    width: '100%',
+                    height: isMobile ? 'auto' : '480px',
+                    aspectRatio: isMobile ? '3 / 4' : '16 / 9',
+                  }}
+                />
+                {isTimerActive && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-9xl font-bold">
+                    {countdown}
+                  </div>
+                )}
+              </>
             ) : capturedImage ? (
               <img 
                 src={capturedImage} 
@@ -302,6 +266,14 @@ const PhotoCaptureComponent: React.FC = () => {
                   className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
                 >
                   <Camera className="mr-2" /> Capture Photo
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={startTimer}
+                  className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                >
+                  <Timer className="mr-2" /> Use Timer (5s)
                 </motion.button>
                 {isMobile && (
                   <motion.button
