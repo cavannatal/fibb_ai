@@ -1,13 +1,24 @@
+import { getCurrentUser } from 'aws-amplify/auth';
 import React, { useState, useEffect } from 'react';
 
 const MultiPricingTablePage: React.FC = () => {
   const [selectedTable, setSelectedTable] = useState(0);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://js.stripe.com/v3/pricing-table.js";
     script.async = true;
     document.body.appendChild(script);
+
+    // Assume you have a function to get the current user's ID
+    const fetchUserId = async () => {
+      // Replace this with your actual logic to get the user ID
+      const { userId: sub } = await getCurrentUser();
+      setUserId(sub);
+    };
+
+    fetchUserId();
     
     return () => {
       document.body.removeChild(script);
@@ -70,7 +81,13 @@ const MultiPricingTablePage: React.FC = () => {
       
       {React.createElement("stripe-pricing-table", {
         "pricing-table-id": pricingTables[selectedTable].id,
-        "publishable-key": "pk_live_51Q4wZeFdWkuROuns9OgKeaZNBF7MQTJwsCi8W20R8GIgYydQfXPa0DHxeEQB2yVXV1GAXZhDFb9vsiv0Kf4BpjII00z3fsR7BX"
+        "publishable-key": "pk_live_51Q4wZeFdWkuROuns9OgKeaZNBF7MQTJwsCi8W20R8GIgYydQfXPa0DHxeEQB2yVXV1GAXZhDFb9vsiv0Kf4BpjII00z3fsR7BX",
+        "client-reference-id": userId,
+        "custom-metadata": JSON.stringify({
+          user_id: userId,
+          plan_type: pricingTables[selectedTable].header,
+          plan_id: pricingTables[selectedTable].id,
+        })
       })}
     </div>
   );
