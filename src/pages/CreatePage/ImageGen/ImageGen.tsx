@@ -13,6 +13,7 @@ type ColorScheme = 'vibrant' | 'muted' | 'monochrome' | 'warm-tones' | 'cool-ton
 
 // Interface for the form state
 interface FormState {
+  selectedLora: string;
   subject: string;
   environment: Environment;
   details: Detail[];
@@ -41,8 +42,11 @@ const ImageGen: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [loraFiles, setLoraFiles] = useState<string[]>([]);
+
   
   const [formState, setFormState] = useState<FormState>({
+    selectedLora: '',
     subject: '',
     environment: 'urban',
     details: [],
@@ -50,6 +54,67 @@ const ImageGen: React.FC = () => {
     camera: 'wide-angle',
     colorScheme: 'vibrant',
   });
+
+  async function getLoraFiles(sub: string): Promise<string[]> {
+    const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
+  
+    console.log('Fetching Lora files for sub:', sub);
+  
+    const requestData = { sub };
+    console.log('Request data:', requestData);
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)  // Make sure this line is present
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
+      }
+  
+      const data = await response.json();
+      console.log('Received data:', data);
+  
+      const files = Array.isArray(data) ? data : [];
+      console.log('Parsed files:', files);
+  
+      return files;
+    } catch (error) {
+      console.error('Error fetching Lora files:', error);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    const fetchLoraFiles = async () => {
+      try {
+        const { userId } = await getCurrentUser();
+        console.log('Fetching Lora files for user:', userId);
+        const files = await getLoraFiles(userId);
+        console.log('Fetched Lora files:', files);
+        setLoraFiles(files);
+        if (files.length === 0) {
+          console.log('No Lora files found for this user');
+          // You might want to set some state here to display a message to the user
+        }
+      } catch (error) {
+        console.error('Error fetching Lora files:', error);
+        setLoraFiles([]);
+      }
+    };
+  
+    fetchLoraFiles();
+  }, []);
+
+  useEffect(() => {
+    console.log('loraFiles state updated:', loraFiles);
+  }, [loraFiles]);
 
   useEffect(() => {
     const fetchApiKeyOpen = async () => {
@@ -210,7 +275,7 @@ const ImageGen: React.FC = () => {
         input: {
           prompt: optimizedPrompt,
           image_size: { width: 1080, height: 1920 },
-          path: "LORAFOLDERPLACEHOLDER",
+          path: formState.selectedLora,
           num_inference_steps: 50,
           guidance_scale: 3.5,
           num_images: 1,
@@ -303,6 +368,7 @@ const ImageGen: React.FC = () => {
   };
 
   return (
+    
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
       <header className="flex justify-center p-4">
         <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
@@ -325,6 +391,28 @@ const ImageGen: React.FC = () => {
           className="w-full max-w-3xl bg-[#144a53] p-6 sm:p-8 rounded-lg"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+            <label htmlFor="selectedLora" className="block text-lg font-semibold mb-2">Select Lora:</label>
+              <select
+                id="selectedLora"
+                name="selectedLora"
+                value={formState.selectedLora}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white"
+              >
+                {loraFiles.length > 0 ? (
+                  <>
+                    <option value="">Select a Lora file</option>
+                    {loraFiles.map((file, index) => (
+                      <option key={index} value={file}>{file}</option>
+                    ))}
+                  </>
+                ) : (
+                  <option value="">No Fibbs available</option>
+              )}
+            </select>
+        </div>
+
             <div>
               <label htmlFor="subject" className="block text-lg font-semibold mb-2">Subject/Scenario:</label>
               <input
