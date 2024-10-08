@@ -61,6 +61,33 @@ const ImageGen: React.FC = () => {
     fetchLoraFiles();
   }, []);
 
+  const getCurrentTimeStamp = () => {
+    return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
+  };
+
+  async function getLoraFiles(sub: string): Promise<string[]> {
+    const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sub }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
+      }
+
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error('Error fetching Lora files:', error);
+      return [];
+    }
+  }
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
     
@@ -89,6 +116,7 @@ const ImageGen: React.FC = () => {
     
     try {
       let imageUrl: string;
+ 
       if (formState.generateWithoutFibb) {
         if (!apiKeyBfl) throw new Error('BFL API key not available');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
@@ -96,7 +124,18 @@ const ImageGen: React.FC = () => {
         if (!apiKeyFal) throw new Error('FAL API key not available');
         imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, formState.selectedLora);
       }
-      setGeneratedImage(imageUrl);
+      
+      // Remove the "?t=[taskID]" from the URL
+      const cleanUrl = imageUrl.split('?')[0];
+      console.log(cleanUrl);
+      // Download the image
+      const response = await fetch(cleanUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      setGeneratedImage(cleanUrl);
+      console.log(generatedImage);
+
     } catch (error) {
       console.error('Error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -112,6 +151,7 @@ const ImageGen: React.FC = () => {
 
   const handleUpload = async (): Promise<void> => {
     if (!generatedImage || isSaved) {
+      console.log(generatedImage);
       setUploadStatus('Image already saved or no image to upload');
       return;
     }
@@ -120,10 +160,10 @@ const ImageGen: React.FC = () => {
       const { userId } = await getCurrentUser();
       const timestamp = getCurrentTimeStamp();
       const fileName = `users/${userId}/gallery/${timestamp}.jpg`;
-
+      console.log(fileName);
       const imageResponse = await fetch(generatedImage);
       const imageBlob = await imageResponse.blob();
-
+      console.log(imageBlob);
       const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,7 +175,7 @@ const ImageGen: React.FC = () => {
       }
 
       const { uploadUrl } = await presignedUrlResponse.json();
-
+      console.log(uploadUrl);
       const s3UploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
         body: imageBlob,
@@ -153,33 +193,6 @@ const ImageGen: React.FC = () => {
       setUploadStatus(`Upload failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
-
-  const getCurrentTimeStamp = () => {
-    return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
-  };
-
-  async function getLoraFiles(sub: string): Promise<string[]> {
-    const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
-    
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sub }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
-      }
-
-      const data = await response.json();
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      console.error('Error fetching Lora files:', error);
-      return [];
-    }
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
@@ -301,7 +314,7 @@ const ImageGen: React.FC = () => {
         )}
       </main>
     </div>
-  );
+    );
 };
 
 export default ImageGen;

@@ -1,4 +1,5 @@
 import { JWT } from 'aws-amplify/auth';
+import { Buffer } from 'buffer';
 
 const BFL_API_URL = 'https://4k7yl1uook.execute-api.us-east-2.amazonaws.com/default/BflAIKey';
 
@@ -83,6 +84,5 @@ const pollBFLResult = async (apiKey: string, taskId: string): Promise<string> =>
     } else if (data.status === 'Error') {
       throw new Error('BFL task failed');
     }
-    // If status is still 'Pending', continue polling
   }
 };
