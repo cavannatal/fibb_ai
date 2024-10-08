@@ -83,7 +83,7 @@ const MultiPricingTablePage: React.FC = () => {
         "pricing-table-id": pricingTables[selectedTable].id,
         "publishable-key": "pk_live_51Q4wZeFdWkuROuns9OgKeaZNBF7MQTJwsCi8W20R8GIgYydQfXPa0DHxeEQB2yVXV1GAXZhDFb9vsiv0Kf4BpjII00z3fsR7BX",
         "client-reference-id": userId,
-        "custom-metadata": JSON.stringify({
+        "metadata": JSON.stringify({
           user_id: userId,
           plan_type: pricingTables[selectedTable].header,
           plan_id: pricingTables[selectedTable].id,
