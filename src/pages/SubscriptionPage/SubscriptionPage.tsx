@@ -72,7 +72,10 @@ const MultiPricingTablePage: React.FC = () => {
           <div
             key={index}
             className={`table-header ${selectedTable === index ? 'active' : ''}`}
-            onClick={() => setSelectedTable(index)}
+            onClick={() => {
+              console.log(userId);
+              setSelectedTable(index)
+            }}
           >
             {table.header}
           </div>
