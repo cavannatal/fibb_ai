@@ -1,6 +1,8 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import * as fal from "@fal-ai/serverless-client";
+import { motion } from 'framer-motion';
+import fibbLogo from '../../../components/images/FibbLogoWhite.svg';
 
 // Define types for form state options
 type Environment = 'urban' | 'nature' | 'space' | 'underwater' | 'fantasy' | 'sci-fi' | 'indoors' | 'outdoors' | 'custom';
@@ -38,6 +40,7 @@ const ImageGen: React.FC = () => {
   const [policyBreak, setPolicyBreak] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   
   const [formState, setFormState] = useState<FormState>({
     subject: '',
@@ -139,8 +142,6 @@ const ImageGen: React.FC = () => {
     }));
   };
 
-  
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
@@ -167,35 +168,6 @@ const ImageGen: React.FC = () => {
     }
 
     try {
-      // Policy compliance check
-      //const policyResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        //method: 'POST',
-        //headers: {
-          //'Content-Type': 'application/json',
-          //'Authorization': `Bearer ${apiKeyOpen}`
-        //},
-        //body: JSON.stringify({
-          //model: 'gpt-4o-mini',
-          //messages: [
-            //{ role: 'system', content: 'ou  a cybersecurity and ethics expert for an image generation engine. You will assess every prompt I give you and assess if there is anything that could pose as a threat to our business or end user. You will also assess every prompt to make sure it does not depict any content that would be deemed unethical, NSFW, or anything that violates OpenAI policy. You will respond ONLY with a YES or NO. No analysis or summary is needed. Make sure every answer you give ends with the word YES or NO. If you cannot assist, just say the word NO'},
-            //{ role: 'user', content: prompt }
-          //]
-        //})
-      //});
-
-      //if (!policyResponse.ok) {
-        //throw new Error(`OpenAI API error: ${policyResponse.status}`);
-      //}
-
-      //const policyData = await policyResponse.json();
-      //const policyCheck = policyData.choices[0].message.content.trim();
-
-      //if (policyCheck === "NO") {
-        //setPolicyBreak("This prompt does not comply with Fibb.ai Use Policy.");
-        //setIsLoading(false);
-        //return; // Stop the workflow here
-      //}
-
       // If policy check passes, continue with prompt optimization and image generation
       const optimizationResponse = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -234,10 +206,10 @@ const ImageGen: React.FC = () => {
       const userId = await getCurrentUser();
       const sub = userId;
     
-      const result = await fal.subscribe("fal-ai/flux-pro", {
+      const result = await fal.subscribe("fal-ai/flux-pro/v1.1", {
         input: {
           prompt: optimizedPrompt,
-          image_size: { width: 1024, height: 1024 },
+          image_size: { width: 1080, height: 1920 },
           path: "LORAFOLDERPLACEHOLDER",
           num_inference_steps: 50,
           guidance_scale: 3.5,
@@ -275,8 +247,8 @@ const ImageGen: React.FC = () => {
   };
 
   const handleUpload = async (): Promise<void> => {
-    if (!generatedImage) {
-      setUploadStatus('No image to upload');
+    if (!generatedImage || isSaved) {
+      setUploadStatus('Image already saved or no image to upload');
       return;
     }
 
@@ -323,143 +295,214 @@ const ImageGen: React.FC = () => {
       }
 
       setUploadStatus('Image uploaded successfully');
+      setIsSaved(true);
     } catch (error) {
       console.error('Error uploading image:', error);
       setUploadStatus(`Upload failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
-
   return (
-    <div className="form-container">
-      <h1>Image Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="subject">Subject/Scenario:</label>
-        <input
-          type="text"
-          id="subject"
-          name="subject"
-          value={formState.subject}
-          onChange={handleChange}
-          placeholder="e.g. A futuristic city at night"
-          required
-        />
-
-        <label htmlFor="environment">Environment/Situation:</label>
-        <select
-          id="environment"
-          name="environment"
-          value={formState.environment}
-          onChange={handleChange}
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
+      <header className="flex justify-center p-4">
+        <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
+      </header>
+      <main className="flex flex-col items-center flex-grow p-4 sm:p-6 pb-16 sm:pb-6">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-16 mt-8 sm:mt-16 text-center"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
-          <option value="urban">Urban</option>
-          <option value="nature">Nature</option>
-          <option value="space">Space</option>
-          <option value="underwater">Underwater</option>
-          <option value="fantasy">Fantasy</option>
-          <option value="sci-fi">Sci-Fi</option>
-          <option value="indoors">Indoors</option>
-          <option value="outdoors">Outdoors</option>
-          <option value="custom">Custom</option>
-        </select>
+          Create Your <span className="text-[#cbf59a]">Image</span>
+        </motion.h1>
 
-        <fieldset>
-          <legend>Details/Mood/Composition:</legend>
-          {(['cinematic', 'epic', 'intimate'] as const).map(detail => (
-            <label key={detail}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-3xl bg-[#144a53] p-6 sm:p-8 rounded-lg"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="subject" className="block text-lg font-semibold mb-2">Subject/Scenario:</label>
               <input
-                type="checkbox"
-                value={detail}
-                checked={formState.details.includes(detail)}
-                onChange={handleCheckboxChange}
+                type="text"
+                id="subject"
+                name="subject"
+                value={formState.subject}
+                onChange={handleChange}
+                placeholder="e.g. A futuristic city at night"
+                required
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white placeholder-gray-300"
               />
-              {detail.charAt(0).toUpperCase() + detail.slice(1)}
-            </label>
-          ))}
-        </fieldset>
+            </div>
 
-        <label htmlFor="lighting">Lighting:</label>
-        <select
-          id="lighting"
-          name="lighting"
-          value={formState.lighting}
-          onChange={handleChange}
-        >
-          <option value="natural">Natural</option>
-          <option value="golden-hour">Golden Hour</option>
-          <option value="artificial">Artificial</option>
-          <option value="low-light">Low Light</option>
-          <option value="neon-glow">Neon Glow</option>
-        </select>
+            <div>
+              <label htmlFor="environment" className="block text-lg font-semibold mb-2">Environment/Situation:</label>
+              <select
+                id="environment"
+                name="environment"
+                value={formState.environment}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white"
+              >
+                <option value="urban">Urban</option>
+                <option value="nature">Nature</option>
+                <option value="space">Space</option>
+                <option value="underwater">Underwater</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="sci-fi">Sci-Fi</option>
+                <option value="indoors">Indoors</option>
+                <option value="outdoors">Outdoors</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
 
-        <label htmlFor="camera">Camera/Lens Setup:</label>
-        <select
-          id="camera"
-          name="camera"
-          value={formState.camera}
-          onChange={handleChange}
-        >
-          <option value="wide-angle">Wide-angle</option>
-          <option value="telephoto">Telephoto</option>
-          <option value="portrait">Portrait</option>
-          <option value="macro">Macro</option>
-        </select>
+            <fieldset className="space-y-2">
+              <legend className="text-lg font-semibold mb-2">Details/Mood/Composition:</legend>
+              <div className="flex flex-wrap gap-4">
+                {(['cinematic', 'epic', 'intimate'] as const).map(detail => (
+                  <label key={detail} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      value={detail}
+                      checked={formState.details.includes(detail)}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    <span>{detail.charAt(0).toUpperCase() + detail.slice(1)}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
-        <label htmlFor="colorScheme">Color Scheme:</label>
-        <select
-          id="colorScheme"
-          name="colorScheme"
-          value={formState.colorScheme}
-          onChange={handleChange}
-        >
-          <option value="vibrant">Vibrant</option>
-          <option value="muted">Muted</option>
-          <option value="monochrome">Monochrome</option>
-          <option value="warm-tones">Warm Tones</option>
-          <option value="cool-tones">Cool Tones</option>
-          <option value="pastel">Pastel</option>
-        </select>
+            <div>
+              <label htmlFor="lighting" className="block text-lg font-semibold mb-2">Lighting:</label>
+              <select
+                id="lighting"
+                name="lighting"
+                value={formState.lighting}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white"
+              >
+                <option value="natural">Natural</option>
+                <option value="golden-hour">Golden Hour</option>
+                <option value="artificial">Artificial</option>
+                <option value="low-light">Low Light</option>
+                <option value="neon-glow">Neon Glow</option>
+              </select>
+            </div>
 
-        <button type="submit" disabled={isLoading || !apiKeyOpen || !apiKeyFal}>
-          {isLoading ? 'Generating...' : 'Generate Image'}
-        </button>
-      </form>
+            <div>
+              <label htmlFor="camera" className="block text-lg font-semibold mb-2">Camera/Lens Setup:</label>
+              <select
+                id="camera"
+                name="camera"
+                value={formState.camera}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white"
+              >
+                <option value="wide-angle">Wide-angle</option>
+                <option value="telephoto">Telephoto</option>
+                <option value="portrait">Portrait</option>
+                <option value="macro">Macro</option>
+              </select>
+            </div>
 
-      {policyBreak && (
-        <div className="error policy-break">
-          <h3>Policy Violation:</h3>
-          <p>{policyBreak}</p>
-        </div>
-      )}
+            <div>
+              <label htmlFor="colorScheme" className="block text-lg font-semibold mb-2">Color Scheme:</label>
+              <select
+                id="colorScheme"
+                name="colorScheme"
+                value={formState.colorScheme}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#285a62] text-white"
+              >
+                <option value="vibrant">Vibrant</option>
+                <option value="muted">Muted</option>
+                <option value="monochrome">Monochrome</option>
+                <option value="warm-tones">Warm Tones</option>
+                <option value="cool-tones">Cool Tones</option>
+                <option value="pastel">Pastel</option>
+              </select>
+            </div>
 
-      {errorOpen && (
-        <div className="error">
-          <h3>OpenAI Error:</h3>
-          <pre>{errorOpen}</pre>
-        </div>
-      )}
+            <motion.button
+              type="submit"
+              disabled={isLoading || !apiKeyOpen || !apiKeyFal}
+              className="w-full bg-[#f79302] text-black font-bold py-3 px-8 rounded-lg text-xl hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isLoading ? 'Generating...' : 'Generate Image'}
+            </motion.button>
+          </form>
+        </motion.div>
 
-      {errorFal && (
-        <div className="error">
-          <h3>FAL Error:</h3>
-          <pre>{errorFal}</pre>
-        </div>
-      )}
+        {policyBreak && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-4 bg-red-600 text-white rounded-lg"
+          >
+            <h3 className="font-bold">Policy Violation:</h3>
+            <p>{policyBreak}</p>
+          </motion.div>
+        )}
 
-      {generatedImage && (
-        <div className="generated-image">
-          <h3>Generated Image:</h3>
-          <img 
-            src={generatedImage} 
-            alt="Generated" 
-            style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} 
-          />
-          <button onClick={handleUpload} disabled={!generatedImage}>
-            Save
-          </button>
-          {uploadStatus && <p>{uploadStatus}</p>}
-        </div>
-      )}
+        {errorOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-4 bg-red-600 text-white rounded-lg"
+          >
+            <h3 className="font-bold">OpenAI Error:</h3>
+            <p>{errorOpen}</p>
+          </motion.div>
+        )}
+
+        {errorFal && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-4 bg-red-600 text-white rounded-lg"
+          >
+            <h3 className="font-bold">FAL Error:</h3>
+            <p>{errorFal}</p>
+          </motion.div>
+        )}
+
+        {generatedImage && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 w-full max-w-3xl flex flex-col items-center"
+            >
+              <h3 className="text-2xl font-bold mb-4">Generated Image:</h3>
+              <img 
+                src={generatedImage} 
+                alt="Generated" 
+                className="w-full rounded-lg shadow-lg mb-4" 
+              />
+              <div className="flex flex-col items-center">
+                <motion.button
+                  onClick={handleUpload}
+                  disabled={!generatedImage || isSaved}
+                  className="mt-4 bg-[#f79302] text-black font-bold py-2 px-6 rounded-lg text-lg hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isSaved ? 'Saved' : 'Save'}
+                </motion.button>
+                {uploadStatus && <p className="mt-2 text-center">{uploadStatus}</p>}
+              </div>
+            </motion.div>
+          )}
+      </main>
     </div>
   );
 };
