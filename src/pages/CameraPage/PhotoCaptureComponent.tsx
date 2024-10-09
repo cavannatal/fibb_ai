@@ -53,7 +53,13 @@ const PhotoCaptureComponent: React.FC = () => {
 
   const initializeCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: facingMode,
+          width: { ideal: 4096 },
+          height: { ideal: 2160 }
+        } 
+      });
       stream.getTracks().forEach(track => track.stop());
       setIsCameraReady(true);
     } catch (error) {
@@ -64,6 +70,8 @@ const PhotoCaptureComponent: React.FC = () => {
 
   const videoConstraints = {
     facingMode: facingMode,
+    width: { ideal: 4096 },
+    height: { ideal: 2160 },
     aspectRatio: isMobile ? 4 / 3 : 16 / 9,
   };
 
@@ -256,33 +264,33 @@ const PhotoCaptureComponent: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="flex mt-4 space-x-4">
+          <div className="flex flex-wrap justify-center mt-4 space-x-2 space-y-2">
             {!capturedImage && isCameraReady ? (
               <>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={capture}
-                  className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                  className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
                 >
-                  <Camera className="mr-2" /> Capture Photo
+                  <Camera className="mr-2" /> Capture
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={startTimer}
-                  className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                  className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
                 >
-                  <Timer className="mr-2" /> Use Timer (5s)
+                  <Timer className="mr-2" /> Timer (5s)
                 </motion.button>
                 {isMobile && (
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={flipCamera}
-                    className="bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
+                    className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
                   >
-                    <RotateCw className="mr-2" /> Flip Camera
+                    <RotateCw className="mr-2" /> Flip
                   </motion.button>
                 )}
               </>
@@ -292,7 +300,7 @@ const PhotoCaptureComponent: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={removePhoto}
-                  className="bg-red-500 text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-red-600"
+                  className="bg-red-500 text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-red-600"
                 >
                   <X className="mr-2" /> Remove
                 </motion.button>
@@ -301,9 +309,9 @@ const PhotoCaptureComponent: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleUpload}
                   disabled={isUploading}
-                  className={`bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
+                  className={`bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
                 >
-                  <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload Photo'}
+                  <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload'}
                 </motion.button>
               </>
             ) : null}
