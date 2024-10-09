@@ -52,11 +52,7 @@ const PhotoCaptureComponent: React.FC = () => {
     { title: "Smile Right", image: smile_right },
   ];
 
-  useEffect(() => {
-    initializeCamera();
-  }, []);
-
-  const initializeCamera = async () => {
+  const initializeCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
@@ -71,7 +67,11 @@ const PhotoCaptureComponent: React.FC = () => {
       console.error('Error initializing camera:', error);
       alert('Failed to initialize camera. Please check your camera permissions and try again.');
     }
-  };
+  }, [facingMode]);
+
+  useEffect(() => {
+    initializeCamera();
+  }, [initializeCamera]);
 
   const videoConstraints = {
     facingMode: facingMode,
@@ -87,9 +87,7 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   }, []);
 
-  const removePhoto = () => {
-    setCapturedImage(null);
-  };
+  const removePhoto = () => setCapturedImage(null);
 
   const handleUpload = async () => {
     if (!capturedImage) {
@@ -101,22 +99,15 @@ const PhotoCaptureComponent: React.FC = () => {
   
     try {
       const { userId } = await getCurrentUser();
-      const sub = userId;
-  
       const timestamp = getCurrentTimeStamp();
-      const fileName = `users/${sub}/photos/${state.startingTimestamp}/${timestamp}.jpg`;
+      const fileName = `users/${userId}/photos/${state.startingTimestamp}/${timestamp}.jpg`;
       const response = await fetch(capturedImage);
       const blob = await response.blob();
   
       const presignedUrlResponse = await fetch('https://rn3fz2qkeatimhczxdtivhxne40lnkhr.lambda-url.us-east-2.on.aws/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: fileName,
-          fileType: blob.type,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName, fileType: blob.type }),
       });
   
       if (!presignedUrlResponse.ok) {
@@ -128,9 +119,7 @@ const PhotoCaptureComponent: React.FC = () => {
       const s3UploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
         body: blob,
-        headers: {
-          'Content-Type': blob.type,
-        },
+        headers: { 'Content-Type': blob.type },
       });
   
       if (!s3UploadResponse.ok) {
@@ -148,13 +137,13 @@ const PhotoCaptureComponent: React.FC = () => {
     }
   };
 
-  const flipCamera = () => {
+  const flipCamera = useCallback(() => {
     setFacingMode(prevMode => {
       const newMode = prevMode === 'user' ? 'environment' : 'user';
       setIsMirrored(newMode === 'user');
       return newMode;
     });
-  };
+  }, []);
 
   const startTimer = () => {
     setIsTimerActive(true);
@@ -263,7 +252,7 @@ const PhotoCaptureComponent: React.FC = () => {
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
                   <CameraButton onClick={capture} icon={Camera} label="Capture" />
                   <CameraButton onClick={startTimer} icon={Timer} label="Timer" />
-                  <CameraButton onClick={flipCamera} icon={RotateCw} label="Flip" />
+                  {isMobile && <CameraButton onClick={flipCamera} icon={RotateCw} label="Flip" />}
                 </div>
               </>
             ) : capturedImage ? (
