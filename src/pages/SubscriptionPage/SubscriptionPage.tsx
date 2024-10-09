@@ -1,9 +1,32 @@
 import { getCurrentUser } from 'aws-amplify/auth';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        'pricing-table-id': string;
+        'publishable-key': string;
+        'client-reference-id'?: string;
+        'customer-email'?: string;
+        'on-price-click'?: string;
+      };
+    }
+  }
+}
+
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Q4wZeFdWkuROuns9OgKeaZNBF7MQTJwsCi8W20R8GIgYydQfXPa0DHxeEQB2yVXV1GAXZhDFb9vsiv0Kf4BpjII00z3fsR7BX';
+
+interface PricingTable {
+  header: string;
+  id: string;
+}
 
 const MultiPricingTablePage: React.FC = () => {
   const [selectedTable, setSelectedTable] = useState(0);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -11,21 +34,75 @@ const MultiPricingTablePage: React.FC = () => {
     script.async = true;
     document.body.appendChild(script);
 
-    // Assume you have a function to get the current user's ID
-    const fetchUserId = async () => {
-      // Replace this with your actual logic to get the user ID
-      const { userId: sub } = await getCurrentUser();
-      setUserId(sub);
+    const fetchUser = async () => {
+      try {
+        const { userId: sub } = await getCurrentUser();
+        setUserId(sub);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        setUserId(null);
+      }
     };
 
-    fetchUserId();
+    fetchUser();
     
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
-  const pricingTables = [
+  // const handlePriceClick = (event: CustomEvent) => {
+  //   event.preventDefault();
+    
+  //   if (!userId) {
+  //     navigate('/signup');
+  //     return;
+  //   }
+
+  //   // Add any additional validations here
+  //   // For example, checking if the user is allowed to subscribe to this plan
+    
+  //   // If all validations pass, allow the default Stripe behavior
+  //   event?.target?.dispatchEvent(new CustomEvent('price-click-proceed'));
+  // };
+
+  useEffect(() => {
+    const handlePriceClick = (event: CustomEvent) => {
+      event.preventDefault();
+      
+      if (!userId) {
+        navigate('/signup');
+        return;
+      }
+  
+      // Add any additional validations here
+      
+      // If all validations pass, allow the default Stripe behavior
+      (event.target as HTMLElement).dispatchEvent(new CustomEvent('price-click-proceed'));
+    };
+  
+    // Define the custom event
+    const priceClickEvent = new CustomEvent('price-click', { bubbles: true });
+  
+    const pricingTable = document.querySelector('stripe-pricing-table');
+    pricingTable?.addEventListener('price-click', handlePriceClick as EventListener);
+  
+    return () => {
+      pricingTable?.removeEventListener('price-click', handlePriceClick as EventListener);
+    };
+  }, [userId, navigate]);
+
+  // useEffect(() => {
+  //   const pricingTable = document.querySelector('stripe-pricing-table');
+  //   pricingTable?.addEventListener('price-click', handlePriceClick);
+  
+  //   return () => {
+  //     pricingTable?.removeEventListener('price-click', handlePriceClick);
+  //   };
+  // }, [userId, navigate]);
+
+
+  const pricingTables: PricingTable[] = [
     {
       header: "Consumer",
       id: "prctbl_1Q6n3LFdWkuROunsZYVnW4m0",
@@ -72,27 +149,19 @@ const MultiPricingTablePage: React.FC = () => {
           <div
             key={index}
             className={`table-header ${selectedTable === index ? 'active' : ''}`}
-            onClick={() => {
-              console.log(userId);
-              setSelectedTable(index)
-            }}
+            onClick={() => setSelectedTable(index)}
           >
             {table.header}
           </div>
         ))}
       </div>
       
-      {React.createElement("stripe-pricing-table", {
-        "pricing-table-id": pricingTables[selectedTable].id,
-        "publishable-key": "pk_live_51Q4wZeFdWkuROuns9OgKeaZNBF7MQTJwsCi8W20R8GIgYydQfXPa0DHxeEQB2yVXV1GAXZhDFb9vsiv0Kf4BpjII00z3fsR7BX",
-        "client-reference-id": userId,
-        "client_reference_id": userId,
-        "metadata": JSON.stringify({
-          user_id: userId,
-          plan_type: pricingTables[selectedTable].header,
-          plan_id: pricingTables[selectedTable].id,
-        })
-      })}
+      <stripe-pricing-table
+        pricing-table-id={pricingTables[selectedTable].id}
+        publishable-key={STRIPE_PUBLISHABLE_KEY}
+        client-reference-id={userId || undefined}
+        on-price-click="price-click"
+      />
     </div>
   );
 };
