@@ -59,7 +59,7 @@ const FAQPage: React.FC = () => {
           className="text-center text-xl mt-12"
           style={{ fontFamily: '"Font1", sans-serif' }}
         >
-          Can't find what you're looking for? Contact our support team for further assistance.
+          Can't find what you're looking for? Contact our support team for further assistance, support@fibb.ai
         </motion.p>
       </main>
     </div>

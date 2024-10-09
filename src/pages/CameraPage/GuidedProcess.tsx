@@ -5,22 +5,22 @@ import { getCurrentUser } from 'aws-amplify/auth';
 import { getCurrentTimeStamp, modelTrain } from '../../utils';
 import awsconfig from '../../aws-exports';
 
-import neu_front from './images/solo_shots/neutral_confident_front.png';
-import neu_right from './images/solo_shots/neutral_confident_right.png';
-import neu_left from './images/solo_shots/neutral_confident_left.png';
-import smirk_front from './images/solo_shots/smirk_closed_front.png';
-import smirk_left from './images/solo_shots/smirk_closed_left.png';
-import smirk_right from './images/solo_shots/smirk_closed_right.png';
-import smile_front from './images/solo_shots/smile_laugh_front.png';
-import smile_left from './images/solo_shots/smile_laugh_left.png';
-import smile_right from './images/solo_shots/smile_laugh_right.png';
+import neu_front from './images/solo_shots/neutral_confident_front.webp';
+import neu_right from './images/solo_shots/neutral_confident_right.webp';
+import neu_left from './images/solo_shots/neutral_confident_left.webp';
+import smirk_front from './images/solo_shots/smirk_closed_front.webp';
+import smirk_left from './images/solo_shots/smirk_closed_left.webp';
+import smirk_right from './images/solo_shots/smirk_closed_right.webp';
+import smile_front from './images/solo_shots/smile_laugh_front.webp';
+import smile_left from './images/solo_shots/smile_laugh_left.webp';
+import smile_right from './images/solo_shots/smile_laugh_right.webp';
 
-import full_body from './images/body_shots/full.png';
-import turned_sideways from './images/body_shots/turned_sideways.png';
-import turned_around from './images/body_shots/turned_around.png';
-import full_body_crossed from './images/body_shots/full_body_crossed.png';
-import sitting_down from './images/body_shots/sitting_down.png';
-import sitting_turned from './images/body_shots/sitting_turned.png';
+import full_body from './images/body_shots/full.webp';
+import turned_sideways from './images/body_shots/turned_sideways.webp';
+import turned_around from './images/body_shots/turned_around.webp';
+import full_body_crossed from './images/body_shots/full_body_crossed.webp';
+import sitting_down from './images/body_shots/sitting_down.webp';
+import sitting_turned from './images/body_shots/sitting_turned.webp';
 import { useLocation } from 'react-router-dom';
 
 
