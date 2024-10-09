@@ -44,14 +44,23 @@ export const generateImageWithFAL = async (
       input: {
         prompt: prompt,
         image_size: { width: 1920, height: 1080 },
-        path: selectedLoraUrl,
+        loras: [
+            {
+              path: selectedLoraUrl,
+              scale: 1.0,
+            },
+          ],
         num_inference_steps: 50,
-        guidance_scale: 3.5,
+        guidance_scale: 0,
         num_images: 1,
+        seed : Math.random(),
+        prompt_upscale: true,
+        safety_tolerance: 5,
         enable_safety_checker: true,
         output_format: "jpeg",
         sync_mode: false,
       },
+      
       logs: true,
       onQueueUpdate: (update) => {
         if (update.status === 'IN_PROGRESS') {
