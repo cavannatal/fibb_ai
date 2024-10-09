@@ -32,7 +32,9 @@ const CompletionPage: React.FC = () => {
       }
     }
 
-    modelTrain(state.userId, "", 3500, state.photoFolderName);
+    if(state.userId && state.photoFolderName) {
+      modelTrain(state.userId, "", 3500, state.photoFolderName);
+    }
   }, [state.userId, state.photoFolderName]);
 
   return (
