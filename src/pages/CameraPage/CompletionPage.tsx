@@ -5,37 +5,6 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const CompletionPage: React.FC = () => {
-  const { state } = useLocation();
-
-  useEffect(() => {
-    const modelTrain = async (sub: string, prompt: string, steps: number, photoFolderName: string) => {
-      const url = 'https://2hohe1gynf.execute-api.us-east-2.amazonaws.com/api/modelTrainFibb';
-      
-      const data = {
-        sub,
-        prompt,
-        steps,
-        photoFolderName
-      };
-    
-      try {
-        const response = await axios.post(url, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-    
-        console.log('Success:', response.data);
-        return response.data;
-      } catch (error) {
-        console.error(JSON.stringify(error));
-      }
-    }
-
-    if(state.userId && state.photoFolderName) {
-      modelTrain(state.userId, "", 3500, state.photoFolderName);
-    }
-  }, [state.userId, state.photoFolderName]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">

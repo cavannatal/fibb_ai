@@ -2,7 +2,7 @@ import React, { useState, useCallback, DragEvent, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
-import { getCurrentTimeStamp } from '../../utils';
+import { getCurrentTimeStamp, modelTrain } from '../../utils';
 import awsconfig from '../../aws-exports';
 
 import neu_front from './images/solo_shots/neutral_confident_front.png';
@@ -21,6 +21,7 @@ import turned_around from './images/body_shots/turned_around.png';
 import full_body_crossed from './images/body_shots/full_body_crossed.png';
 import sitting_down from './images/body_shots/sitting_down.png';
 import sitting_turned from './images/body_shots/sitting_turned.png';
+import { useLocation } from 'react-router-dom';
 
 
 Amplify.configure(awsconfig);
@@ -74,6 +75,7 @@ const useIsMobile = () => {
     const [dragOver, setDragOver] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const isMobile = useIsMobile();
+    const { state } = useLocation();
   
     const handleFileUpload = useCallback((file: File, title: string) => {
       const reader = new FileReader();
@@ -174,6 +176,8 @@ const useIsMobile = () => {
         const results = await Promise.all(uploadPromises);
         console.log('All photos uploaded:', results);
         alert('All photos have been uploaded successfully!');
+
+        await modelTrain(userId, "", 3500, state.startingTimestamp);
         
         // Here you would typically navigate to a completion page
         window.location.href = '/completion';
