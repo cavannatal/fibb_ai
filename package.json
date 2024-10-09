@@ -27,6 +27,7 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.108",
     "@types/react-slick": "^0.23.13",
+    "aios": "^1.0.1",
     "amazon-cognito-identity-js": "^6.3.12",
     "auth0": "^4.10.0",
     "autoprefixer": "^10.4.20",

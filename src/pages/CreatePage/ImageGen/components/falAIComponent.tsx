@@ -32,39 +32,39 @@ export const fetchFalApiKey = async (accessToken: JWT): Promise<string> => {
 };
 
 export const generateImageWithFAL = async (
-  apiKey: string,
-  prompt: string,
-  loraPath: string
-): Promise<string> => {
-  fal.config({
-    credentials: apiKey
-  });
-
-  const result = await fal.subscribe('fal-ai/flux-lora', {
-    input: {
-      prompt: prompt,
-      image_size: { width: 1920, height: 1080 },
-      path: loraPath,
-      num_inference_steps: 50,
-      guidance_scale: 3.5,
-      num_images: 1,
-      enable_safety_checker: true,
-      output_format: "jpeg",
-      sync_mode: false,
-    },
-    logs: true,
-    onQueueUpdate: (update) => {
-      if (update.status === 'IN_PROGRESS') {
-        console.log('Generation in progress...', update.logs);
-      }
-    },
-  });
-
-  const imageResult = result as FalImageResult;
-
-  if (imageResult.images && imageResult.images.length > 0) {
-    return imageResult.images[0].url;
-  } else {
-    throw new Error('No image was generated');
-  }
-};
+    apiKey: string,
+    prompt: string,
+    selectedLoraUrl: string
+  ): Promise<string> => {
+    fal.config({
+      credentials: apiKey
+    });
+  
+    const result = await fal.subscribe('fal-ai/flux-lora', {
+      input: {
+        prompt: prompt,
+        image_size: { width: 1920, height: 1080 },
+        path: selectedLoraUrl,
+        num_inference_steps: 50,
+        guidance_scale: 3.5,
+        num_images: 1,
+        enable_safety_checker: true,
+        output_format: "jpeg",
+        sync_mode: false,
+      },
+      logs: true,
+      onQueueUpdate: (update) => {
+        if (update.status === 'IN_PROGRESS') {
+          console.log('Generation in progress...', update.logs);
+        }
+      },
+    });
+  
+    const imageResult = result as FalImageResult;
+  
+    if (imageResult.images && imageResult.images.length > 0) {
+      return imageResult.images[0].url;
+    } else {
+      throw new Error('No image was generated');
+    }
+  };

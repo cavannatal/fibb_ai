@@ -84,5 +84,6 @@ const pollBFLResult = async (apiKey: string, taskId: string): Promise<string> =>
     } else if (data.status === 'Error') {
       throw new Error('BFL task failed');
     }
+
   }
 };

@@ -9,6 +9,12 @@ interface FormState {
   selectedLora: string;
   subject: string;
   generateWithoutFibb: boolean; 
+  mode: 'Enhanced' | 'Research';
+}
+
+interface LoraFile {
+  key: string;
+  presignedUrl: string;
 }
 
 const ImageGen: React.FC = () => {
@@ -21,11 +27,13 @@ const ImageGen: React.FC = () => {
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [loraFiles, setLoraFiles] = useState<string[]>([]);
+  const [selectedLoraUrl, setSelectedLoraUrl] = useState<string>('');
   
   const [formState, setFormState] = useState<FormState>({
     selectedLora: '',
     subject: '',
-    generateWithoutFibb: false, 
+    generateWithoutFibb: false,
+    mode: 'Enhanced',
   });
 
   useEffect(() => {
@@ -49,9 +57,10 @@ const ImageGen: React.FC = () => {
   useEffect(() => {
     const fetchLoraFiles = async () => {
       try {
-        const { userId } = await getCurrentUser();
-        const files = await getLoraFiles(userId);
-        setLoraFiles(files);
+        const { username } = await getCurrentUser();
+        const files = await getLoraFiles(username);
+        console.log('Fetched Lora files:', files);
+        setLoraFiles(files.map(file => file.key));
       } catch (error) {
         console.error('Error fetching Lora files:', error);
         setLoraFiles([]);
@@ -65,7 +74,7 @@ const ImageGen: React.FC = () => {
     return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
   };
 
-  async function getLoraFiles(sub: string): Promise<string[]> {
+  async function getLoraFiles(sub: string): Promise<{ key: string; presignedUrl: string }[]> {
     const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
     
     try {
@@ -74,14 +83,26 @@ const ImageGen: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sub }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('API Error:', errorData);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
       }
-
+  
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      console.log('API Data:', data);
+      setSelectedLoraUrl(data.body.files[0].presignedUrl);
+  
+      if (data && data.body && typeof data.body === 'object' && Array.isArray(data.body.files)) {
+        return data.body.files.map((file: { key: string; presignedUrl: string }) => ({
+          key: file.key,
+          presignedUrl: file.presignedUrl,
+        }));
+      } else {
+        console.error('Unexpected data format:', data);
+        return [];
+      }
     } catch (error) {
       console.error('Error fetching Lora files:', error);
       return [];
@@ -90,12 +111,26 @@ const ImageGen: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
-    
+      
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormState(prevState => ({
         ...prevState,
         [name]: checked,
+      }));
+    } else if (name === 'mode') {
+      setFormState(prevState => ({
+        ...prevState,
+        mode: value as 'Enhanced' | 'Research',
+        generateWithoutFibb: value === 'Research',
+      }));
+    } else if (name === 'selectedLora') {
+      const selectedFile = loraFiles.find(file => file === value);
+      setFormState(prevState => ({
+        ...prevState,
+        selectedLora: value,
+        selectedLoraUrl: selectedFile ? selectedFile : '',
+        generateWithoutFibb: prevState.mode === 'Research',
       }));
     } else {
       setFormState(prevState => ({
@@ -113,31 +148,32 @@ const ImageGen: React.FC = () => {
     setGeneratedImage(null);
     setIsSaved(false);
     setUploadStatus(null);
-    
+
+
+
     try {
       let imageUrl: string;
- 
       if (formState.generateWithoutFibb) {
         if (!apiKeyBfl) throw new Error('BFL API key not available');
+        console.log('Generating image with BFL');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
+        console.log('BFL image URL:', imageUrl);
       } else {
         if (!apiKeyFal) throw new Error('FAL API key not available');
-        imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, formState.selectedLora);
+        setSelectedLoraUrl(formState.selectedLora);
+        console.log("Selected Lora URL:", selectedLoraUrl);
+        imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, selectedLoraUrl);
+ 
       }
       
       // Remove the "?t=[taskID]" from the URL
-      const cleanUrl = imageUrl.split('?')[0];
-      console.log(cleanUrl);
-      // Download the image
-      const response = await fetch(cleanUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
+      const cleanUrl = String(imageUrl).split('?')[0];
+      console.log('Clean URL:', cleanUrl);
+  
       setGeneratedImage(cleanUrl);
-      console.log(generatedImage);
-
+  
     } catch (error) {
-      console.error('Error in image generation:', error);
+      console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (formState.generateWithoutFibb) {
         setErrorBfl(`Error in BFL workflow: ${errorMessage}`);
@@ -224,13 +260,23 @@ const ImageGen: React.FC = () => {
                 name="selectedLora"
                 value={formState.selectedLora}
                 onChange={handleChange}
-                disabled={formState.generateWithoutFibb}
+                disabled={formState.generateWithoutFibb || formState.mode === 'Research'}
                 className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                <option value="">Select a Lora file</option>
                 {loraFiles.map((file, index) => (
-                  <option key={index} value={file}>{file}</option>
+                  <option key={index} value={file}>{file.split('/').pop()}</option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="mode" className="block text-lg font-semibold mb-2">Mode:</label>
+              <select 
+              id="mode"
+              name="mode" 
+              value={formState.mode} 
+              onChange={handleChange}>
+                <option value="Enhanced">Enhanced</option>
+                <option value="Research">Research</option>
               </select>
             </div>
 
