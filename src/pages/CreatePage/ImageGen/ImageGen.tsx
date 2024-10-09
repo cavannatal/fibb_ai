@@ -138,12 +138,12 @@ const ImageGen: React.FC = () => {
     try {
       let imageUrl: string;
       if (formState.selectedStyle === 'fibb Limn') {
-        if (!apiKeyBfl) throw new Error('BFL API key not available');
-        console.log('Generating image with BFL');
+        if (!apiKeyBfl) throw new Error('FIBB_ENHANCED API key not available');
+        console.log('Generating image with FIBB_ENHANCED');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
-        console.log('BFL image URL:', imageUrl);
+        console.log('FIBB_ENHANCED image URL:', imageUrl);
       } else {
-        if (!apiKeyFal) throw new Error('FAL API key not available');
+        if (!apiKeyFal) throw new Error('FIBB_RESEARCH API key not available');
         console.log("Selected Lora URL:", selectedLoraUrl);
         imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, selectedLoraUrl);
       }
@@ -157,9 +157,9 @@ const ImageGen: React.FC = () => {
       console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (formState.selectedStyle === 'fibb Limn') {
-        setErrorBfl(`Error in BFL workflow: ${errorMessage}`);
+        setErrorBfl(`Error in FIBB_ENHANCED workflow: ${errorMessage}`);
       } else {
-        setErrorFal(`Error in FAL workflow: ${errorMessage}`);
+        setErrorFal(`Error in FIBB_RESEARCH workflow: ${errorMessage}`);
       }
     } finally {
       setIsLoading(false);
