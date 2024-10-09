@@ -39,21 +39,18 @@ export const generateImageWithFAL = async (
     fal.config({
       credentials: apiKey
     });
-  
+
+    let loras = selectedLoraUrl !== '' ? [{ path: selectedLoraUrl, scale: 1.0 }] : undefined;
+
     const result = await fal.subscribe('fal-ai/flux-lora', {
       input: {
         prompt: prompt,
         image_size: { width: 1920, height: 1080 },
-        loras: [
-            {
-              path: selectedLoraUrl,
-              scale: 1.0,
-            },
-          ],
+        loras: loras,
         num_inference_steps: 50,
         guidance_scale: 0,
         num_images: 1,
-        seed : Math.random(),
+        seed: Math.floor(Math.random() * 1000000), // Use an integer seed
         prompt_upscale: true,
         safety_tolerance: 5,
         enable_safety_checker: true,

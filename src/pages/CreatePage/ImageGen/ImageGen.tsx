@@ -9,7 +9,6 @@ interface FormState {
   selectedStyle: 'fibb Enhanced' | 'fibb Limn';
   selectedLora: string;
   subject: string;
-  generateWithoutFibb: boolean;
 }
 
 interface LoraFile {
@@ -33,7 +32,6 @@ const ImageGen: React.FC = () => {
     selectedStyle: 'fibb Enhanced',
     selectedLora: '',
     subject: '',
-    generateWithoutFibb: false,
   });
 
   useEffect(() => {
@@ -112,7 +110,6 @@ const ImageGen: React.FC = () => {
     } else if (name === 'selectedLora') {
       const selectedFile = loraFiles.find(file => file.key === value);
       if (selectedFile) {
-        setSelectedLoraUrl(selectedFile.presignedUrl);
       }
       setFormState(prevState => ({
         ...prevState,
@@ -134,7 +131,7 @@ const ImageGen: React.FC = () => {
     setGeneratedImage(null);
     setIsSaved(false);
     setUploadStatus(null);
-
+  
     try {
       let imageUrl: string;
       if (formState.selectedStyle === 'fibb Limn') {
@@ -303,8 +300,8 @@ const ImageGen: React.FC = () => {
                   name="selectedLora"
                   value={formState.selectedLora}
                   onChange={handleChange}
-                  disabled={formState.generateWithoutFibb || formState.selectedStyle === 'fibb Limn'}
-                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb || formState.selectedStyle === 'fibb Limn' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={formState.selectedStyle === 'fibb Limn'}
+                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.selectedStyle === 'fibb Limn' ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Select a fibb</option>
                   <option value="Generate without a fibb">Generate without a fibb</option>
