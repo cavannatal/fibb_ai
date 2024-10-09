@@ -118,20 +118,6 @@ const ImageGen: React.FC = () => {
         ...prevState,
         [name]: checked,
       }));
-    } else if (name === 'mode') {
-      setFormState(prevState => ({
-        ...prevState,
-        mode: value as 'Enhanced' | 'Research',
-        generateWithoutFibb: value === 'Research',
-      }));
-    } else if (name === 'selectedLora') {
-      const selectedFile = loraFiles.find(file => file === value);
-      setFormState(prevState => ({
-        ...prevState,
-        selectedLora: value,
-        selectedLoraUrl: selectedFile ? selectedFile : '',
-        generateWithoutFibb: prevState.mode === 'Research',
-      }));
     } else {
       setFormState(prevState => ({
         ...prevState,
@@ -153,7 +139,7 @@ const ImageGen: React.FC = () => {
 
     try {
       let imageUrl: string;
-      if (formState.generateWithoutFibb) {
+      if (formState.mode === 'Research') {
         if (!apiKeyBfl) throw new Error('BFL API key not available');
         console.log('Generating image with BFL');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
@@ -261,7 +247,7 @@ const ImageGen: React.FC = () => {
                 value={formState.selectedLora}
                 onChange={handleChange}
                 disabled={formState.generateWithoutFibb || formState.mode === 'Research'}
-                className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb || formState.mode === 'Research' ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {loraFiles.map((file, index) => (
                   <option key={index} value={file}>{file.split('/').pop()}</option>
@@ -277,6 +263,7 @@ const ImageGen: React.FC = () => {
               onChange={handleChange}>
                 <option value="Enhanced">Enhanced</option>
                 <option value="Research">Research</option>
+                className={`w-full p-3 rounded-lg bg-[#285a62] text-white`}
               </select>
             </div>
 
@@ -315,7 +302,7 @@ const ImageGen: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {isLoading ? 'Generating...' : `Generate Image with ${formState.generateWithoutFibb ? 'BFL' : 'FAL'}`}
+              {isLoading ? 'Generating...' : `Generate Image with ${formState.mode === 'Research' ? 'BFL' : 'FAL'}`}
             </motion.button>
           </form>
         </motion.div>
