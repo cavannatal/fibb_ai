@@ -36,8 +36,9 @@ const topTeamMembers: TeamMember[] = [
     name: "Nick Friesen", 
     role: "Co-Founder and Head of Artificial Intelligence Research", 
     description: [
-      "Nick is the founder of one of the largest dating photography companies in the world. With millions in revenue, and photographers based throughout the US, he’s an expert on facial expressions, body language, and image optimization. ",
-      "With Fibb.ai, he brings the attention to detail and artistic understanding to configure our models to generate the most accurate personal replicas anyone ever has seen.",
+      "Nick is the mastermind behind the world's undisputed largest dating photography empire, a company generating millions in revenue while his competitors scramble for scraps. His photographers are strategically stationed across the US, each handpicked for their ability to capture perfection—because, naturally, Nick settles for nothing less."
+      "An absolute authority on facial expressions, body language, and image optimization, Nick’s expertise is unparalleled—universally acknowledged, of course. He doesn’t just understand the art of the photo; he redefines it."
+      "In his spare time—when he isn’t dominating the industry—Nick casually perfects his cooking, baking, and the ancient craft of smoking meats to levels that would make Michelin chefs weep.",
     ],
     imageUrl: nick,
     imageStyle: "object-cover object-center scale-100",
