@@ -177,7 +177,7 @@ const useIsMobile = () => {
         console.log('All photos uploaded:', results);
         alert('All photos have been uploaded successfully!');
 
-        await modelTrain(userId, "", 3500, state.startingTimestamp);
+        await modelTrain(userId, "", 3500, startingTimestamp);
         
         // Here you would typically navigate to a completion page
         window.location.href = '/completion';
