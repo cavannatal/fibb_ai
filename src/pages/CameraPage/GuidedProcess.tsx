@@ -5,8 +5,6 @@ import { getCurrentUser } from 'aws-amplify/auth';
 import { getCurrentTimeStamp } from '../../utils';
 import awsconfig from '../../aws-exports';
 
-
-
 import neu_front from './images/solo_shots/neutral_confident_front.png';
 import neu_right from './images/solo_shots/neutral_confident_right.png';
 import neu_left from './images/solo_shots/neutral_confident_left.png';
@@ -16,6 +14,14 @@ import smirk_right from './images/solo_shots/smirk_closed_right.png';
 import smile_front from './images/solo_shots/smile_laugh_front.png';
 import smile_left from './images/solo_shots/smile_laugh_left.png';
 import smile_right from './images/solo_shots/smile_laugh_right.png';
+
+import full_body from './images/body_shots/full.png';
+import turned_sideways from './images/body_shots/turned_sideways.png';
+import turned_around from './images/body_shots/turned_around.png';
+import full_body_crossed from './images/body_shots/full_body_crossed.png';
+import sitting_down from './images/body_shots/sitting_down.png';
+import sitting_turned from './images/body_shots/sitting_turned.png';
+
 
 Amplify.configure(awsconfig);
 
@@ -34,6 +40,15 @@ const cards: Card[] = [
   { title: "Smile Front", image: smile_front },
   { title: "Smile Left", image: smile_left },
   { title: "Smile Right", image: smile_right },
+
+  { title: "Full Body", image: full_body },
+  { title: "Turned Sideways", image: turned_sideways },
+  { title: "Turned Around", image: turned_around },
+  { title: "Full Body, Arms Crossed", image: full_body_crossed },
+  { title: "Sitting Down", image: sitting_down },
+  { title: "Sitting Turned", image: sitting_turned },
+
+
 ];
 
 const useIsMobile = () => {
@@ -177,9 +192,13 @@ const useIsMobile = () => {
             className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-16 mt-8 sm:mt-16 text-center"
             style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
           >
-            Create your <span className="text-[#cbf59a]">fibb</span> gallery
+            Your <span className="text-[#cbf59a]">fibb</span> Guided Process
           </h1>
           
+          <p className="text-center text-lg mb-8 sm:mb-16 max-w-2xl">
+          Embark on your personalized fibb journey! Upload your photos below to kickstart your transformative experience. For Full Body shots, please use your camera for now — we're currently developing an iOS app to enhance this process. Let's begin your fibb adventure!
+        </p>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 w-full max-w-6xl mb-8 sm:mb-16">
             {cards.map((card, index) => (
               <div
