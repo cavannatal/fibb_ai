@@ -20,6 +20,11 @@ import smile_right from './images/solo_shots/smile_laugh_front.png';
 
 Amplify.configure(awsconfig);
 
+interface Card {
+  title: string;
+  image: string;
+}
+
 const PhotoCaptureComponent: React.FC = () => {
   const { state } = useLocation();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -35,7 +40,7 @@ const PhotoCaptureComponent: React.FC = () => {
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  const cards = [
+  const cards: Card[] = [
     { title: "Neutral Front", image: neu_front },
     { title: "Neutral Right", image: neu_right },
     { title: "Neutral Left", image: neu_left },
@@ -167,7 +172,7 @@ const PhotoCaptureComponent: React.FC = () => {
     return () => clearTimeout(timer);
   }, [isTimerActive, countdown, capture]);
 
-  const TemplateCard = ({ card, onClose }: { card: { title: string; image: string }; onClose: () => void }) => (
+  const TemplateCard: React.FC<{ card: Card; onClose: () => void }> = ({ card, onClose }) => (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -192,6 +197,22 @@ const PhotoCaptureComponent: React.FC = () => {
         </button>
       </div>
     </motion.div>
+  );
+
+  const CameraButton: React.FC<{
+    onClick: () => void;
+    icon: React.ElementType;
+    label: string;
+  }> = ({ onClick, icon: Icon, label }) => (
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className="bg-[#084248] text-white p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[#0a5761]"
+      title={label}
+    >
+      <Icon size={24} />
+    </motion.button>
   );
 
   return (
@@ -239,18 +260,33 @@ const PhotoCaptureComponent: React.FC = () => {
                     {countdown}
                   </div>
                 )}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                  <CameraButton onClick={capture} icon={Camera} label="Capture" />
+                  <CameraButton onClick={startTimer} icon={Timer} label="Timer" />
+                  <CameraButton onClick={flipCamera} icon={RotateCw} label="Flip" />
+                </div>
               </>
             ) : capturedImage ? (
-              <img 
-                src={capturedImage} 
-                alt="captured" 
-                className="rounded-lg shadow-lg w-full"
-                style={{
-                  height: isMobile ? 'auto' : '480px',
-                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
-                  objectFit: 'cover',
-                }}
-              />
+              <>
+                <img 
+                  src={capturedImage} 
+                  alt="captured" 
+                  className="rounded-lg shadow-lg w-full"
+                  style={{
+                    height: isMobile ? 'auto' : '480px',
+                    aspectRatio: isMobile ? '3 / 4' : '16 / 9',
+                    objectFit: 'cover',
+                  }}
+                />
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                  <CameraButton onClick={removePhoto} icon={X} label="Remove" />
+                  <CameraButton 
+                    onClick={handleUpload} 
+                    icon={Upload} 
+                    label={isUploading ? "Uploading..." : "Upload"} 
+                  />
+                </div>
+              </>
             ) : (
               <div 
                 className="flex items-center justify-center bg-gray-200 rounded-lg"
@@ -263,58 +299,6 @@ const PhotoCaptureComponent: React.FC = () => {
                 <p>Initializing camera...</p>
               </div>
             )}
-          </div>
-          <div className="flex flex-wrap justify-center mt-4 space-x-2 space-y-2">
-            {!capturedImage && isCameraReady ? (
-              <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={capture}
-                  className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
-                >
-                  <Camera className="mr-2" /> Capture
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={startTimer}
-                  className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
-                >
-                  <Timer className="mr-2" /> Timer (5s)
-                </motion.button>
-                {isMobile && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={flipCamera}
-                    className="bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-[#0a5761]"
-                  >
-                    <RotateCw className="mr-2" /> Flip
-                  </motion.button>
-                )}
-              </>
-            ) : capturedImage ? (
-              <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={removePhoto}
-                  className="bg-red-500 text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 hover:bg-red-600"
-                >
-                  <X className="mr-2" /> Remove
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleUpload}
-                  disabled={isUploading}
-                  className={`bg-[#084248] text-white px-4 py-2 rounded-2xl flex items-center transition-all duration-300 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
-                >
-                  <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload'}
-                </motion.button>
-              </>
-            ) : null}
           </div>
         </>
       )}
