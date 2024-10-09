@@ -1,6 +1,7 @@
 import React from 'react';
-import FAQComponent from './FAQComponent';
 import { motion } from 'framer-motion';
+import FAQComponent from './FAQComponent';
+import fibbLogo from '../../components/images/FibbLogoWhite.svg';
 
 const FAQPage: React.FC = () => {
   const faqs = [
@@ -27,16 +28,40 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <motion.h2 
-          className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-blue-600"
+    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
+      <header className="flex justify-center p-4">
+        <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
+      </header>
+      <main className="flex flex-col items-center px-4 sm:px-6 pb-16 sm:pb-6 max-w-3xl mx-auto w-full">
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-16 mt-8 sm:mt-16 text-center text-[#cbf59a]"
+          style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
           Frequently Asked Questions
-        </motion.h2>
-      <FAQComponent faqs={faqs} />
+        </motion.h1>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full"
+        >
+          <FAQComponent faqs={faqs} />
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-center text-xl mt-12"
+          style={{ fontFamily: '"Font1", sans-serif' }}
+        >
+          Can't find what you're looking for? Contact our support team for further assistance.
+        </motion.p>
+      </main>
     </div>
   );
 };

@@ -16,16 +16,21 @@ interface FAQItemProps {
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle }) => {
   return (
-    <div className="border-b border-gray-700 last:border-b-0">
+    <motion.div 
+      className="border-b border-[#cbf59a] last:border-b-0"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <button
         className="w-full py-4 px-4 flex justify-between items-center text-left focus:outline-none"
         onClick={onToggle}
       >
-        <span className="font-medium text-gray-200">{question}</span>
+        <span className="font-medium text-xl text-[#cbf59a]" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>{question}</span>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-gray-400" />
+          <ChevronUp className="w-5 h-5 text-[#cbf59a]" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-[#cbf59a]" />
         )}
       </button>
       <AnimatePresence>
@@ -36,11 +41,11 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="px-4 pb-4 text-gray-400">{answer}</div>
+            <div className="px-4 pb-4 text-xl text-white" style={{ fontFamily: '"Font1", sans-serif' }}>{answer}</div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
@@ -56,9 +61,8 @@ const FAQComponent: React.FC<FAQComponentProps> = ({ faqs }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4  rounded-lg shadow-lg">
-      
-      <div className="space-y-2">
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="space-y-4">
         {faqs.map((faq, index) => (
           <FAQItem
             key={index}
