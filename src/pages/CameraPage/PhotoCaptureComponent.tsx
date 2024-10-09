@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Camera, Upload, RotateCw, X, Info, Timer } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,6 +27,7 @@ interface Card {
 }
 
 const PhotoCaptureComponent: React.FC = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -127,8 +129,12 @@ const PhotoCaptureComponent: React.FC = () => {
       }
   
       setCapturedImage(null);
-      setCurrentCardIndex(prevIndex => (prevIndex + 1) % cards.length);
-      setShowTemplateCard(true);
+      if (currentCardIndex < cards.length - 1) {
+        setCurrentCardIndex(prevIndex => prevIndex + 1);
+        setShowTemplateCard(true);
+      } else {
+        navigate('/completion');
+      }
     } catch (error) {
       console.error('Error uploading photo:', error);
       alert('Failed to upload photo. Please try again.');
@@ -168,19 +174,19 @@ const PhotoCaptureComponent: React.FC = () => {
       exit={{ opacity: 0, scale: 0.8 }}
       className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-white p-4 sm:p-8 rounded-lg shadow-lg max-w-md w-full m-4">
         <img 
           src={card.image} 
           alt={card.title} 
-          className="w-full h-96 object-cover rounded-lg mb-4"
+          className="w-full h-64 sm:h-96 object-cover rounded-lg mb-4"
         />
-        <h2 className="text-2xl font-bold mb-4 text-[#084248]">{card.title}</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-[#084248]">{card.title}</h2>
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
           For the best results, please try your best to match the template above.
         </p>
         <button
           onClick={onClose}
-          className="w-full bg-[#084248] text-white px-6 py-3 rounded-2xl transition-all duration-300 hover:bg-[#0a5761]"
+          className="w-full bg-[#084248] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-2xl transition-all duration-300 hover:bg-[#0a5761]"
         >
           Start Capturing
         </button>
@@ -197,15 +203,15 @@ const PhotoCaptureComponent: React.FC = () => {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className="bg-[#084248] text-white p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[#0a5761]"
+      className="bg-[#084248] text-white p-2 sm:p-3 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[#0a5761]"
       title={label}
     >
-      <Icon size={24} />
+      <Icon size={isMobile ? 20 : 24} />
     </motion.button>
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-2 sm:p-4" style={{ fontFamily: 'Nunito, sans-serif' }}>
       <AnimatePresence>
         {showTemplateCard && (
           <TemplateCard 
@@ -217,18 +223,18 @@ const PhotoCaptureComponent: React.FC = () => {
 
       {!showTemplateCard && (
         <>
-          <div className="flex items-center justify-center w-full mb-4">
-            <h2 className="text-2xl font-bold text-[#084248] mr-2">
+          <div className="flex items-center justify-center w-full mb-2 sm:mb-4">
+            <h2 className="text-lg sm:text-2xl font-bold text-[#084248] mr-2">
               {cards[currentCardIndex].title}
             </h2>
             <button
               onClick={() => setShowTemplateCard(true)}
               className="text-[#084248] hover:text-[#0a5761] transition-colors duration-300 flex items-center justify-center"
             >
-              <Info size={24} />
+              <Info size={isMobile ? 20 : 24} />
             </button>
           </div>
-          <div className={`relative ${isMobile ? 'w-full' : ''}`}>
+          <div className={`relative ${isMobile ? 'w-full' : 'w-3/4'}`}>
             {!capturedImage && isCameraReady ? (
               <>
                 <Webcam
@@ -245,7 +251,7 @@ const PhotoCaptureComponent: React.FC = () => {
                   }}
                 />
                 {isTimerActive && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-9xl font-bold">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-6xl sm:text-9xl font-bold">
                     {countdown}
                   </div>
                 )}
