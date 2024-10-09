@@ -10,7 +10,7 @@ const PhotoCollectionIntroPage: React.FC = () => {
 
   const handleContinue = async () => {
     const { userId } = await getCurrentUser();
-    navigate('/photo-capture', { state: {
+    navigate('/guided', { state: {
       sub: userId,
       startingTimestamp: getCurrentTimeStamp()
     }});

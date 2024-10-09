@@ -20,6 +20,7 @@ import CreatePage from './pages/CreatePage/CreatePage';
 import Portfolio from './pages/CaseStudies/TempCaseStudies';
 import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage';
 import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
+import GuidedProcess from './pages/CameraPage/GuidedProcess';
 
 
 
@@ -59,6 +60,7 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/guided" element={<GuidedProcess />} />
             <Route path="/tempsub" element={<TempSub />} />
             <Route path="/signup" element={<Signup onUserChange={setUser} />} />
             <Route 
@@ -70,10 +72,10 @@ const App: React.FC = () => {
               } 
             />
             <Route 
-              path="/photo-capture" 
+              path="/guided" 
               element={
                 <ProtectedRoute user={user}>
-                  <PhotoCaptureComponent />
+                  <GuidedProcess />
                 </ProtectedRoute>
               } 
             />

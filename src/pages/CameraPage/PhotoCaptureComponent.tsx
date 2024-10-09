@@ -263,37 +263,25 @@ const PhotoCaptureComponent: React.FC = () => {
               </>
             ) : capturedImage ? (
               <>
-                <img 
-                  src={capturedImage} 
-                  alt="captured" 
-                  className="rounded-lg shadow-lg w-full"
-                  style={{
-                    height: isMobile ? 'auto' : '480px',
-                    aspectRatio: isMobile ? '3 / 4' : '16 / 9',
-                    objectFit: 'cover',
-                  }}
-                />
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
-                  <CameraButton onClick={removePhoto} icon={X} label="Remove" />
-                  <CameraButton 
-                    onClick={handleUpload} 
-                    icon={Upload} 
-                    label={isUploading ? "Uploading..." : "Upload"} 
-                  />
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={removePhoto}
+                  className="bg-red-500 text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 hover:bg-red-600"
+                >
+                  <X className="mr-2" /> Remove
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleUpload}
+                  disabled={isUploading}
+                  className={`bg-[#084248] text-white px-6 py-3 rounded-2xl flex items-center transition-all duration-300 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a5761]'}`}
+                >
+                  <Upload className="mr-2" /> {isUploading ? 'Uploading...' : 'Upload Photo'}
+                </motion.button>
               </>
-            ) : (
-              <div 
-                className="flex items-center justify-center bg-gray-200 rounded-lg"
-                style={{
-                  width: '100%',
-                  height: isMobile ? '0' : '480px',
-                  aspectRatio: isMobile ? '3 / 4' : '16 / 9',
-                }}
-              >
-                <p>Initializing camera...</p>
-              </div>
-            )}
+            ) : null}
           </div>
         </>
       )}
