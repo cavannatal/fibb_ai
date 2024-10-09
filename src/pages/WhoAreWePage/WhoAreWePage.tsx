@@ -38,6 +38,7 @@ const topTeamMembers: TeamMember[] = [
     description: [
       "Nick is the founder of one of the largest dating photography companies in the world. With millions in revenue, and photographers based throughout the US, he’s an expert on facial expressions, body language, and image optimization. ",
       "With Fibb.ai, he brings the attention to detail and artistic understanding to configure our models to generate the most accurate personal replicas anyone ever has seen.",
+      "He also enjoys cooking, baking, and smoking various meats. In his spare time, he's often working on a welding project, playing piano and guitar, or spending time with his wife and two dogs.",
     ],
     imageUrl: nick,
     imageStyle: "object-cover object-center scale-100",

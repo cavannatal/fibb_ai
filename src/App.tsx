@@ -12,13 +12,16 @@ import CameraPage from './pages/CameraPage/CameraPage';
 import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
-import PhotoGallery from './pages/HomePage/components/photoGallery';
+import PhotoGallery from './pages/PhotoGalleryPage/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
 import Marketplace from './pages/Marketplace/index';
 import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
 import CreatePage from './pages/CreatePage/CreatePage';
 import Portfolio from './pages/CaseStudies/TempCaseStudies';
 import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage';
+import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
+
+
 
 import awsExports from './aws-exports';
 
@@ -56,6 +59,7 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/tempsub" element={<TempSub />} />
             <Route path="/signup" element={<Signup onUserChange={setUser} />} />
             <Route 
               path="/cam" 
