@@ -133,7 +133,10 @@ const PhotoCaptureComponent: React.FC = () => {
         setCurrentCardIndex(prevIndex => prevIndex + 1);
         setShowTemplateCard(true);
       } else {
-        navigate('/completion');
+        navigate('/completion', { state: {
+          userId,
+          startingTimestamp: state.startingTimestamp
+        }});
       }
     } catch (error) {
       console.error('Error uploading photo:', error);
