@@ -22,6 +22,7 @@ import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage'
 import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
 import GuidedProcess from './pages/CameraPage/GuidedProcess';
 import ComputePage from './pages/ComputePage/ComputePage'
+import CompletionPage from './pages/CameraPage/CompletionPage'
 
 
 
@@ -64,6 +65,7 @@ const App: React.FC = () => {
             <Route path="/guided" element={<GuidedProcess />} />
             <Route path="/compute" element={<ComputePage />} />
             <Route path="/tempsub" element={<TempSub />} />
+            <Route path="/completion" element={<CompletionPage/>} />
             <Route path="/signup" element={<Signup onUserChange={setUser} />} />
             <Route 
               path="/cam" 

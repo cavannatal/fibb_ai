@@ -176,7 +176,7 @@ const useIsMobile = () => {
         alert('All photos have been uploaded successfully!');
         
         // Here you would typically navigate to a completion page
-        // navigate('/completion');
+        window.location.href = '/completion';
       } catch (error) {
         console.error('Error uploading photos:', error);
         alert('Failed to upload photos. Please try again.');
@@ -196,7 +196,7 @@ const useIsMobile = () => {
           </h1>
           
           <p className="text-center text-lg mb-8 sm:mb-16 max-w-2xl">
-          Embark on your personalized fibb journey! Upload your photos below to kickstart your transformative experience. For Full Body shots, please use your camera for now — we're currently developing an iOS app to enhance this process. Let's begin your fibb adventure!
+          Embark on your personalized fibb journey! Upload your photos below to kickstart your transformative experience. For Full Body shots, please use your camera app for now — we're currently developing an iOS app to enhance this process. Let's begin your fibb adventure!
         </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 w-full max-w-6xl mb-8 sm:mb-16">
