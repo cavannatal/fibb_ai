@@ -6,10 +6,10 @@ import { fetchFalApiKey, generateImageWithFAL } from './components/falAIComponen
 import { fetchBflApiKey, generateImageWithBFL } from './components/bflAIComponent';
 
 interface FormState {
+  selectedStyle: 'fibb Enhanced' | 'fibb Limn';
   selectedLora: string;
   subject: string;
-  generateWithoutFibb: boolean; 
-  mode: 'Enhanced' | 'Research';
+  generateWithoutFibb: boolean;
 }
 
 interface LoraFile {
@@ -26,14 +26,14 @@ const ImageGen: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState<boolean>(false);
-  const [loraFiles, setLoraFiles] = useState<string[]>([]);
+  const [loraFiles, setLoraFiles] = useState<LoraFile[]>([]);
   const [selectedLoraUrl, setSelectedLoraUrl] = useState<string>('');
   
   const [formState, setFormState] = useState<FormState>({
+    selectedStyle: 'fibb Enhanced',
     selectedLora: '',
     subject: '',
     generateWithoutFibb: false,
-    mode: 'Enhanced',
   });
 
   useEffect(() => {
@@ -59,8 +59,7 @@ const ImageGen: React.FC = () => {
       try {
         const { username } = await getCurrentUser();
         const files = await getLoraFiles(username);
-        console.log('Fetched Lora files:', files);
-        setLoraFiles(files.map(file => file.key));
+        setLoraFiles(files);
       } catch (error) {
         console.error('Error fetching Lora files:', error);
         setLoraFiles([]);
@@ -74,7 +73,7 @@ const ImageGen: React.FC = () => {
     return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
   };
 
-  async function getLoraFiles(sub: string): Promise<{ key: string; presignedUrl: string }[]> {
+  async function getLoraFiles(sub: string): Promise<LoraFile[]> {
     const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
     
     try {
@@ -86,23 +85,15 @@ const ImageGen: React.FC = () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('API Error:', errorData);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
       }
   
       const data = await response.json();
-      console.log('API Data:', data);
-      setSelectedLoraUrl(data.body.files[0].presignedUrl);
-  
-      if (data && data.body && typeof data.body === 'object' && Array.isArray(data.body.files)) {
-        return data.body.files.map((file: { key: string; presignedUrl: string }) => ({
-          key: file.key,
-          presignedUrl: file.presignedUrl,
-        }));
-      } else {
-        console.error('Unexpected data format:', data);
-        return [];
+      if (data.body.files && data.body.files.length > 0) {
+        setSelectedLoraUrl(data.body.files[0].presignedUrl);
       }
+  
+      return data.body.files || [];
     } catch (error) {
       console.error('Error fetching Lora files:', error);
       return [];
@@ -117,6 +108,15 @@ const ImageGen: React.FC = () => {
       setFormState(prevState => ({
         ...prevState,
         [name]: checked,
+      }));
+    } else if (name === 'selectedLora') {
+      const selectedFile = loraFiles.find(file => file.key === value);
+      if (selectedFile) {
+        setSelectedLoraUrl(selectedFile.presignedUrl);
+      }
+      setFormState(prevState => ({
+        ...prevState,
+        [name]: value,
       }));
     } else {
       setFormState(prevState => ({
@@ -135,24 +135,19 @@ const ImageGen: React.FC = () => {
     setIsSaved(false);
     setUploadStatus(null);
 
-
-
     try {
       let imageUrl: string;
-      if (formState.mode === 'Research') {
+      if (formState.selectedStyle === 'fibb Limn') {
         if (!apiKeyBfl) throw new Error('BFL API key not available');
         console.log('Generating image with BFL');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
         console.log('BFL image URL:', imageUrl);
       } else {
         if (!apiKeyFal) throw new Error('FAL API key not available');
-        setSelectedLoraUrl(formState.selectedLora);
         console.log("Selected Lora URL:", selectedLoraUrl);
         imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, selectedLoraUrl);
- 
       }
       
-      // Remove the "?t=[taskID]" from the URL
       const cleanUrl = String(imageUrl).split('?')[0];
       console.log('Clean URL:', cleanUrl);
   
@@ -161,7 +156,7 @@ const ImageGen: React.FC = () => {
     } catch (error) {
       console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      if (formState.generateWithoutFibb) {
+      if (formState.selectedStyle === 'fibb Limn') {
         setErrorBfl(`Error in BFL workflow: ${errorMessage}`);
       } else {
         setErrorFal(`Error in FAL workflow: ${errorMessage}`);
@@ -229,7 +224,7 @@ const ImageGen: React.FC = () => {
           className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-16 mt-8 sm:mt-16 text-center"
           style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >
-          Create Your <span className="text-[#cbf59a]">Image</span>
+          Bring your <span className="text-[#cbf59a]">fibb</span> to life.
         </motion.h1>
 
         <motion.div
@@ -238,60 +233,127 @@ const ImageGen: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full max-w-3xl bg-[#144a53] p-6 sm:p-8 rounded-lg"
         >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="selectedLora" className="block text-lg font-semibold mb-2">Select your Fibb:</label>
-              <select
-                id="selectedLora"
-                name="selectedLora"
-                value={formState.selectedLora}
-                onChange={handleChange}
-                disabled={formState.generateWithoutFibb || formState.mode === 'Research'}
-                className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb || formState.mode === 'Research' ? 'opacity-50 cursor-not-allowed' : ''}`}
+          <form onSubmit={handleSubmit} className="space-y-16">
+            <div className="flex flex-col sm:flex-row">
+              <div className="w-full sm:w-1/3 mb-4 sm:mb-0">
+                <label className="block text-xl font-semibold mb-2"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >Choose your style:</label>
+              </div>
+              <div className="w-full sm:w-2/3 space-y-4">
+                <label className="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="selectedStyle"
+                    value="fibb Enhanced"
+                    checked={formState.selectedStyle === 'fibb Enhanced'}
+                    onChange={handleChange}
+                    className="mt-1"
+                  />
+                  <div>
+                    <span className="font-semibold text-lg"
+                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                    >fibb Enhanced</span>
+                    <p className="text-md text-teal-300"
+                    style={{ fontFamily: '"Font1", sans-serif' }}
+                    >
+                      This model is trained on an extensive dataset of photorealistic images and produces
+                      hyper-accurate visuals with lifelike details. Ideal for portraits, product visuals, or any
+                      project that requires a true-to-life representation.
+                    </p>
+                  </div>
+                </label>
+                <label className="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="selectedStyle"
+                    value="fibb Limn"
+                    checked={formState.selectedStyle === 'fibb Limn'}
+                    onChange={handleChange}
+                    className="mt-1"
+                  />
+                  <div>
+                    <span className="font-semibold text-lg"
+                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                    >fibb Research</span>
+                    <p className="text-md text-teal-300"
+                    style={{ fontFamily: '"Font1", sans-serif' }}
+                    >
+                      (in beta from the fibb Innovation Lab)
+                      This model excels at following detailed text prompts with exceptional accuracy for
+                      creative and experimental projects. Ideal for highly stylized art, imaginative concepts,
+                      or text-to-image generation.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="w-full mb-2">
+                <label htmlFor="selectedLora" className="block text-xl font-semibold"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >Choose your fibb:</label>
+              </div>
+              <div className="w-full sm:w-64 text-lg"
+              style={{ fontFamily: '"Font1", sans-serif' }}
               >
-                {loraFiles.map((file, index) => (
-                  <option key={index} value={file}>{file.split('/').pop()}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="mode" className="block text-lg font-semibold mb-2">Mode:</label>
-              <select 
-              id="mode"
-              name="mode" 
-              value={formState.mode} 
-              onChange={handleChange}>
-                <option value="Enhanced">Enhanced</option>
-                <option value="Research">Research</option>
-                className={`w-full p-3 rounded-lg bg-[#285a62] text-white`}
-              </select>
-            </div>
-
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  name="generateWithoutFibb"
-                  checked={formState.generateWithoutFibb}
+                <select
+                  id="selectedLora"
+                  name="selectedLora"
+                  value={formState.selectedLora}
                   onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-[#f79302]"
-                />
-                <span className="text-lg">Generate without a Fibb</span>
-              </label>
+                  disabled={formState.generateWithoutFibb || formState.selectedStyle === 'fibb Limn'}
+                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.generateWithoutFibb || formState.selectedStyle === 'fibb Limn' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <option value="">Select a fibb</option>
+                  <option value="Generate without a fibb">Generate without a fibb</option>
+                  {loraFiles.map((file, index) => (
+                    <option key={index} value={file.key}>{file.key.split('/').pop()}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="subject" className="block text-lg font-semibold mb-2">Subject/Scenario:</label>
-              <textarea
-                id="subject"
-                name="subject"
-                value={formState.subject}
-                onChange={handleChange}
-                placeholder="e.g. A futuristic city at night"
-                required
-                className="w-full p-3 rounded-lg bg-[#285a62] text-white placeholder-gray-300 resize-none"
-                rows={3}
-              />
+            <div className="flex flex-col sm:flex-row">
+              <div className="w-full sm:w-2/3 sm:pr-4">
+                <label htmlFor="subject" className="block text-xl font-semibold mb-2"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >What do you want to see?</label>
+                <div className="block sm:hidden mb-4">
+                  <h4 className="font-semibold mb-2"
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                  >Tips for prompting:</h4>
+                  <ul className="list-disc list-inside text-md text-white"
+                  style={{ fontFamily: '"Font1", sans-serif' }}
+                  >
+                    <li>Longer and more detailed prompts will generate better results.</li>
+                    <li>When using a fibb, refer to yourself as he or she for more accurate results.</li>
+                  </ul>
+                </div>
+                <textarea
+                  id="subject"
+                  name="subject"
+                  value={formState.subject}
+                  onChange={handleChange}
+                  style={{ fontFamily: '"Font1", sans-serif' }}
+                  placeholder="Example prompt: He stands on a dimly lit balcony in the middle of New York City. He leans against the railing as the breeze blows. The city skyline glows in the distance, and the warm, golden light from the apartment behind him casts a soft glow on his profile. He gazes out thoughtfully, lost in the moment while the world below hums with quiet energy."
+                  required
+                  className="w-full p-2 rounded bg-[#285a62] text-white placeholder-gray-400 resize-none"
+                  rows={6}
+                />
+              </div>
+              <div className="hidden sm:block w-1/3 pl-4">
+                <h4 className="font-semibold mb-2"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >Tips for prompting:</h4>
+                <ul className="list-disc list-inside text-md text-white"
+                style={{ fontFamily: '"Font1", sans-serif' }}
+                >
+                  <li>Longer and more detailed prompts will generate better results.</li>
+                  <li>When using a fibb, refer to yourself as he or she for more accurate results.</li>
+                </ul>
+              </div>
             </div>
 
             <motion.button
@@ -302,7 +364,7 @@ const ImageGen: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {isLoading ? 'Generating...' : `Generate Image with ${formState.mode === 'Research' ? 'BFL' : 'FAL'}`}
+              {isLoading ? 'CREATING...' : 'CREATE'}
             </motion.button>
           </form>
         </motion.div>
@@ -324,30 +386,28 @@ const ImageGen: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-8 w-full max-w-3xl flex flex-col items-center"
           >
-            <h3 className="text-2xl font-bold mb-4">Generated Image:</h3>
             <img 
               src={generatedImage} 
               alt="Generated" 
               className="w-full rounded-lg shadow-lg mb-4" 
             />
-            <div className="flex flex-col items-center">
-              <motion.button
-                onClick={handleUpload}
-                disabled={!generatedImage || isSaved}
-                className="mt-4 bg-[#f79302] text-black font-bold py-2 px-6 rounded-lg text-lg hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isSaved ? 'Saved' : 'Save'}
-              </motion.button>
-              {uploadStatus && <p className="mt-2 text-center">{uploadStatus}</p>}
-            </div>
+            <motion.button
+              onClick={handleUpload}
+              disabled={!generatedImage || isSaved}
+              className="mt-4 bg-[#f79302] text-black font-bold py-2 px-6 rounded-lg text-lg hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isSaved ? 'Saved' : 'Save'}
+            </motion.button>
+            {uploadStatus && <p className="mt-2 text-center">{uploadStatus}</p>}
           </motion.div>
         )}
       </main>
     </div>
-    );
+  );
+
 };
 
 export default ImageGen;
