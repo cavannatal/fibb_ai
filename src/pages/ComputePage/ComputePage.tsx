@@ -28,15 +28,15 @@ const ComputePage: React.FC = () => {
         >
           Introducing fibbCompute,
         </motion.h2>
-        <motion.h2
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-3xl sm:text-5xl font-semibold mb-8 sm:mb-16"
+          className="text-3xl sm:text-5xl font-semibold mb-8 text-center text-[#cbf59a]"
           style={{ fontFamily: '"Sofia Pro", sans-serif' }}
         >
-          Coming in 2025.
-        </motion.h2>
+          Coming Soon in November 2024
+        </motion.div>
         <div className="flex flex-col md:flex-row gap-6 sm:gap-8 w-full mt-32 mb-8 sm:mb-16">
           {[
             { title: "Fastest Training", content: "Nearly 10x faster than our closest competitor. Train to 3200+ steps in as low as 7 minutes and 24 seconds." },

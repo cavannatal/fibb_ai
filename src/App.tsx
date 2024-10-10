@@ -9,7 +9,6 @@ import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
 import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage';
 import CameraPage from './pages/CameraPage/CameraPage';
-import PhotoCaptureComponent from './pages/CameraPage/PhotoCaptureComponent';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/PhotoGalleryPage/photoGallery';
@@ -17,12 +16,13 @@ import TOSPage from './pages/TOSPage/TOSPage';
 import Marketplace from './pages/Marketplace/index';
 import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
 import CreatePage from './pages/CreatePage/CreatePage';
-import Portfolio from './pages/CaseStudies/TempCaseStudies';
+import Portfolio from './pages/CaseStudies/Services';
 import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage';
 import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
 import GuidedProcess from './pages/CameraPage/GuidedProcess';
 import ComputePage from './pages/ComputePage/ComputePage'
 import CompletionPage from './pages/CameraPage/CompletionPage'
+import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
 
 
 
@@ -60,7 +60,7 @@ const App: React.FC = () => {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
-            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/marketplace" element={<MarketplaceSoon />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/guided" element={<GuidedProcess />} />
             <Route path="/compute" element={<ComputePage />} />
