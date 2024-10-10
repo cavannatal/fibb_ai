@@ -19,10 +19,15 @@ import CreatePage from './pages/CreatePage/CreatePage';
 import Portfolio from './pages/CaseStudies/Services';
 import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage';
 import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
-import GuidedProcess from './pages/CameraPage/GuidedProcess';
+import GuidedProcess from './pages/CameraPage/GuidedProcess';       
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
-import Profile from './pages/ProfilePage/ProfilePage';
+import Profile from './pages/ProfilePage/ProfilePage';        
+import ComputePage from './pages/ComputePage/ComputePage'
+import CompletionPage from './pages/CameraPage/CompletionPage'
+import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
+import TokenDisplay from './pages/CreatePage/ImageGen/TokenSystem/TokenDisplay';
+
 
 import awsExports from './aws-exports';
 
@@ -54,6 +59,7 @@ const App: React.FC = () => {
             <Route path="/team" element={<WhoAreWePage />} />
             <Route path="/FAQ" element={<FAQPage />} />
             <Route path="/events" element={<EventsPage />} />
+            <Route path="/token-display" element={<TokenDisplay />} />
             <Route path="/subscribe" element={<SubscriptionPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
