@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
 
 interface NavBarProps {
-  signOut?: () => void;
   user?: any; // We're using 'any' here as the exact type is not exported from Amplify
 }
 
-const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
+const NavBar: React.FC<NavBarProps> = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -18,16 +17,15 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
     { name: "Marketplace", path: "/marketplace" },
     { name: "Services", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
-    ...(user ? [{ name: "Gallery", path: "/photo-gallery" }] : []),
     ...(user ? [{ name: "Create", path: "/get-started" }] : []),
   ];
 
-  const handleAuth = () => {
-    if (user && signOut) {
-      signOut();
-    } else {
-      navigate('/signup');
-    }
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile'); // Assuming '/profile' is the route for the profile page
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -54,12 +52,21 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
                 {item.name}
               </Link>
             ))}
-            <button
-              onClick={handleAuth}
-              className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap"
-            >
-              {user ? 'Log Out' : 'Sign Up'}
-            </button>
+            {user ? (
+              <button
+                onClick={handleProfileClick}
+                className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap"
+              >
+                <User size={20} />
+              </button>
+            ) : (
+              <button
+                onClick={handleSignUp}
+                className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap"
+              >
+                Sign Up
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -80,15 +87,27 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
               {item.name}
             </Link>
           ))}
-          <button
-            onClick={() => {
-              handleAuth();
-              setIsMenuOpen(false);
-            }}
-            className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
-          >
-            {user ? 'Log Out' : 'Sign Up'}
-          </button>
+          {user ? (
+            <button
+              onClick={() => {
+                handleProfileClick();
+                setIsMenuOpen(false);
+              }}
+              className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
+            >
+              Profile
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                handleSignUp();
+                setIsMenuOpen(false);
+              }}
+              className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
+            >
+              Sign Up
+            </button>
+          )}
         </div>
       </div>
     </nav>
