@@ -1,5 +1,4 @@
-import { TokenType } from './tokenStructure';
-import { UserTokens, calculateConsumableTokens, consumeTokens, resetSubscriptionTokens, refillTokens, fetchTokensFromDynamoDB } from './tokenCounter';
+import { TokenType } from './TokenStructure';
 
 export type SubscriptionTier = 'Basic' | 'Starter' | 'Standard' | 'Pro';
 
@@ -19,7 +18,7 @@ const tokenBillingInfo: TokenBillingInfo = {
     packSize: 10,
     pricing: {
       Basic: 4.99,
-      Starter: 3.99,
+      Starter: 4.99,
       Standard: 2.99,
       Pro: 1.99,
     },
@@ -29,7 +28,7 @@ const tokenBillingInfo: TokenBillingInfo = {
     packSize: 20,
     pricing: {
       Basic: 4.99,
-      Starter: 3.99,
+      Starter: 4.99,
       Standard: 2.99,
       Pro: 1.99,
     },
@@ -63,27 +62,8 @@ export class ConsumerBilling {
   static getTokenBillingInfo(): TokenBillingInfo {
     return tokenBillingInfo;
   }
-
-  static async manageUserTokens(userId: string, userTier: SubscriptionTier): Promise<UserTokens> {
-    try {
-      let userTokens = await fetchTokensFromDynamoDB(userId);
-      userTokens = calculateConsumableTokens(userTokens);
-
-      const updatedTokens = consumeTokens(userTokens, TokenType.ENHANCED, 5);
-      if (updatedTokens) {
-        userTokens = updatedTokens;
-        console.log('Tokens consumed successfully');
-      } else {
-        console.log('Not enough tokens');
-      }
-
-      userTokens = resetSubscriptionTokens(userTokens);
-      userTokens = refillTokens(userTokens, TokenType.RESEARCH, 20);
-
-      return userTokens;
-    } catch (error) {
-      console.error('Error managing user tokens:', error);
-      throw error;
-    }
-  }
 }
+
+console.log('Enhanced token price for Standard tier:', ConsumerBilling.getTokenPrice(TokenType.ENHANCED, 'Standard'));
+console.log('Cost of 20 Research tokens for Pro tier:', ConsumerBilling.calculateTokenCost(TokenType.RESEARCH, 20, 'Pro'));
+console.log('All token billing info:', ConsumerBilling.getTokenBillingInfo());

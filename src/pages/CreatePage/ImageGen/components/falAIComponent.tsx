@@ -45,7 +45,7 @@ export const generateImageWithFAL = async (
     const result = await fal.subscribe('fal-ai/flux-lora', {
       input: {
         prompt: prompt,
-        image_size: { width: 1920, height: 1080 },
+        image_size: { width: 1080, height: 1080 },
         loras: loras,
         num_inference_steps: 50,
         guidance_scale: 0,
