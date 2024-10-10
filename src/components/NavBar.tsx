@@ -15,8 +15,7 @@ const NavBar: React.FC<NavBarProps> = ({ signOut, user }) => {
   const navItems = [
     { name: "Our Team", path: "/team" },
     { name: "fibbCompute", path: "/compute"},
-    { name: "Events", path: "/events" },
-    { name: "Blog", path: "/blog" },
+    { name: "Marketplace", path: "/marketplace" },
     { name: "Services", path: '/portfolio' },
     { name: "Subscribe", path: "/subscribe" },
     ...(user ? [{ name: "Gallery", path: "/photo-gallery" }] : []),
