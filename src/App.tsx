@@ -13,18 +13,16 @@ import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/PhotoGalleryPage/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
-import Marketplace from './pages/Marketplace/index';
+import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp';
 import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
 import CreatePage from './pages/CreatePage/CreatePage';
 import Portfolio from './pages/CaseStudies/Services';
 import Signup, { checkUser, handleSignOut } from './pages/SignupPage/SignupPage';
 import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
 import GuidedProcess from './pages/CameraPage/GuidedProcess';
-import ComputePage from './pages/ComputePage/ComputePage'
-import CompletionPage from './pages/CameraPage/CompletionPage'
-import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
-
-
+import ComputePage from './pages/ComputePage/ComputePage';
+import CompletionPage from './pages/CameraPage/CompletionPage';
+import Profile from './pages/ProfilePage/ProfilePage';
 
 import awsExports from './aws-exports';
 
@@ -49,7 +47,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-white">
-        <NavBar signOut={signOutUser} user={user} />
+        <NavBar user={user} />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -62,8 +60,15 @@ const App: React.FC = () => {
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<MarketplaceSoon />} />
             <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/guided" element={<GuidedProcess />} />
             <Route path="/compute" element={<ComputePage />} />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute user={user}>
+                  <Profile user={user} signOut={signOutUser} />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/tempsub" element={<TempSub />} />
             <Route path="/completion" element={<CompletionPage/>} />
             <Route path="/signup" element={<Signup onUserChange={setUser} />} />
@@ -100,7 +105,6 @@ const App: React.FC = () => {
               }
             />
           </Routes>
-          
         </main>
         <Footer />
       </div>
