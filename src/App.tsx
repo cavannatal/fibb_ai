@@ -24,7 +24,7 @@ import CompletionPage from './pages/CameraPage/CompletionPage';
 import Profile from './pages/ProfilePage/ProfilePage';        
 import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
 import TokenDisplay from './pages/CreatePage/ImageGen/components/TokenSystem/TokenDisplay';
-
+import ConsentPage from './pages/SubscriptionPage/ConsentPage';
 
 
 import awsExports from './aws-exports';
@@ -42,6 +42,8 @@ const App: React.FC = () => {
     initUser();
   }, []);
 
+
+
   const signOutUser = async () => {
     await handleSignOut();
     setUser(null);
@@ -58,13 +60,14 @@ const App: React.FC = () => {
             <Route path="/FAQ" element={<FAQPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/tokens" element={<TokenDisplay />} />
-            <Route path="/subscribe" element={<SubscriptionPage />} />
+            <Route path="/subscribe" element={<TempSub />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
             <Route path="/terms-of-service" element={<TOSPage />} />
             <Route path="/marketplace" element={<MarketplaceSoon />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/compute" element={<ComputePage />} />
+            <Route path="/consent" element={<ConsentPage />} />
             <Route 
               path="/profile" 
               element={
@@ -73,7 +76,6 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               } 
             />
-            <Route path="/tempsub" element={<TempSub />} />
             <Route path="/completion" element={<CompletionPage/>} />
             <Route path="/signup" element={<Signup onUserChange={setUser} />} />
             <Route 

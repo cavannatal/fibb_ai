@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TokenType, TokenSource, TokenWallet } from './TokenStructure';
 import { ConsumerBilling, TokenBillingInfo, SubscriptionTier } from './ConsumerBilling';
-import { tokenManagementService } from './TokenManagement';
 
 
 interface TokenDisplayProps {
@@ -16,42 +15,38 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ userId }) => {
 
   const tokenInfo: TokenBillingInfo = ConsumerBilling.getTokenBillingInfo();
 
-  useEffect(() => {
-    const fetchWallet = async () => {
-      if (!userId) {
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        const userTokens = await tokenManagementService.getUserTokens(userId);
-        const walletData: TokenWallet = {
-          [TokenType.FIBB]: {
-            [TokenSource.MONTHLY]: userTokens.subsFibb,
-            [TokenSource.PURCHASED]: userTokens.paidFibb,
-          },
-          [TokenType.ENHANCED]: {
-            [TokenSource.MONTHLY]: userTokens.subsEnhanced,
-            [TokenSource.PURCHASED]: userTokens.paidEnhanced,
-          },
-          [TokenType.RESEARCH]: {
-            [TokenSource.MONTHLY]: userTokens.subsResearch,
-            [TokenSource.PURCHASED]: userTokens.paidResearch,
-          },
-        };
-        setWallet(walletData);
-        setError(null);
-        setSubscriptionTier('Standard');
-      } catch (err) {
-        setError('Failed to fetch wallet data. Please try again later.');
-        console.error('Error fetching wallet:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchWallet = async () => {
+  //     if (!userId) {
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     try {
+  //       setLoading(true);
+  //      // const userTokens = await tokenManagementService.getUserTokens(userId);
+  //       const walletData: TokenWallet = {
+  //         [TokenType.FIBB]: {
+  //           [TokenSource.MONTHLY]: userTokens.subsFibb,
+  //           [TokenSource.PURCHASED]: userTokens.paidFibb,
+  //         },
+  //         [TokenType.GEN]: {
+  //           [TokenSource.MONTHLY]: userTokens.subsGen,
+  //           [TokenSource.PURCHASED]: userTokens.paidGen,
+  //         },
+  //       };
+  //       setWallet(walletData);
+  //       setError(null);
+  //       setSubscriptionTier('Standard');
+  //     } catch (err) {
+  //       setError('Failed to fetch wallet data. Please try again later.');
+  //       console.error('Error fetching wallet:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchWallet();
-  }, [userId]);
+  //   fetchWallet();
+  // }, [userId]);
 
   const getTotalTokens = (tokenType: TokenType) => {
     if (!wallet) return 0;
@@ -62,8 +57,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ userId }) => {
 
   const tokenColors = {
     [TokenType.FIBB]: 'bg-green-500',
-    [TokenType.ENHANCED]: 'bg-blue-500',
-    [TokenType.RESEARCH]: 'bg-orange-500',
+    [TokenType.GEN]: 'bg-blue-500',
   };
 
   return (
@@ -82,7 +76,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ userId }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         {Object.values(TokenType).map((tokenType) => (
           <div key={tokenType} className="bg-white rounded-2xl p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
             <h3 className={`text-xl mb-4 ${tokenColors[tokenType].replace('bg-', 'text-')}`}>{tokenType} Tokens</h3>
@@ -95,7 +89,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ userId }) => {
       </div>
 
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Available Token Packs</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {Object.entries(tokenInfo).map(([tokenType, info]) => (
           <div key={tokenType} className="bg-white rounded-2xl p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col">
             <div className="flex-grow">

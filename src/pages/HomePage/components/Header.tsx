@@ -42,10 +42,18 @@ const Header: React.FC = () => {
   };
 
   const galleryItems = [
-    { src: circle }, { src: himg9 }, { src: himg5 },
-    { src: himg4 }, { src: lemonright }, { src: circle },
-    { src: lemonleft }, { src: himg2 }, { src: himg3 },
-    { src: himg1 }, { src: square }, { src: himg6 },
+    { src: circle, link: '/circle' },
+    { src: himg9, link: '/image9' },
+    { src: himg5, link: '/image5' },
+    { src: himg4, link: '/image4' },
+    { src: lemonright, link: '/lemon-right' },
+    { src: circle, link: '/circle-2' },
+    { src: lemonleft, link: '/lemon-left' },
+    { src: himg2, link: '/image2' },
+    { src: himg3, link: '/image3' },
+    { src: himg1, link: '/image1' },
+    { src: square, link: '/square' },
+    { src: himg6, link: '/image6' },
   ];
 
   return (

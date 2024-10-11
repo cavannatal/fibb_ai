@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 
 interface PlanPrice {
   monthly: string;
@@ -19,53 +19,11 @@ interface Plan {
 
 type PlanCategory = 'consumer' | 'professional' | 'founders' ;
 
-const initiateStripeCheckout = async (packageId: string) => {
-  const { userId } = await getCurrentUser();
 
-  try {
-    console.log('Sending request with:', { userId, packageId });
-
-    const response = await axios.post(
-      'https://1ns0n7yl4b.execute-api.us-east-2.amazonaws.com/api/fibb-stripe-controller',
-      { userId, packageId },
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    console.log('Response received:', response.data);
-
-    if (response.data.statusCode === 400) {
-      console.log('Server returned an error:', response.data.body);
-      throw new Error(`Server error: ${response.data.body}`);
-    }
-
-    return response.data;
-  } catch (error) {
-    console.log('Error initiating Stripe checkout:', error);
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        console.log('Error response:', error.response.data);
-        console.log('Error status:', error.response.status);
-        console.log('Error headers:', error.response.headers);
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-      } else {
-        console.log('Error setting up request:', error.message);
-      }
-    } else {
-      console.log('Unexpected error:', error);
-    }
-    throw error;
-  }
-};
-
-const PricingPage: React.FC = () => {
+  const PricingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlanCategory>('consumer');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const allPlans: Record<PlanCategory, Plan[]> = {
     consumer: [
       {
@@ -207,50 +165,69 @@ const PricingPage: React.FC = () => {
     ],
     
   };
-
-  const handleSubscribe = async (plan: Plan) => {
+  
+  const initiateStripeCheckout = async (packageId: string) => {
+    const { userId } = await getCurrentUser();
+  
+  
     try {
-      console.log('Subscribing to plan:', plan);
-      const packageId = typeof plan.packageId === 'string' 
-        ? plan.packageId 
-        : billingPeriod === 'monthly' 
-          ? plan.packageId.monthly 
-          : plan.packageId.yearly;
-      
-      console.log('Selected packageId:', packageId);
-      
-      if (!packageId) {
-        throw new Error('Invalid packageId');
-      }
+      console.log('Sending request with:', { userId, packageId });
   
-      const response = await initiateStripeCheckout(packageId);
-      console.log('Received response:', response);
-      
-      if (typeof response === 'string') {
-        console.log('Redirecting to:', response);
-        window.location.href = response;
-      } else if (response && response.statusCode === 400) {
-        console.log('Server returned an error:', response.body);
-        throw new Error(`Server error: ${response.body}`);
-      } else {
-        console.log('Invalid response received:', response);
-        throw new Error('Invalid response received from server');
-      }
-    } catch (error: unknown) {
-      console.log('Error during subscription process:', error);
-      
-      if (error instanceof Error) {
-        console.log('Error message:', error.message);
-      } else if (typeof error === 'object' && error !== null && 'message' in error) {
-        console.log('Error message:', (error as { message: string }).message);
-      } else {
-        console.log('Unknown error:', error);
-      }
+      const response = await axios.post(
+        'https://o1t89jiych.execute-api.us-east-2.amazonaws.com/api/fibb-stripe-checkout-consumer',
+        { userId, packageId },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
   
-      // Handle the error appropriately, e.g., show an error message to the user
-      // You might want to set an error state here and display it in your UI
+      console.log('Response received:', response.data);
+  
+      if (response.data.statusCode === 400) {
+        console.log('Server returned an error:', response.data.body);
+        throw new Error(`Server error: ${response.data.body}`);
+      }
+      setCheckoutUrl(response.data.checkouturl);
+  
+      return response.data;
+    } catch (error) {
+      console.log('Error initiating Stripe checkout:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log('Error response:', error.response.data);
+          console.log('Error status:', error.response.status);
+          console.log('Error headers:', error.response.headers);
+        } else if (error.request) {
+          console.log('No response received:', error.request);
+        } else {
+          console.log('Error setting up request:', error.message);
+        }
+      } else {
+        console.log('Unexpected error:', error);
+      }
+      throw error;
     }
   };
+
+
+  const handleSubscription = async (packageId: string) => {
+    if (!packageId) {
+      throw new Error('Invalid packageId');
+    }
+  
+    try {
+      const response = await initiateStripeCheckout(packageId);
+      console.log('Received response:', response);
+      setCheckoutUrl(response.checkoutUrl);
+      window.open(response.checkoutuUrl, '_blank', 'noopener,noreferrer');
+
+    } catch (error: unknown) {
+      console.log('Error during subscription process:', error);
+    }
+  };
+
 
   return (
     <div className="bg-gradient-to-r from-[#093f48] to-[#004948] text-white min-h-screen">
@@ -330,13 +307,7 @@ const PricingPage: React.FC = () => {
               <button 
                   className="w-full bg-[#f79302] text-black py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                  onClick={() => {
-                    try {
-                      handleSubscribe(plan);
-                    } catch (error) {
-                      console.error('Error in handleSubscribe:', error);
-                    }
-                  }}
+                  onClick={() => handleSubscription(billingPeriod === 'monthly' ? (plan.packageId as { monthly: string, yearly: string }).monthly : (plan.packageId as { monthly: string, yearly: string }).yearly)}
                   >
                 {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
               </button>

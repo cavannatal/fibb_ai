@@ -1,41 +1,35 @@
 import { ReactNode } from 'react';
 
-export enum TokenType {
-    FIBB = 'Fibb',
-    ENHANCED = 'Enhanced',
-    RESEARCH = 'Research',
+  export enum TokenType {
+      FIBB = 'Fibb',
+      GEN = 'Gen',
   }
   
   export enum TokenSource {
-    MONTHLY = 'Monthly',
-    PURCHASED = 'Purchased',
+      MONTHLY = 'Monthly',
+      PURCHASED = 'Purchased',
   }
   
   export interface TokenBalance {
-    type: TokenType;
-    source: TokenSource;
-    amount: number;
+      type: TokenType;
+      source: TokenSource;
+      amount: number;
   }
   
   export interface TokenWallet {
-    [TokenType.FIBB]: {
-      [TokenSource.MONTHLY]: number;
-      [TokenSource.PURCHASED]: number;
-    };
-    [TokenType.ENHANCED]: {
-      [TokenSource.MONTHLY]: number;
-      [TokenSource.PURCHASED]: number;
-    };
-    [TokenType.RESEARCH]: {
-      [TokenSource.MONTHLY]: number;
-      [TokenSource.PURCHASED]: number;
-    };
+      [TokenType.FIBB]: {
+          [TokenSource.MONTHLY]: number;
+          [TokenSource.PURCHASED]: number;
+      };
+      [TokenType.GEN]: {
+          [TokenSource.MONTHLY]: number;
+          [TokenSource.PURCHASED]: number;
+      };
   }
   
   export const createEmptyWallet = (): TokenWallet => ({
     [TokenType.FIBB]: { [TokenSource.MONTHLY]: 0, [TokenSource.PURCHASED]: 0 },
-    [TokenType.ENHANCED]: { [TokenSource.MONTHLY]: 0, [TokenSource.PURCHASED]: 0 },
-    [TokenType.RESEARCH]: { [TokenSource.MONTHLY]: 0, [TokenSource.PURCHASED]: 0 },
+    [TokenType.GEN]: { [TokenSource.MONTHLY]: 0, [TokenSource.PURCHASED]: 0 },
   });
   
   export const addTokens = (wallet: TokenWallet, type: TokenType, source: TokenSource, amount: number): TokenWallet => {

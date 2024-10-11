@@ -25,9 +25,8 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
 
   const profileMenuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={16} />, path: '/profile' },
-    { name: 'Photo Gallery', icon: <Image size={16} />, path: '/profile/gallery' },
-    { name: 'Settings', icon: <Settings size={16} />, path: '/profile/settings' },
-    { name: 'Billing', icon: <CreditCard size={16} />, path: '/profile/billing' },
+    { name: 'Photo Gallery', icon: <Image size={16} />, path: '/photo-gallery' },
+    { name: 'Billing', icon: <CreditCard size={16} />, path: 'https://payments.fibb.ai/p/login/bIYbK836g9UA7ew144' },
   ];
 
   const handleSignUp = () => {

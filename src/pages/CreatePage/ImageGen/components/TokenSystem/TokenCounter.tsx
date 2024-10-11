@@ -1,75 +1,75 @@
-import { TokenType } from './TokenStructure';
+import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 
-export interface UserTokens {
-  fibbTokens: number;
-  enhancedTokens: number;
-  researchTokens: number;
-  paidFibb: number;
-  subsFibb: number;
-  paidEnhanced: number;
-  subsEnhanced: number;
-  paidResearch: number;
-  subsResearch: number;
+interface TokenData {
+  genTokens: number;
+  fibbs: number;
 }
 
-export async function fetchTokensFromDynamoDB(userId: string): Promise<UserTokens> {
-  // This is a placeholder for the actual Lambda function call
-  const response = await fetch(`https://your-api-gateway-url/getTokens?userId=${userId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch tokens');
-  }
-  return await response.json();
-}
-
-export function calculateConsumableTokens(tokens: UserTokens): UserTokens {
-  return {
-    ...tokens,
-    fibbTokens: tokens.paidFibb + tokens.subsFibb,
-    enhancedTokens: tokens.paidEnhanced + tokens.subsEnhanced,
-    researchTokens: tokens.paidResearch + tokens.subsResearch,
-  };
-}
-
-export function consumeTokens(tokens: UserTokens, tokenType: TokenType, amount: number): UserTokens | null {
-  let updatedTokens = { ...tokens };
-  let remainingAmount = amount;
-
-  const consumeFromSource = (source: 'subs' | 'paid') => {
-    const key = `${source}${tokenType}` as keyof UserTokens;
-    const available = updatedTokens[key] as number;
-    if (available >= remainingAmount) {
-      updatedTokens[key] = available - remainingAmount;
-      remainingAmount = 0;
-    } else {
-      remainingAmount -= available;
-      updatedTokens[key] = 0;
+export async function fetchTokenData(): Promise<TokenData> {
+  try {
+    const { accessToken } = (await fetchAuthSession()).tokens ?? {};
+    if (!accessToken) {
+      throw new Error('No access token available');
     }
-  };
 
-  consumeFromSource('subs');
-  if (remainingAmount > 0) {
-    consumeFromSource('paid');
+    const { userId } = await getCurrentUser();
+
+    const response = await fetch('https://60hgfwk3n1.execute-api.us-east-2.amazonaws.com/api/getUserSubscription', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (typeof data.totalGenerations === 'number' && typeof data.totalFibbs === 'number') {
+      return { 
+        genTokens: data.totalGenerations, 
+        fibbs: data.totalFibbs 
+      };
+    } else {
+      throw new Error('Invalid response format');
+    }
+  } catch (error) {
+    console.error('Error fetching token data:', error);
+    throw error;
   }
-
-  if (remainingAmount > 0) {
-    return null; // Not enough tokens
-  }
-
-  return calculateConsumableTokens(updatedTokens);
 }
 
-export function resetSubscriptionTokens(tokens: UserTokens): UserTokens {
-  return {
-    ...tokens,
-    subsFibb: 0,
-    subsEnhanced: 0,
-    subsResearch: 0,
-  };
-}
+export async function deductGenToken(): Promise<boolean> {
+  try {
+    const { accessToken } = (await fetchAuthSession()).tokens ?? {};
+    if (!accessToken) {
+      throw new Error('No access token available');
+    }
 
-export function refillTokens(tokens: UserTokens, tokenType: TokenType, amount: number): UserTokens {
-  const updatedTokens = { ...tokens };
-  const key = `paid${tokenType}` as keyof UserTokens;
-  updatedTokens[key] = (updatedTokens[key] as number) + amount;
-  return calculateConsumableTokens(updatedTokens);
+    const { userId } = await getCurrentUser();
+
+    const response = await fetch('https://60hgfwk3n1.execute-api.us-east-2.amazonaws.com/api/deductGenToken', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return data.success;
+  } catch (error) {
+    console.error('Error deducting GenToken:', error);
+    return false;
+  }
 }

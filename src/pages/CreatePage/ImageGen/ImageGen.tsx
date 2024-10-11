@@ -3,7 +3,9 @@ import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import { motion } from 'framer-motion';
 import fibbLogo from '../../../components/images/FibbLogoWhite.svg';
 import { fetchFalApiKey, generateImageWithFAL } from './components/falAIComponent';
-import { fetchBflApiKey, generateImageWithBFL } from './components/bflAIComponent';
+import { fetchBflApiKey, generateImageWithBFL } from './components/bflAIComponent'; 
+import { fetchTokenData } from './components/TokenSystem/TokenCounter';
+import { error } from 'console';
 
 interface FormState {
   selectedStyle: 'fibb Enhanced' | 'fibb Limn';
@@ -27,7 +29,9 @@ const ImageGen: React.FC = () => {
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [loraFiles, setLoraFiles] = useState<LoraFile[]>([]);
   const [selectedLoraUrl, setSelectedLoraUrl] = useState<string>('');
-  
+  const [genTokens, setGenTokens] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
+
   const [formState, setFormState] = useState<FormState>({
     selectedStyle: 'fibb Enhanced',
     selectedLora: '',
@@ -66,6 +70,29 @@ const ImageGen: React.FC = () => {
   
     fetchLoraFiles();
   }, []);
+
+  useEffect(() => {
+    const getTokenData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchTokenData();
+        setGenTokens(data.genTokens);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch token data');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getTokenData();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading token data...</div>;
+  }
+
 
   const getCurrentTimeStamp = () => {
     return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
@@ -131,6 +158,13 @@ const ImageGen: React.FC = () => {
     setGeneratedImage(null);
     setIsSaved(false);
     setUploadStatus(null);
+
+
+    if (genTokens <= 0) {
+      setErrorFal('No GenTokens available for image generation.');
+      return;
+    }
+    setGenTokens(prevTokens => prevTokens - 1);
   
     try {
       let imageUrl: string;
@@ -208,12 +242,16 @@ const ImageGen: React.FC = () => {
     }
   };
 
+ 
+  
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
       <header className="flex justify-center p-4">
         <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
       </header>
       <main className="flex flex-col items-center flex-grow p-4 sm:p-6 pb-16 sm:pb-6">
+        
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -243,7 +281,7 @@ const ImageGen: React.FC = () => {
                     type="radio"
                     name="selectedStyle"
                     value="fibb Enhanced"
-                    checked={formState.selectedStyle === 'fibb Enhanced'}
+                    checked={false} // This should be controlled by formState
                     onChange={handleChange}
                     className="mt-1"
                   />
@@ -265,7 +303,7 @@ const ImageGen: React.FC = () => {
                     type="radio"
                     name="selectedStyle"
                     value="fibb Limn"
-                    checked={formState.selectedStyle === 'fibb Limn'}
+                    checked={false} // This should be controlled by formState
                     onChange={handleChange}
                     className="mt-1"
                   />
@@ -298,10 +336,10 @@ const ImageGen: React.FC = () => {
                 <select
                   id="selectedLora"
                   name="selectedLora"
-                  value={formState.selectedLora}
+                  value="" // This should be controlled by formState
                   onChange={handleChange}
-                  disabled={formState.selectedStyle === 'fibb Limn'}
-                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.selectedStyle === 'fibb Limn' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={false} // This should be controlled by formState
+                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white`}
                 >
                   <option value="">Select a fibb</option>
                   <option value="Generate without a fibb">Generate without a fibb</option>
@@ -331,13 +369,14 @@ const ImageGen: React.FC = () => {
                 <textarea
                   id="subject"
                   name="subject"
-                  value={formState.subject}
+                  value="" // This should be controlled by formState
                   onChange={handleChange}
                   style={{ fontFamily: '"Font1", sans-serif' }}
                   placeholder="Example prompt: He stands on a dimly lit balcony in the middle of New York City. He leans against the railing as the breeze blows. The city skyline glows in the distance, and the warm, golden light from the apartment behind him casts a soft glow on his profile. He gazes out thoughtfully, lost in the moment while the world below hums with quiet energy."
                   required
                   className="w-full p-2 rounded bg-[#285a62] text-white placeholder-gray-400 resize-none"
                   rows={6}
+                  
                 />
               </div>
               <div className="hidden sm:block w-1/3 pl-4">
@@ -352,16 +391,26 @@ const ImageGen: React.FC = () => {
                 </ul>
               </div>
             </div>
+            {isLoading ? (
+          <div>Loading token data...</div>
+        ) : error ? (
+          <div>Error: {String(error)}</div>
+        ) : (
+          <div className="token-display mb-4">
+            <h3 className="text-xl font-bold mb-2">Your Token Balance</h3><div>GenTokens: {genTokens}</div>
+          </div>
+        )}
+            
 
             <motion.button
               type="submit"
-              disabled={isLoading || (!apiKeyFal && !apiKeyBfl)}
+              disabled={isLoading || (!apiKeyFal && !apiKeyBfl) || genTokens <= 0}
               className="w-full bg-[#f79302] text-black font-bold py-3 px-8 rounded-lg text-xl hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {isLoading ? 'CREATING...' : 'CREATE'}
+              {isLoading ? 'CREATING...' : `CREATE`}
             </motion.button>
           </form>
         </motion.div>
@@ -404,7 +453,6 @@ const ImageGen: React.FC = () => {
       </main>
     </div>
   );
-
 };
 
 export default ImageGen;

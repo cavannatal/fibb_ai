@@ -13,19 +13,9 @@ export interface TokenBillingInfo {
 }
 
 const tokenBillingInfo: TokenBillingInfo = {
-  [TokenType.ENHANCED]: {
-    name: 'Enhanced Token Pack',
+  [TokenType.GEN]: {
+    name: 'Gen Token Pack',
     packSize: 10,
-    pricing: {
-      Basic: 4.99,
-      Starter: 4.99,
-      Standard: 2.99,
-      Pro: 1.99,
-    },
-  },
-  [TokenType.RESEARCH]: {
-    name: 'Research Token Pack',
-    packSize: 20,
     pricing: {
       Basic: 4.99,
       Starter: 4.99,
