@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
 
 interface PlanPrice {
   monthly: string;
@@ -20,10 +20,13 @@ interface Plan {
 type PlanCategory = 'consumer' | 'professional' | 'founders' ;
 
 
-  const PricingPage: React.FC = () => {
+
+
+const PricingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlanCategory>('consumer');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  
   const allPlans: Record<PlanCategory, Plan[]> = {
     consumer: [
       {

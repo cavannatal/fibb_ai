@@ -89,11 +89,6 @@ const ImageGen: React.FC = () => {
     getTokenData();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading token data...</div>;
-  }
-
-
   const getCurrentTimeStamp = () => {
     return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
   };
@@ -369,7 +364,7 @@ const ImageGen: React.FC = () => {
                 <textarea
                   id="subject"
                   name="subject"
-                  value="" // This should be controlled by formState
+                  value={formState.subject} // This should be controlled by formState
                   onChange={handleChange}
                   style={{ fontFamily: '"Font1", sans-serif' }}
                   placeholder="Example prompt: He stands on a dimly lit balcony in the middle of New York City. He leans against the railing as the breeze blows. The city skyline glows in the distance, and the warm, golden light from the apartment behind him casts a soft glow on his profile. He gazes out thoughtfully, lost in the moment while the world below hums with quiet energy."
@@ -391,17 +386,11 @@ const ImageGen: React.FC = () => {
                 </ul>
               </div>
             </div>
-            {isLoading ? (
-          <div>Loading token data...</div>
-        ) : error ? (
-          <div>Error: {String(error)}</div>
-        ) : (
+
           <div className="token-display mb-4">
             <h3 className="text-xl font-bold mb-2">Your Token Balance</h3><div>GenTokens: {genTokens}</div>
           </div>
-        )}
-            
-
+  
             <motion.button
               type="submit"
               disabled={isLoading || (!apiKeyFal && !apiKeyBfl) || genTokens <= 0}
