@@ -247,24 +247,24 @@ const PricingPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-r from-[#093f48] to-[#004948] text-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h1 className="text-4xl font-extrabold text-center mb-8"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-4 sm:mb-8"
         style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
         >Choose Your Plan</h1>
-        <p className="text-2xl text-center mb-8 text-[#cbf59a]"
+        <p className="text-xl sm:text-2xl text-center mb-6 sm:mb-8 text-[#cbf59a]"
         style={{ fontFamily: '"Font1", sans-serif' }}
         >Simple, transparent pricing that grows with you</p>
         
-        <div className="flex justify-center space-x-4 mb-8">
+        <div className="flex flex-wrap justify-center gap-4 mb-6 sm:mb-8">
           {(Object.keys(allPlans) as PlanCategory[]).map((tab) => (
             <button
               key={tab}
-              className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 ease-in-out
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 ease-in-out
                 ${activeTab === tab
                   ? 'bg-[#cbf59a] text-[#004948] shadow-lg' 
                   : 'bg-[#144a53] text-white hover:bg-[#285a62]'
                 }`}
-                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               onClick={() => setActiveTab(tab)}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -272,7 +272,7 @@ const PricingPage: React.FC = () => {
           ))}
         </div>
 
-        <div className="h-16 mb-8">
+        <div className="h-16 mb-6 sm:mb-8">
           {activeTab === 'consumer' && (
             <div className="flex justify-center">
               <div className="relative bg-[#144a53] p-1 rounded-full inline-flex items-center">
@@ -283,7 +283,7 @@ const PricingPage: React.FC = () => {
                   }}
                 />
                 <button
-                  className={`relative z-10 px-8 py-2 text-sm font-medium rounded-full transition-colors duration-300 ease-in-out
+                  className={`relative z-10 px-4 sm:px-8 py-2 text-sm font-medium rounded-full transition-colors duration-300 ease-in-out
                     ${billingPeriod === 'monthly' ? 'text-[#004948]' : 'text-white'}`}
                   onClick={() => setBillingPeriod('monthly')}
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
@@ -291,7 +291,7 @@ const PricingPage: React.FC = () => {
                   Monthly
                 </button>
                 <button
-                  className={`relative z-10 px-8 py-2 text-sm font-medium rounded-full transition-colors duration-300 ease-in-out
+                  className={`relative z-10 px-4 sm:px-8 py-2 text-sm font-medium rounded-full transition-colors duration-300 ease-in-out
                     ${billingPeriod === 'yearly' ? 'text-[#004948]' : 'text-white'}`}
                   onClick={() => setBillingPeriod('yearly')}
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
@@ -303,14 +303,14 @@ const PricingPage: React.FC = () => {
           )}
         </div>
 
-        <div className={`grid gap-8 ${activeTab === 'founders' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
+        <div className={`grid gap-6 sm:gap-8 ${activeTab === 'founders' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'}`}>
            {allPlans[activeTab].map((plan, index) => (
-            <div key={plan.name} className="flex flex-col p-6 rounded-2xl bg-gradient-to-b from-[#144a53] to-[#093f48] shadow-xl transform transition-all duration-300 hover:scale-105">
+            <div key={plan.name} className="flex flex-col p-4 sm:p-6 rounded-2xl bg-gradient-to-b from-[#144a53] to-[#093f48] shadow-xl transform transition-all duration-300 hover:scale-105">
               {plan.popular && <div className="text-xs font-semibold uppercase tracking-wide text-[#cbf59a] mb-2">Most popular</div>}
-              <h3 className="text-3xl font-bold mb-2"
+              <h3 className="text-2xl sm:text-3xl font-bold mb-2"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               >{plan.name}</h3>
-              <p className="text-3xl font-bold mb-4"
+              <p className="text-2xl sm:text-3xl font-bold mb-4"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               >
                 {typeof plan.price === 'string' 
@@ -318,24 +318,24 @@ const PricingPage: React.FC = () => {
                   : billingPeriod === 'monthly' 
                     ? plan.price.monthly 
                     : plan.price.yearly}
-                {activeTab === 'consumer' && <span className="text-xl font-normal">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>}
+                {activeTab === 'consumer' && <span className="text-lg sm:text-xl font-normal">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>}
               </p>
               <button 
-                  className="w-full bg-[#f79302] text-black py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
+                  className="w-full bg-[#f79302] text-black py-2 sm:py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                   onClick={() => handleSubscription(billingPeriod === 'monthly' ? (plan.packageId as { monthly: string, yearly: string }).monthly : (plan.packageId as { monthly: string, yearly: string }).yearly)}
                 >
                 {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
               </button>
-              <p className="text-lg text-[#cbf59a] mb-4"
+              <p className="text-base sm:text-lg text-[#cbf59a] mb-4"
               style={{ fontFamily: '"Font1", sans-serif' }}
               >{plan.description}</p>
-              <ul className="space-y-2 text-md"
+              <ul className="space-y-2 text-sm sm:text-md"
               style={{ fontFamily: '"Font1", sans-serif' }}
               >
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <svg className="w-5 h-5 mr-2 text-[#cbf59a] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-[#cbf59a] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     <span>{feature}</span>
