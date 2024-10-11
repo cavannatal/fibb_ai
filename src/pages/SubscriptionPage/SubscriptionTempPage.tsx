@@ -239,7 +239,7 @@ const PricingPage: React.FC = () => {
       const response = await initiateStripeCheckout(packageId);
       console.log('Received response:', response);
       setCheckoutUrl(response.checkoutUrl);
-      window.open(response.checkoutUrl, '_blank', 'noopener,noreferrer');
+      window.open(response.checkoutUrl);
     } catch (error: unknown) {
       console.log('Error during subscription process:', error);
     }

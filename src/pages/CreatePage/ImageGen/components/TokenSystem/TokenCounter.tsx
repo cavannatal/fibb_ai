@@ -52,7 +52,7 @@ export async function deductGenToken(): Promise<boolean> {
 
     const { userId } = await getCurrentUser();
 
-    const response = await fetch('https://60hgfwk3n1.execute-api.us-east-2.amazonaws.com/api/deductGenToken', {
+    const response = await fetch('https://60hgfwk3n1.execute-api.us-east-2.amazonaws.com/api/getUserSubscription', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

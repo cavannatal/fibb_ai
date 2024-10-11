@@ -89,6 +89,7 @@ const ImageGen: React.FC = () => {
     getTokenData();
   }, []);
 
+
   const getCurrentTimeStamp = () => {
     return new Date().toISOString().replace(/[-:]/g, "").split('.')[0] + "Z";
   };
@@ -238,7 +239,6 @@ const ImageGen: React.FC = () => {
   };
 
  
-  
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
