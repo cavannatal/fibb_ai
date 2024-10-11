@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 
 interface PlanPrice {
   monthly: string;
@@ -17,15 +17,27 @@ interface Plan {
   popular?: boolean;
 }
 
-type PlanCategory = 'consumer' | 'professional' | 'founders' ;
-
-
-
+type PlanCategory = 'consumer' | 'professional' | 'founders';
 
 const PricingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlanCategory>('consumer');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        await getCurrentUser();
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
   
   const allPlans: Record<PlanCategory, Plan[]> = {
     consumer: [
@@ -169,13 +181,12 @@ const PricingPage: React.FC = () => {
     
   };
   
-  const initiateStripeCheckout = async (packageId: string) => {
+    const initiateStripeCheckout = async (packageId: string) => {
     const { userId } = await getCurrentUser();
-  
-  
+
     try {
       console.log('Sending request with:', { userId, packageId });
-  
+
       const response = await axios.post(
         'https://o1t89jiych.execute-api.us-east-2.amazonaws.com/api/fibb-stripe-checkout-consumer',
         { userId, packageId },
@@ -185,15 +196,15 @@ const PricingPage: React.FC = () => {
           }
         }
       );
-  
+
       console.log('Response received:', response.data);
-  
+
       if (response.data.statusCode === 400) {
         console.log('Server returned an error:', response.data.body);
         throw new Error(`Server error: ${response.data.body}`);
       }
       setCheckoutUrl(response.data.checkouturl);
-  
+
       return response.data;
     } catch (error) {
       console.log('Error initiating Stripe checkout:', error);
@@ -214,10 +225,14 @@ const PricingPage: React.FC = () => {
     }
   };
 
-
   const handleSubscription = async (packageId: string) => {
     if (!packageId) {
       throw new Error('Invalid packageId');
+    }
+  
+    if (!isAuthenticated) {
+      navigate("/signup");
+      return;
     }
   
     try {
@@ -225,12 +240,10 @@ const PricingPage: React.FC = () => {
       console.log('Received response:', response);
       setCheckoutUrl(response.checkoutUrl);
       window.open(response.checkoutUrl, '_blank', 'noopener,noreferrer');
-
     } catch (error: unknown) {
       console.log('Error during subscription process:', error);
     }
   };
-
 
   return (
     <div className="bg-gradient-to-r from-[#093f48] to-[#004948] text-white min-h-screen">
