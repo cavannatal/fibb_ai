@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Dashboard from '../CreatePage/ImageGen/tokenSystem/TokenDisplay';
+import TokenDisplay from '../CreatePage/ImageGen/tokenSystem/TokenDisplay';
 import ComingSoon from './components/ComingSoon';
 import PhotoGallery from './components/PhotoGallery';
 import { LayoutDashboard, Settings, CreditCard, LogOut, Image, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -24,7 +24,7 @@ const Profile: React.FC<ProfileProps> = ({ user, signOut }) => {
   const renderContent = () => {
     switch (activeItem) {
       case 'Dashboard':
-        return <Dashboard />;
+        return <TokenDisplay />;
       case 'Photo Gallery':
         return <PhotoGallery />;
       default:
