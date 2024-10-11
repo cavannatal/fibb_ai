@@ -1,12 +1,17 @@
-//NO GOOD REPLACED WITH TOKENDISPLAY
-
-
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { BadgeDollarSign, Zap, Calendar, ArrowUpRight, BarChart2 } from 'lucide-react';
+import SubscriptionStatus from '../../../components/stripe/components/StripeDataImport';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 interface CardProps {
   children: ReactNode;
   className?: string;
+}
+
+interface SubscriptionInfo {
+  tier: string;
+  status: string;
+  currentPeriodEnd: string;
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '' }: CardProps) => (
@@ -54,6 +59,7 @@ interface UserData {
   };
   plan: string;
   nextBilling: string;
+  status: string;
   usage: {
     current: number;
     limit: number;
@@ -62,7 +68,62 @@ interface UserData {
 }
 
 const Dashboard: React.FC = () => {
-  // Mock data - replace with actual data fetching logic
+  const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getUserEmail() {
+      try {
+        const currentUser = await getCurrentUser();
+        const userAttributes = await fetchUserAttributes();
+        setUserEmail(userAttributes.email || null);
+      } catch (error) {
+        console.error('Error fetching user email:', error);
+        setUserEmail(null);
+      }
+    }
+  
+    getUserEmail();
+  }, []);
+
+  useEffect(() => {
+    // Function to fetch subscription info
+    const fetchSubscriptionInfo = async () => {
+      if (!userEmail) {
+        console.error('User email is not available');
+        return;
+      }
+    
+      const url = `https://2i6bgkeplb.execute-api.us-east-2.amazonaws.com/default/frontEndData?email=${userEmail}`;
+      console.log('Fetching subscription info from:', url);
+    
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error('Failed to fetch subscription info');
+        }
+    
+        const data: SubscriptionInfo = await response.json();
+        console.log('Received subscription data:', data);
+        setSubscriptionInfo(data);
+      } catch (error) {
+        console.error('Error fetching subscription info:', error);
+      }
+    };
+  
+    if (userEmail) {
+      fetchSubscriptionInfo();
+    }
+  }, [userEmail]);
+
   const userData: UserData = {
     name: "Alice Johnson",
     tokens: {
@@ -70,14 +131,18 @@ const Dashboard: React.FC = () => {
       advanced: { current: 15, total: 30 },
       premium: { current: 5, total: 20 }
     },
-    plan: "Pro",
-    nextBilling: "2024-11-10",
+    plan: subscriptionInfo?.tier || 'Loading...',
+    nextBilling: subscriptionInfo?.currentPeriodEnd || 'Loading...',
+    status: subscriptionInfo?.status || 'Loading...',
     usage: {
       current: 75,
       limit: 100
     },
     modelsGenerated: 42
   };
+console.log(userData);
+console.log(userEmail);
+console.log(subscriptionInfo);
 
   const formatTokens = (value: number): string => {
     return value.toFixed(1);
@@ -122,7 +187,6 @@ const Dashboard: React.FC = () => {
             </p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">Usage This Month</CardTitle>

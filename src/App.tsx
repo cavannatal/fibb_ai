@@ -13,7 +13,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
 import PhotoGallery from './pages/PhotoGalleryPage/photoGallery';
 import TOSPage from './pages/TOSPage/TOSPage';
-import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp';
 import ImageGen from './pages/CreatePage/ImageGen/ImageGen';
 import CreatePage from './pages/CreatePage/CreatePage';
 import Portfolio from './pages/CaseStudies/Services';
@@ -22,8 +21,10 @@ import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
 import GuidedProcess from './pages/CameraPage/GuidedProcess';       
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
-import Profile from './pages/ProfilePage/ProfilePage';     
+import Profile from './pages/ProfilePage/ProfilePage';        
+import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
 import TokenDisplay from './pages/CreatePage/ImageGen/components/TokenSystem/TokenDisplay';
+
 
 
 import awsExports from './aws-exports';
