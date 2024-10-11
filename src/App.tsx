@@ -23,7 +23,7 @@ import GuidedProcess from './pages/CameraPage/GuidedProcess';
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
 import Profile from './pages/ProfilePage/ProfilePage';        
-import TokenDisplay from './pages/CreatePage/ImageGen/tokenSystem/TokenDisplay';
+
 
 
 import awsExports from './aws-exports';
@@ -56,7 +56,6 @@ const App: React.FC = () => {
             <Route path="/team" element={<WhoAreWePage />} />
             <Route path="/FAQ" element={<FAQPage />} />
             <Route path="/events" element={<EventsPage />} />
-            <Route path="/token-display" element={<TokenDisplay />} />
             <Route path="/subscribe" element={<SubscriptionPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/photo-gallery" element={<PhotoGallery />} />
