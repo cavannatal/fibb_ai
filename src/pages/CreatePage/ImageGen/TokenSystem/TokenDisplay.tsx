@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TokenType, TokenSource, TokenWallet } from './TokenStructure';
-import { ConsumerBilling, TokenBillingInfo, SubscriptionTier } from './ConsumerBilling';
+import { TokenType, TokenSource, TokenWallet } from './tokenStructure';
+import { ConsumerBilling, TokenBillingInfo, SubscriptionTier } from './consumerBilling';
 import { tokenManagementService } from './TokenManagement';
+
 interface TokenDisplayProps {
   userId?: string;
 }

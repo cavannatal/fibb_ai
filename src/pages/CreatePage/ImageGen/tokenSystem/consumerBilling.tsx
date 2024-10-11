@@ -1,4 +1,4 @@
-import { TokenType } from './TokenStructure';
+import { TokenType } from './tokenStructure';
 
 export type SubscriptionTier = 'Basic' | 'Starter' | 'Standard' | 'Pro';
 
@@ -63,7 +63,3 @@ export class ConsumerBilling {
     return tokenBillingInfo;
   }
 }
-
-console.log('Enhanced token price for Standard tier:', ConsumerBilling.getTokenPrice(TokenType.ENHANCED, 'Standard'));
-console.log('Cost of 20 Research tokens for Pro tier:', ConsumerBilling.calculateTokenCost(TokenType.RESEARCH, 20, 'Pro'));
-console.log('All token billing info:', ConsumerBilling.getTokenBillingInfo());

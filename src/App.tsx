@@ -23,10 +23,7 @@ import GuidedProcess from './pages/CameraPage/GuidedProcess';
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
 import Profile from './pages/ProfilePage/ProfilePage';        
-import ComputePage from './pages/ComputePage/ComputePage'
-import CompletionPage from './pages/CameraPage/CompletionPage'
-import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
-import TokenDisplay from './pages/CreatePage/ImageGen/TokenSystem/TokenDisplay';
+import TokenDisplay from './pages/CreatePage/ImageGen/tokenSystem/TokenDisplay';
 
 
 import awsExports from './aws-exports';
