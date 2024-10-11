@@ -88,7 +88,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
                       <Link
                         key={index}
                         to={item.path}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         <span className="mr-2">{item.icon}</span>
                         {item.name}
@@ -96,7 +96,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
                     ))}
                     <button
                       onClick={signOut}
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                      className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                     >
                       <LogOut size={16} className="mr-2" />
                       Log Out
@@ -126,7 +126,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
             <Link
               key={index}
               to={item.path}
-              className="block py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300"
+              className="flex items-center py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
@@ -138,7 +138,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
                 <Link
                   key={index}
                   to={item.path}
-                  className="block py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 flex items-center"
+                  className="flex items-center py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="mr-2">{item.icon}</span>
@@ -150,7 +150,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
                   signOut();
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left py-2 px-4 text-base text-red-600 hover:bg-gray-100 transition duration-300 font-semibold flex items-center"
+                className="flex items-center w-full text-left py-2 px-4 text-base text-red-600 hover:bg-gray-100 transition duration-300 font-semibold"
               >
                 <LogOut size={16} className="mr-2" />
                 Log Out
@@ -162,7 +162,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
                 handleSignUp();
                 setIsMenuOpen(false);
               }}
-              className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
+              className="flex items-center w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
             >
               Sign Up
             </button>
