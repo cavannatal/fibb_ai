@@ -1,4 +1,4 @@
-import { TokenType } from './tokenStructure';
+import { TokenType } from './TokenStructure';
 
 export type SubscriptionTier = 'Basic' | 'Starter' | 'Standard' | 'Pro';
 

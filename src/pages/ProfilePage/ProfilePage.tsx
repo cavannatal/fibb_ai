@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import TokenDisplay from '../CreatePage/ImageGen/tokenSystem/TokenDisplay';
 import ComingSoon from './components/ComingSoon';
 import PhotoGallery from './components/PhotoGallery';
 import { LayoutDashboard, Settings, CreditCard, LogOut, Image, ChevronLeft, ChevronRight } from 'lucide-react';
+import TokenDisplay from '../CreatePage/ImageGen/components/TokenSystem/TokenDisplay';
 
 interface ProfileProps {
   user: any; // You might want to replace 'any' with a more specific type if available

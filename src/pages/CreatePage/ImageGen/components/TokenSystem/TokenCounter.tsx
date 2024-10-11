@@ -1,4 +1,4 @@
-import { TokenType } from './tokenStructure';
+import { TokenType } from './TokenStructure';
 
 export interface UserTokens {
   fibbTokens: number;

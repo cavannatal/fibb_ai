@@ -1,6 +1,6 @@
-import { TokenType } from './tokenStructure';
-import { UserTokens, calculateConsumableTokens, consumeTokens, resetSubscriptionTokens, refillTokens, fetchTokensFromDynamoDB } from './tokenCounter';
-import { ConsumerBilling, SubscriptionTier } from './consumerBilling';
+import { TokenType } from './TokenStructure';
+import { UserTokens, calculateConsumableTokens, consumeTokens, resetSubscriptionTokens, refillTokens, fetchTokensFromDynamoDB } from './TokenCounter';
+import { ConsumerBilling, SubscriptionTier } from './ConsumerBilling';
 
 export class TokenManagementService {
   async getUserTokens(userId: string): Promise<UserTokens> {
