@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, LayoutDashboard, Settings, CreditCard, LogOut, Image, ChevronDown } from 'lucide-react';
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
 
 interface NavBarProps {
   user?: any; // We're using 'any' here as the exact type is not exported from Amplify
+  signOut: () => Promise<void>;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ user }) => {
+const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
     { name: "Our Team", path: "/team" },
@@ -20,15 +23,33 @@ const NavBar: React.FC<NavBarProps> = ({ user }) => {
     ...(user ? [{ name: "Create", path: "/get-started" }] : []),
   ];
 
+  const profileMenuItems = [
+    { name: 'Dashboard', icon: <LayoutDashboard size={16} />, path: '/profile' },
+    { name: 'Photo Gallery', icon: <Image size={16} />, path: '/profile/gallery' },
+    { name: 'Settings', icon: <Settings size={16} />, path: '/profile/settings' },
+    { name: 'Billing', icon: <CreditCard size={16} />, path: '/profile/billing' },
+  ];
+
   const handleSignUp = () => {
     navigate('/signup');
   };
 
-  const handleProfileClick = () => {
-    navigate('/profile'); // Assuming '/profile' is the route for the profile page
-  };
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const toggleProfileDropdown = () => setIsProfileDropdownOpen(!isProfileDropdownOpen);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="bg-gray-100 shadow-lg" style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}>
@@ -53,12 +74,36 @@ const NavBar: React.FC<NavBarProps> = ({ user }) => {
               </Link>
             ))}
             {user ? (
-              <button
-                onClick={handleProfileClick}
-                className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap"
-              >
-                <User size={20} />
-              </button>
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={toggleProfileDropdown}
+                  className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap flex items-center"
+                >
+                  <User size={20} />
+                  <ChevronDown size={16} className="ml-1" />
+                </button>
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                    {profileMenuItems.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.path}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                      >
+                        <span className="mr-2">{item.icon}</span>
+                        {item.name}
+                      </Link>
+                    ))}
+                    <button
+                      onClick={signOut}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
+                    >
+                      <LogOut size={16} className="mr-2" />
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <button
                 onClick={handleSignUp}
@@ -88,15 +133,29 @@ const NavBar: React.FC<NavBarProps> = ({ user }) => {
             </Link>
           ))}
           {user ? (
-            <button
-              onClick={() => {
-                handleProfileClick();
-                setIsMenuOpen(false);
-              }}
-              className="w-full text-left py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 font-semibold"
-            >
-              Profile
-            </button>
+            <>
+              {profileMenuItems.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.path}
+                  className="block py-2 px-4 text-base text-gray-600 hover:text-[#084248] hover:bg-gray-100 transition duration-300 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.name}
+                </Link>
+              ))}
+              <button
+                onClick={() => {
+                  signOut();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left py-2 px-4 text-base text-red-600 hover:bg-gray-100 transition duration-300 font-semibold flex items-center"
+              >
+                <LogOut size={16} className="mr-2" />
+                Log Out
+              </button>
+            </>
           ) : (
             <button
               onClick={() => {

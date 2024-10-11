@@ -47,7 +47,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-white">
-        <NavBar user={user} />
+        <NavBar user={user} signOut={signOutUser} />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />

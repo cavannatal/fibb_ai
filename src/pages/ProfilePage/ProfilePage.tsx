@@ -107,9 +107,6 @@ const Profile: React.FC<ProfileProps> = ({ user, signOut }) => {
 
       {/* Desktop sidebar */}
       <div className="hidden md:block w-64 bg-white shadow-lg overflow-y-auto">
-        <div className="p-4">
-          <h2 className="text-xl font-semibold">Welcome, {user.username}</h2>
-        </div>
         <nav className="mt-8">
           {menuItems.map((item, index) => (
             <div
