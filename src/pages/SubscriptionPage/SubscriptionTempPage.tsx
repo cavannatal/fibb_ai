@@ -224,7 +224,7 @@ const PricingPage: React.FC = () => {
       const response = await initiateStripeCheckout(packageId);
       console.log('Received response:', response);
       setCheckoutUrl(response.checkoutUrl);
-      window.open(response.checkoutuUrl, '_blank', 'noopener,noreferrer');
+      window.open(response.checkoutUrl, '_blank', 'noopener,noreferrer');
 
     } catch (error: unknown) {
       console.log('Error during subscription process:', error);
@@ -311,7 +311,7 @@ const PricingPage: React.FC = () => {
                   className="w-full bg-[#f79302] text-black py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
                   style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                   onClick={() => handleSubscription(billingPeriod === 'monthly' ? (plan.packageId as { monthly: string, yearly: string }).monthly : (plan.packageId as { monthly: string, yearly: string }).yearly)}
-                  >
+                >
                 {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
               </button>
               <p className="text-lg text-[#cbf59a] mb-4"
