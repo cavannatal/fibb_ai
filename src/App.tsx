@@ -22,7 +22,8 @@ import TempSub from './pages/SubscriptionPage/SubscriptionTempPage';
 import GuidedProcess from './pages/CameraPage/GuidedProcess';       
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
-import Profile from './pages/ProfilePage/ProfilePage';        
+import Profile from './pages/ProfilePage/ProfilePage';     
+import TokenDisplay from './pages/CreatePage/ImageGen/tokenSystem/TokenDisplay'   
 
 
 
