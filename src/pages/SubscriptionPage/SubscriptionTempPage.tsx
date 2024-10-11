@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { getCurrentUser } from 'aws-amplify/auth';
+import axios from 'axios';
+
 
 interface PlanPrice {
   monthly: string;
@@ -10,10 +13,54 @@ interface Plan {
   price: PlanPrice | string;
   description: string;
   features: string[];
+  packageId: { monthly: string, yearly: string } | string;
   popular?: boolean;
 }
 
 type PlanCategory = 'consumer' | 'professional' | 'founders' ;
+
+const initiateStripeCheckout = async (packageId: string) => {
+  const { userId } = await getCurrentUser();
+
+  try {
+    console.log('Sending request with:', { userId, packageId });
+
+    const response = await axios.post(
+      'https://1ns0n7yl4b.execute-api.us-east-2.amazonaws.com/api/fibb-stripe-controller',
+      { userId, packageId },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    console.log('Response received:', response.data);
+
+    if (response.data.statusCode === 400) {
+      console.log('Server returned an error:', response.data.body);
+      throw new Error(`Server error: ${response.data.body}`);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.log('Error initiating Stripe checkout:', error);
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.log('Error response:', error.response.data);
+        console.log('Error status:', error.response.status);
+        console.log('Error headers:', error.response.headers);
+      } else if (error.request) {
+        console.log('No response received:', error.request);
+      } else {
+        console.log('Error setting up request:', error.message);
+      }
+    } else {
+      console.log('Unexpected error:', error);
+    }
+    throw error;
+  }
+};
 
 const PricingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PlanCategory>('consumer');
@@ -23,14 +70,15 @@ const PricingPage: React.FC = () => {
     consumer: [
       {
         name: 'Fibb Basic',
-        price: { monthly: '$1', yearly: '$10' },
+        price: { monthly: '$12', yearly: '$120' },
         description: 'For casual users',
         features: [
           'No access to Fibbs',
-          '50 Generations per month',
+          '30 Generations per month',
           'Basic Support',
           'Additional Generations: $0.50'
-        ]
+        ],
+        packageId: { monthly: '2fe526a3-1d2b-4870-bd97-b5fb9365538c', yearly: '5521fb82-7f5e-4106-8646-eb8e08e6a8db' },
       },
       {
         name: 'Fibb Starter',
@@ -39,11 +87,12 @@ const PricingPage: React.FC = () => {
         features: [
           'All "Fibb Basic" Benefits',
           '1 Fibb per month',
-          '20 Generations per month',
+          '50 Generations per month',
           'Higher Priority Support',
           'Additional Fibbs: $15/ea',
           'Additional Generations: $0.50/ea'
-        ]
+        ],
+        packageId: { monthly: '19e5c058-9732-4b43-8863-7f4366ca5e02', yearly: '961cd828-f581-47b7-bd15-25b2b61dee7e' },
       },
       {
         name: 'Fibb Standard',
@@ -57,7 +106,8 @@ const PricingPage: React.FC = () => {
           'Premium Content',
           'Additional Fibbs: $10/ea',
           'Additional Generations: $0.30/ea'
-        ]
+        ],
+        packageId: { monthly: 'cc2f2542-a7be-42cc-9290-d1f399c6830a', yearly: '51ae3be9-6aaf-4ea7-8e5f-5ea4707fd20f' },
       },
       {
         name: 'Fibb Pro',
@@ -72,7 +122,8 @@ const PricingPage: React.FC = () => {
           'Commercial use license',
           'Additional Fibbs: $5/ea',
           'Additional Generations: $0.20/ea'
-        ]
+        ],
+        packageId: { monthly: '2f51a18d-f1e3-4cd1-9b72-ac45c38d85cf', yearly: '1bf43511-9aef-4f94-a0d2-79f3cbca76dc' },
       }
     ],
     professional: [
@@ -84,7 +135,8 @@ const PricingPage: React.FC = () => {
           'Handcrafted Fibb',
           '100 Curated Headshots',
           '10 Clothing, Expression, and Background changes'
-        ]
+        ],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
       {
         name: 'Ascent',
@@ -96,7 +148,8 @@ const PricingPage: React.FC = () => {
           'Handcrafted Fibb',
           'Corporate Headshot Package',
           'Creative Headshot Package'
-        ]
+        ],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
       {
         name: 'Summit',
@@ -109,7 +162,8 @@ const PricingPage: React.FC = () => {
           'Corporate Headshot Package',
           'Creative Headshot Package',
           'Lifestyle Package'
-        ]
+        ],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
       {
         name: 'Pinnacle',
@@ -124,7 +178,8 @@ const PricingPage: React.FC = () => {
           'Lifestyle Package',
           'Mega-Prompt Package',
           'Creative General Package'
-        ]
+        ],
+        packageId: { monthly: '$12', yearly: '$120' },
       }
     ],
     founders: [
@@ -132,22 +187,69 @@ const PricingPage: React.FC = () => {
         name: "Pioneer's Palette",
         price: '$1,750',
         description: '',
-        features: []
+        features: [],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
       {
         name: 'Genesis Creator',
         price: '$3,000',
         description: '',
-        features: []
+        features: [],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
       {
         name: "Founder's Forge",
         price: '$10,000',
         description: '',
-        features: []
+        features: [],
+        packageId: { monthly: '$12', yearly: '$120' },
       },
     ],
     
+  };
+
+  const handleSubscribe = async (plan: Plan) => {
+    try {
+      console.log('Subscribing to plan:', plan);
+      const packageId = typeof plan.packageId === 'string' 
+        ? plan.packageId 
+        : billingPeriod === 'monthly' 
+          ? plan.packageId.monthly 
+          : plan.packageId.yearly;
+      
+      console.log('Selected packageId:', packageId);
+      
+      if (!packageId) {
+        throw new Error('Invalid packageId');
+      }
+  
+      const response = await initiateStripeCheckout(packageId);
+      console.log('Received response:', response);
+      
+      if (typeof response === 'string') {
+        console.log('Redirecting to:', response);
+        window.location.href = response;
+      } else if (response && response.statusCode === 400) {
+        console.log('Server returned an error:', response.body);
+        throw new Error(`Server error: ${response.body}`);
+      } else {
+        console.log('Invalid response received:', response);
+        throw new Error('Invalid response received from server');
+      }
+    } catch (error: unknown) {
+      console.log('Error during subscription process:', error);
+      
+      if (error instanceof Error) {
+        console.log('Error message:', error.message);
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        console.log('Error message:', (error as { message: string }).message);
+      } else {
+        console.log('Unknown error:', error);
+      }
+  
+      // Handle the error appropriately, e.g., show an error message to the user
+      // You might want to set an error state here and display it in your UI
+    }
   };
 
   return (
@@ -209,7 +311,7 @@ const PricingPage: React.FC = () => {
         </div>
 
         <div className={`grid gap-8 ${activeTab === 'founders' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
-          {allPlans[activeTab].map((plan, index) => (
+           {allPlans[activeTab].map((plan, index) => (
             <div key={plan.name} className="flex flex-col p-6 rounded-2xl bg-gradient-to-b from-[#144a53] to-[#093f48] shadow-xl transform transition-all duration-300 hover:scale-105">
               {plan.popular && <div className="text-xs font-semibold uppercase tracking-wide text-[#cbf59a] mb-2">Most popular</div>}
               <h3 className="text-3xl font-bold mb-2"
@@ -225,9 +327,17 @@ const PricingPage: React.FC = () => {
                     : plan.price.yearly}
                 {activeTab === 'consumer' && <span className="text-xl font-normal">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>}
               </p>
-              <button className="w-full bg-[#f79302] text-black py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
-              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-              >
+              <button 
+                  className="w-full bg-[#f79302] text-black py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
+                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                  onClick={() => {
+                    try {
+                      handleSubscribe(plan);
+                    } catch (error) {
+                      console.error('Error in handleSubscribe:', error);
+                    }
+                  }}
+                  >
                 {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
               </button>
               <p className="text-lg text-[#cbf59a] mb-4"
