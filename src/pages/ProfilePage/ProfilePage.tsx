@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LayoutDashboard, Settings, CreditCard, LogOut, Image, ChevronLeft, ChevronRight } from 'lucide-react';
 import ComingSoon from './components/ComingSoon';
 import PhotoGallery from './components/PhotoGallery';
-import TokenDisplay from '../CreatePage/ImageGen/components/TokenSystem/TokenDisplay';
+import TokenDisplay from '../Marketplace/TokenSystem/TokenDisplay';
 
 interface ProfileProps {
   user: any; // Replace 'any' with a more specific type if available

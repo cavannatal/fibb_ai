@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
           <HowItWorks />
           <ImageDisplay/>
           <MissionStatement/>
-          
+
         </div>
       </main>
     </div>

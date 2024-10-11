@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import fibbLogo from '../../../components/images/FibbLogoWhite.svg';
 import { fetchFalApiKey, generateImageWithFAL } from './components/falAIComponent';
 import { fetchBflApiKey, generateImageWithBFL } from './components/bflAIComponent'; 
-import { fetchTokenData } from './components/TokenSystem/TokenCounter';
+import { fetchTokenData } from '../../Marketplace/TokenSystem/TokenCounter';
 import { error } from 'console';
 
 interface FormState {

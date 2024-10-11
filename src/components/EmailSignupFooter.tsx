@@ -77,7 +77,10 @@ const EmailSignupFooter: React.FC = () => {
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <Mail className="h-5 w-5 text-[#084248]/60" />
-            </div>
+              </div>
+            <Button onClick={() => window.open('https://zzei5gp6bbz.typeform.com/to/zpb2ae6s', '_blank')} type="button">
+              ACL Photos <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
             <Input
               type="email"
               value={email}

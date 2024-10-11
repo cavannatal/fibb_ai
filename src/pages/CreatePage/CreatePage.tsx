@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { CognitoContext } from '../../auth/CognitoProviderWithNavigate';
 import awsconfig from '../../aws-exports';
 import fibbLogo from '../../components/images/FibbLogoWhite.svg';
-import { fetchTokenData } from './ImageGen/components/TokenSystem/TokenCounter'; 
+import { fetchTokenData } from '../Marketplace/TokenSystem/TokenCounter'; 
 
 Amplify.configure(awsconfig);
 

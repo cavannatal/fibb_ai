@@ -23,7 +23,7 @@ import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
 import Profile from './pages/ProfilePage/ProfilePage';        
 import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
-import TokenDisplay from './pages/CreatePage/ImageGen/components/TokenSystem/TokenDisplay';
+import TokenDisplay from './pages/Marketplace/TokenSystem/TokenDisplay';
 import ConsentPage from './pages/SubscriptionPage/ConsentPage';
 
 
