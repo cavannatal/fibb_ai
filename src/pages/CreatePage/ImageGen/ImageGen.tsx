@@ -8,7 +8,7 @@ import { fetchTokenData } from '../../Marketplace/TokenSystem/TokenCounter';
 import { error } from 'console';
 
 interface FormState {
-  selectedStyle: 'fibb Enhanced' | 'fibb Limn';
+  selectedStyle: 'Enhanced' | 'Research';
   selectedLora: string;
   subject: string;
 }
@@ -33,7 +33,7 @@ const ImageGen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [formState, setFormState] = useState<FormState>({
-    selectedStyle: 'fibb Enhanced',
+    selectedStyle: 'Enhanced',
     selectedLora: '',
     subject: '',
   });
@@ -123,22 +123,23 @@ const ImageGen: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
-      
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked;
-      setFormState(prevState => ({
+    
+    if (name === 'selectedStyle') {
+      setFormState((prevState) => ({
         ...prevState,
-        [name]: checked,
+        [name]: value as "Enhanced" | "Research",
+        selectedLora: value === 'Research' ? '' : prevState.selectedLora
       }));
-    } else if (name === 'selectedLora') {
+    } else if (name === 'selectedLora' && formState.selectedStyle !== 'Research') {
       const selectedFile = loraFiles.find(file => file.key === value);
       if (selectedFile) {
+        setSelectedLoraUrl(selectedFile.presignedUrl);
       }
       setFormState(prevState => ({
         ...prevState,
         [name]: value,
       }));
-    } else {
+    } else if (name !== 'selectedLora') {
       setFormState(prevState => ({
         ...prevState,
         [name]: value,
@@ -164,7 +165,7 @@ const ImageGen: React.FC = () => {
   
     try {
       let imageUrl: string;
-      if (formState.selectedStyle === 'fibb Limn') {
+      if (formState.selectedStyle === 'Research') {
         if (!apiKeyBfl) throw new Error('FIBB_ENHANCED API key not available');
         console.log('Generating image with FIBB_ENHANCED');
         imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
@@ -183,7 +184,7 @@ const ImageGen: React.FC = () => {
     } catch (error) {
       console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      if (formState.selectedStyle === 'fibb Limn') {
+      if (formState.selectedStyle === 'Research') {
         setErrorBfl(`Error in FIBB_ENHANCED workflow: ${errorMessage}`);
       } else {
         setErrorFal(`Error in FIBB_RESEARCH workflow: ${errorMessage}`);
@@ -237,7 +238,15 @@ const ImageGen: React.FC = () => {
       setUploadStatus(`Upload failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
-
+  useEffect(() => {
+    setFormState((prevState) => {
+      const newStyle = prevState.selectedStyle === 'Research' ? 'Research' : 'Enhanced';
+      return {
+        ...prevState,
+        selectedStyle: newStyle
+      };
+    });
+  }, [formState.selectedStyle]);
  
 
   return (
@@ -246,7 +255,6 @@ const ImageGen: React.FC = () => {
         <img src={fibbLogo} alt="fibb.ai" className="h-8 sm:h-12 mt-4 sm:mt-6 mb-2 sm:mb-4" />
       </header>
       <main className="flex flex-col items-center flex-grow p-4 sm:p-6 pb-16 sm:pb-6">
-        
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -276,7 +284,7 @@ const ImageGen: React.FC = () => {
                     type="radio"
                     name="selectedStyle"
                     value="fibb Enhanced"
-                    checked={false} // This should be controlled by formState
+                    checked={formState.selectedStyle === 'Enhanced'}
                     onChange={handleChange}
                     className="mt-1"
                   />
@@ -297,8 +305,8 @@ const ImageGen: React.FC = () => {
                   <input
                     type="radio"
                     name="selectedStyle"
-                    value="fibb Limn"
-                    checked={false} // This should be controlled by formState
+                    value="Research"
+                    checked={formState.selectedStyle === 'Research'}
                     onChange={handleChange}
                     className="mt-1"
                   />
@@ -331,15 +339,14 @@ const ImageGen: React.FC = () => {
                 <select
                   id="selectedLora"
                   name="selectedLora"
-                  value="" // This should be controlled by formState
+                  value={formState.selectedLora}
                   onChange={handleChange}
-                  disabled={false} // This should be controlled by formState
-                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white`}
+                  className={`w-full p-3 rounded-lg bg-[#285a62] text-white ${formState.selectedStyle === 'Research' ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Select a fibb</option>
                   <option value="Generate without a fibb">Generate without a fibb</option>
                   {loraFiles.map((file, index) => (
-                    <option key={index} value={file.key}>{file.key.split('/').pop()}</option>
+                      <option key={index} value={file.key}>{file.key.split('/').pop()}</option>
                   ))}
                 </select>
               </div>
@@ -364,14 +371,13 @@ const ImageGen: React.FC = () => {
                 <textarea
                   id="subject"
                   name="subject"
-                  value={formState.subject} // This should be controlled by formState
+                  value={formState.subject}
                   onChange={handleChange}
                   style={{ fontFamily: '"Font1", sans-serif' }}
                   placeholder="Example prompt: He stands on a dimly lit balcony in the middle of New York City. He leans against the railing as the breeze blows. The city skyline glows in the distance, and the warm, golden light from the apartment behind him casts a soft glow on his profile. He gazes out thoughtfully, lost in the moment while the world below hums with quiet energy."
                   required
                   className="w-full p-2 rounded bg-[#285a62] text-white placeholder-gray-400 resize-none"
                   rows={6}
-                  
                 />
               </div>
               <div className="hidden sm:block w-1/3 pl-4">
@@ -387,19 +393,15 @@ const ImageGen: React.FC = () => {
               </div>
             </div>
 
-          <div className="token-display mb-4">
-            <h3 className="text-xl font-bold mb-2">Your Token Balance</h3><div>GenTokens: {genTokens}</div>
-          </div>
-  
             <motion.button
               type="submit"
-              disabled={isLoading || (!apiKeyFal && !apiKeyBfl) || genTokens <= 0}
+              disabled={isLoading || (!apiKeyFal && !apiKeyBfl)}
               className="w-full bg-[#f79302] text-black font-bold py-3 px-8 rounded-lg text-xl hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {isLoading ? 'CREATING...' : `CREATE`}
+              {isLoading ? 'CREATING...' : 'CREATE'}
             </motion.button>
           </form>
         </motion.div>
