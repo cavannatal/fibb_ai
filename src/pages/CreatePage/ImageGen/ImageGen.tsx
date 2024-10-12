@@ -392,10 +392,13 @@ const ImageGen: React.FC = () => {
                 </ul>
               </div>
             </div>
-
+            <div className="token-display mb-4">
+              <h3 className="text-xl font-bold mb-2">Your Token Balance</h3>
+              <div>GenTokens: {genTokens}</div>
+            </div>  
             <motion.button
               type="submit"
-              disabled={isLoading || (!apiKeyFal && !apiKeyBfl)}
+              disabled={isLoading || (!apiKeyFal && !apiKeyBfl) || genTokens <= 0}
               className="w-full bg-[#f79302] text-black font-bold py-3 px-8 rounded-lg text-xl hover:bg-[#f79600] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
               whileHover={{ scale: 1.05 }}
