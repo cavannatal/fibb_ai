@@ -7,7 +7,6 @@ import HomePage from './pages/HomePage/HomePage';
 import WhoAreWePage from './pages/WhoAreWePage/WhoAreWePage';
 import EventsPage from './pages/EventsPage/EventsPage';
 import FAQPage from './pages/FAQ/FAQPage';
-import SubscriptionPage from './pages/SubscriptionPage/SubscriptionPage';
 import CameraPage from './pages/CameraPage/CameraPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import BlogPage from './pages/Blog/BlogPage';
