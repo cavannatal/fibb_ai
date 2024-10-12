@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import fibbLogo from '../../components/images/FibbLogoWhite.svg';
-import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import dogsinlab from './images/dogsInLab.jpg'
 
-const CompletionPage: React.FC = () => {
-
+const CompletionPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#093f48] to-[#004948] text-white">
       <header className="flex justify-center p-4">
@@ -25,27 +23,26 @@ const CompletionPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="text-3xl sm:text-2xl mb-12 text-center"
           style={{ fontFamily: '"Font1", sans-serif' }}
         >
           <p className="mb-6">
-            Congratulations! You've successfully completed the guided process.
+          Thanks for submitting your photos, our data scientists are hard at working bringing it to life! We will email you again when your Fibb is ready!
           </p>
-          <p>
-            Now you can sit back and relax. Our advanced AI system is hard at work creating a fibb model using your likeness for your creative use. This process typically takes just a few minutes. Once your personalized model is ready, you'll receive a notification to access it. You'll then be able to use this model for various creative projects within the fibb platform. We're excited to see what you'll create!
-          </p>
+
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center text-2xl"
-          style={{ fontFamily: '"Font1", sans-serif' }}
-        >
-          Thank you for choosing fibb. Your creative journey is about to begin!
-        </motion.p>
+        <motion.img
+          src={dogsinlab}
+          alt="Completion celebration"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8 sm:mb-12 rounded-lg shadow-lg"
+        />
+        
+
       </main>
     </div>
   );
