@@ -2,9 +2,9 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 import { motion } from 'framer-motion';
 import fibbLogo from '../../../components/images/FibbLogoWhite.svg';
-import { fetchFalApiKey, generateImageWithFAL } from './components/falAIComponent';
-import { fetchBflApiKey, generateImageWithBFL } from './components/bflAIComponent'; 
-import { fetchTokenData } from '../../Marketplace/TokenSystem/TokenCounter';
+import { fetchFalApiKey } from './components/falAIComponent';
+import { fetchBflApiKey } from './components/bflAIComponent'; 
+import { deductGenToken, fetchTokenData } from '../../Marketplace/TokenSystem/TokenCounter';
 import { error } from 'console';
 
 interface FormState {
@@ -155,40 +155,38 @@ const ImageGen: React.FC = () => {
     setGeneratedImage(null);
     setIsSaved(false);
     setUploadStatus(null);
-
-
+  
     if (genTokens <= 0) {
       setErrorFal('No GenTokens available for image generation.');
+      setIsLoading(false);
       return;
     }
-    setGenTokens(prevTokens => prevTokens - 1);
   
     try {
-      let imageUrl: string;
-      if (formState.selectedStyle === 'Research') {
-        if (!apiKeyBfl) throw new Error('FIBB_ENHANCED API key not available');
-        console.log('Generating image with FIBB_ENHANCED');
-        imageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
-        console.log('FIBB_ENHANCED image URL:', imageUrl);
-      } else {
-        if (!apiKeyFal) throw new Error('FIBB_RESEARCH API key not available');
-        console.log("Selected Lora URL:", selectedLoraUrl);
-        imageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, selectedLoraUrl);
-      }
+      const { userId } = await getCurrentUser();
       
-      const cleanUrl = String(imageUrl).split('?')[0];
-      console.log('Clean URL:', cleanUrl);
+      // Attempt to deduct a GenToken
+      try {
+        const deductionSuccessful = await deductGenToken(userId);
+        if (!deductionSuccessful) {
+          throw new Error('Token deduction failed');
+        }
+      } catch (deductionError) {
+        console.error('Error during token deduction:', deductionError);
+        setErrorFal(`Failed to deduct token: ${deductionError instanceof Error ? deductionError.message : String(deductionError)}`);
+        setIsLoading(false);
+        return;
+      }
   
-      setGeneratedImage(cleanUrl);
+      // If deduction was successful, update the local state
+      setGenTokens(prevTokens => prevTokens - 1);
+  
+      // Rest of your image generation code...
   
     } catch (error) {
       console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      if (formState.selectedStyle === 'Research') {
-        setErrorBfl(`Error in FIBB_ENHANCED workflow: ${errorMessage}`);
-      } else {
-        setErrorFal(`Error in FIBB_RESEARCH workflow: ${errorMessage}`);
-      }
+      setErrorFal(`Error in image generation: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -415,7 +413,7 @@ const ImageGen: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 p-4 bg-red-600 text-white rounded-lg"
           >
-            <h3 className="font-bold">{errorFal ? 'FAL Error:' : 'BFL Error:'}</h3>
+            <h3 className="font-bold">{errorFal ? 'FIBB_RESEARCH Error:' : 'FIBB_ENHANCED Error:'}</h3>
             <p>{errorFal || errorBfl}</p>
           </motion.div>
         )}
