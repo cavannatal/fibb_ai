@@ -79,11 +79,11 @@ const pollBFLResult = async (apiKey: string, taskId: string): Promise<string> =>
     const data = await response.json();
 
     if (data.status === 'Ready') {
-      const uniqueUrl = `${data.result.sample}?t=${new Date().getTime()}`;
-      return uniqueUrl;
+      // Return the image URL directly
+      return data.result.sample;
     } else if (data.status === 'Error') {
       throw new Error('BFL task failed');
     }
-
+    // If not ready or error, continue polling
   }
 };

@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import fibbLogo from '../../../components/images/FibbLogoWhite.svg';
 import { fetchFalApiKey } from './components/falAIComponent';
 import { fetchBflApiKey } from './components/bflAIComponent'; 
+import { generateImageWithFAL } from './components/falAIComponent';
+import { generateImageWithBFL } from './components/bflAIComponent';
 import { deductGenToken, fetchTokenData } from '../../Marketplace/TokenSystem/TokenCounter';
 import { error } from 'console';
 
@@ -181,8 +183,17 @@ const ImageGen: React.FC = () => {
       // If deduction was successful, update the local state
       setGenTokens(prevTokens => prevTokens - 1);
   
-      // Rest of your image generation code...
+      // Generate image based on selected style
+      let generatedImageUrl: string;
+      if (formState.selectedStyle === 'Enhanced') {
+        if (!apiKeyFal) throw new Error('FIBB_ENHANCED key not available');
+        generatedImageUrl = await generateImageWithFAL(apiKeyFal, formState.subject, selectedLoraUrl);
+      } else {
+        if (!apiKeyBfl) throw new Error('FIBB_RESEARCH key not available');
+        generatedImageUrl = await generateImageWithBFL(apiKeyBfl, formState.subject);
+      }
   
+      setGeneratedImage(generatedImageUrl);
     } catch (error) {
       console.error('Detailed error in image generation:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
