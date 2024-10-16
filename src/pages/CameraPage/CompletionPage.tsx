@@ -42,7 +42,6 @@ const CompletionPage = () => {
           className="mb-8 sm:mb-12 rounded-lg shadow-lg"
         />
         
-
       </main>
     </div>
   );
