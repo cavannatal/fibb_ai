@@ -1,43 +1,43 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-import market1 from './DemPhotos/marketing_1.jpeg';
-import market2 from './DemPhotos/marketing_2.jpeg';
-import market3 from './DemPhotos/marketing_3.jpeg';
-import market4 from './DemPhotos/marketing_4.jpeg';
-import market5 from './DemPhotos/marketing_5.jpg';
-import market6 from './DemPhotos/marketing_6.jpg';
-import market7 from './DemPhotos/marketing_7.jpeg';
-import market8 from './DemPhotos/marketing_3.jpg';
-import market9 from './DemPhotos/marketing_9.jpeg';
+import market1 from './DemPhotos/marketing_1.webp';
+import market2 from './DemPhotos/marketing_2.webp';
+import market3 from './DemPhotos/marketing_8.webp';
+import market4 from './DemPhotos/marketing_4.webp';
+import market5 from './DemPhotos/marketing_5.webp';
+import market6 from './DemPhotos/marketing_6.webp';
+import market7 from './DemPhotos/marketing_7.webp';
+import market8 from './DemPhotos/marketing_3.webp';
+import market9 from './DemPhotos/marketing_9.webp';
 
-import profess1 from './DemPhotos/professional_1.jpeg';
-import profess2 from './DemPhotos/professional_2.jpeg';
-import profess3 from './DemPhotos/professional_3.jpeg';
-import profess4 from './DemPhotos/professional_4.jpeg';
-import profess5 from './DemPhotos/professional_5.jpeg';
-import profess6 from './DemPhotos/professional_6.jpeg';
-import profess7 from './DemPhotos/professional7.jpg';
-import profess8 from './DemPhotos/professional_8.jpeg';
-import profess9 from './DemPhotos/professional_9.jpeg';
+import profess1 from './DemPhotos/professional_1.webp';
+import profess2 from './DemPhotos/professional_2.webp';
+import profess3 from './DemPhotos/professional_3.webp';
+import profess4 from './DemPhotos/professional_4.webp';
+import profess5 from './DemPhotos/professional_5.webp';
+import profess6 from './DemPhotos/professional_6.webp';
+import profess7 from './DemPhotos/professional7.webp';
+import profess8 from './DemPhotos/professional_8.webp';
+import profess9 from './DemPhotos/professional_9.webp';
 
-import pers1 from './DemPhotos/personalbrand_1.jpeg';
-import pers2 from './DemPhotos/personalbrand_2.jpg';
-import pers3 from './DemPhotos/personalbrand_3.jpeg';
-import pers4 from './DemPhotos/personalbrand_4.jpeg';
-import pers5 from './DemPhotos/personalbrand_5.jpeg';
-import pers6 from './DemPhotos/personalbrand_6.jpeg';
-import pers7 from './DemPhotos/personalbrand_7.jpeg';
+import pers1 from './DemPhotos/personalbrand_1.webp';
+import pers2 from './DemPhotos/personalbrand_2.webp';
+import pers3 from './DemPhotos/personalbrand_3.webp';
+import pers4 from './DemPhotos/personalbrand_4.webp';
+import pers5 from './DemPhotos/personalbrand_5.webp';
+import pers6 from './DemPhotos/personalbrand_6.webp';
+import pers7 from './DemPhotos/personalbrand_7.webp';
 
-import ls1 from './DemPhotos/ls1.png';
-import ls2 from './DemPhotos/ls2.png';
-import ls3 from './DemPhotos/ls3.png';
-import ls4 from './DemPhotos/ls4.png';
-import ls5 from './DemPhotos/ls5.png';
-import ls6 from './DemPhotos/ls6.png';
-import ls7 from './DemPhotos/ls7.png';
-import ls8 from './DemPhotos/ls8.png';
-import ls9 from './DemPhotos/ls9.png';
+import ls1 from './DemPhotos/ls1.webp';
+import ls2 from './DemPhotos/ls2.webp';
+import ls3 from './DemPhotos/ls3.webp';
+import ls4 from './DemPhotos/ls4.webp';
+import ls5 from './DemPhotos/ls5.webp';
+import ls6 from './DemPhotos/ls6.webp';
+import ls7 from './DemPhotos/ls7.webp';
+import ls8 from './DemPhotos/ls8.webp';
+import ls9 from './DemPhotos/ls9.webp';
 
 
 

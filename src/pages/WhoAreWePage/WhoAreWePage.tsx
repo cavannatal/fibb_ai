@@ -1,16 +1,16 @@
 import React from 'react';
 import { FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import matt from "./images/matt.jpg";
-import nick from "./images/nick.jpg";
-import cavan from "./images/cavan.jpg";
-import jake from "./images/jake.jpg";
-import ceasar from "./images/ceasar.jpg";
-import Mike from './images/Mike.jpeg';
-import allie from './images/allie.jpg';
-import fahim from './images/fahim.jpg';
-import carrie from './images/carrie.jpg';
-import javier from './images/javier.jpeg';
+import matt from "./images/matt.webp";
+import nick from "./images/nick.webp";
+import cavan from "./images/cavan.webp";
+import jake from "./images/jake.webp";
+import ceasar from "./images/ceasar.webp";
+import Mike from './images/Mike.webp';
+import allie from './images/allie.webp';
+import fahim from './images/fahim.webp';
+import carrie from './images/carrie.webp';
+import javier from './images/javier.webp';
 
 // Define types for our data structure
 interface TeamMember {

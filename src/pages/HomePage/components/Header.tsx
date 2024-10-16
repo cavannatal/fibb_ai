@@ -3,18 +3,18 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from 'aws-amplify/auth';
 
-import himg1 from './header_images/himg1.png';
-import himg2 from './header_images/himg2.png';
-import himg3 from './header_images/himg3.png';
-import himg4 from './header_images/himg4.png';
-import himg5 from './header_images/himg5.png';
-import himg6 from './header_images/himg6.png';
-import himg9 from './header_images/himg9.png';
+import himg1 from './header_images/himg1.webp';
+import himg2 from './header_images/himg2.webp';
+import himg3 from './header_images/himg3.webp';
+import himg4 from './header_images/himg4.webp';
+import himg5 from './header_images/himg5.webp';
+import himg6 from './header_images/himg6.webp';
+import himg9 from './header_images/himg9.webp';
 
-import circle from './header_images/home_shape_1.png';
-import square from './header_images/home_shape_11.png';
-import lemonleft from './header_images/home_shape_7.png';
-import lemonright from './header_images/home_shape_5.png';
+import circle from './header_images/home_shape_1.webp';
+import square from './header_images/home_shape_11.webp';
+import lemonleft from './header_images/home_shape_7.webp';
+import lemonright from './header_images/home_shape_5.webp';
 
 const Header: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
