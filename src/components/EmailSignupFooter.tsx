@@ -34,14 +34,14 @@ const EmailSignupFooter: React.FC = () => {
         },
         body: JSON.stringify({ email }),
       });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage('Subscribed successfully!');
-        setEmail('');
-      } else {
-        setMessage(data.message || 'Error subscribing. Please try again.');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
+      setMessage(data.message || 'Subscribed successfully!');
+      setEmail('');
     } catch (error) {
+      console.error('Error:', error);
       setMessage('Error subscribing. Please try again.');
     } finally {
       setIsLoading(false);
