@@ -27,7 +27,7 @@ const EmailSignupFooter: React.FC = () => {
     setIsLoading(true);
     setMessage('');
     try {
-      const response = await fetch('https://wu9j4g3ps5.execute-api.us-east-2.amazonaws.com/prod/subscribe', {
+      const response = await fetch('https://wu9j4g3ps5.execute-api.us-east-2.amazonaws.com/prod/email-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
