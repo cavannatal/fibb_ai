@@ -45,15 +45,15 @@ export const generateImageWithFAL = async (
     const result = await fal.subscribe('fal-ai/flux-lora', {
       input: {
         prompt: prompt,
-        image_size: { width: 1080, height: 1080 },
+        image_size: { width: 1024, height: 1024 },
         loras: loras,
         num_inference_steps: 50,
-        guidance_scale: 0,
+        guidance_scale: 3.5,
         num_images: 1,
         seed: Math.floor(Math.random() * 1000000), // Use an integer seed
         prompt_upscale: true,
-        safety_tolerance: 5,
-        enable_safety_checker: true,
+        safety_tolerance: 2,
+        enable_safety_checker: false,
         output_format: "jpeg",
         sync_mode: false,
       },
