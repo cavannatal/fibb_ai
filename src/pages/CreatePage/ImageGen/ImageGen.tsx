@@ -100,23 +100,40 @@ const ImageGen: React.FC = () => {
     const apiUrl = 'https://44stvp2e79.execute-api.us-east-2.amazonaws.com/api/getLoraFiles';
     
     try {
-      const response = await fetch(apiUrl, {
+      const loraTable = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sub }),
       });
   
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
+      if (!loraTable.ok) {
+        const errorData = await loraTable.json();
+        throw new Error(`HTTP error! status: ${loraTable.status}, message: ${errorData.message}`);
       }
   
-      const data = await response.json();
-      if (data.body.files && data.body.files.length > 0) {
-        setSelectedLoraUrl(data.body.files[0].presignedUrl);
+      const data = await loraTable.json();
+      console.log('API Response:', data);
+  
+      if (!data.items || !Array.isArray(data.items)) {
+        console.error('Unexpected data structure:', data);
+        return [];
       }
   
-      return data.body.files || [];
+      // Filter completed Lora files and map to the required format
+      const completedLoraFiles = data.items
+        .filter((item: any) => item.status === 'COMPLETED')
+        .map((item: any) => ({
+          key: item.requestName,
+          presignedUrl: item.generatedLoraURL
+        }));
+  
+      console.log('Completed Lora Files:', completedLoraFiles);
+  
+      if (completedLoraFiles.length > 0) {
+        setSelectedLoraUrl(completedLoraFiles[0].presignedUrl);
+      }
+  
+      return completedLoraFiles;
     } catch (error) {
       console.error('Error fetching Lora files:', error);
       return [];
