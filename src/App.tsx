@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { Amplify } from 'aws-amplify';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -21,14 +21,23 @@ import GuidedProcess from './pages/CameraPage/GuidedProcess';
 import ComputePage from './pages/ComputePage/ComputePage';
 import CompletionPage from './pages/CameraPage/CompletionPage';
 import Profile from './pages/ProfilePage/ProfilePage';        
-import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp'
+import MarketplaceSoon from './pages/Marketplace/MarketPlaceTemp';
 import TokenDisplay from './pages/Marketplace/TokenSystem/TokenDisplay';
 import ConsentPage from './pages/SubscriptionPage/ConsentPage';
-
 
 import awsExports from './aws-exports';
 
 Amplify.configure(awsExports);
+
+const FooterWrapper = () => {
+  const location = useLocation();
+  const footerRoutes = ['/', '/portfolio']; // Footer will appear only on HomePage and Services (Portfolio) page
+
+  if (footerRoutes.includes(location.pathname)) {
+    return <Footer />;
+  }
+  return null;
+};
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -40,8 +49,6 @@ const App: React.FC = () => {
     };
     initUser();
   }, []);
-
-
 
   const signOutUser = async () => {
     await handleSignOut();
@@ -111,7 +118,7 @@ const App: React.FC = () => {
             />
           </Routes>
         </main>
-        <Footer />
+        <FooterWrapper />
       </div>
     </Router>
   );
