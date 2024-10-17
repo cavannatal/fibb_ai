@@ -4,7 +4,7 @@ import { Menu, X, User, LayoutDashboard, Settings, CreditCard, LogOut, Image, Ch
 import FibbLogoBlack from './images/FibbLogoBlack.svg';
 
 interface NavBarProps {
-  user?: any; // We're using 'any' here as the exact type is not exported from Amplify
+  user?: any;
   signOut: () => Promise<void>;
 }
 
@@ -13,6 +13,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
 
   const navItems = [
     { name: "Our Team", path: "/team" },
@@ -35,11 +36,18 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const toggleProfileDropdown = () => setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node) &&
+        profileButtonRef.current &&
+        !profileButtonRef.current.contains(event.target as Node)
+      ) {
         setIsProfileDropdownOpen(false);
       }
     };
@@ -47,6 +55,19 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
     };
   }, []);
 
@@ -75,27 +96,41 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
             {user ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
+                  ref={profileButtonRef}
                   onClick={toggleProfileDropdown}
                   className="py-2 px-1 lg:px-2 text-sm lg:text-base text-gray-600 hover:text-[#084248] transition duration-300 font-semibold whitespace-nowrap flex items-center"
+                  aria-haspopup="true"
+                  aria-expanded={isProfileDropdownOpen}
                 >
                   <User size={20} />
-                  <ChevronDown size={16} className="ml-1" />
+                  <ChevronDown size={16} className={`ml-1 transition-transform duration-200 ${isProfileDropdownOpen ? 'transform rotate-180' : ''}`} />
                 </button>
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                  <div 
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu"
+                  >
                     {profileMenuItems.map((item, index) => (
                       <Link
                         key={index}
                         to={item.path}
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer"
+                        role="menuitem"
+                        onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         <span className="mr-2">{item.icon}</span>
                         {item.name}
                       </Link>
                     ))}
                     <button
-                      onClick={signOut}
-                      className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      onClick={() => {
+                        setIsProfileDropdownOpen(false);
+                        signOut();
+                      }}
+                      className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer"
+                      role="menuitem"
                     >
                       <LogOut size={16} className="mr-2" />
                       Log Out
@@ -117,7 +152,7 @@ const NavBar: React.FC<NavBarProps> = ({ user, signOut }) => {
       {/* Mobile menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-108 opacity-100' : 'max-h-0 opacity-0'
+          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50">
