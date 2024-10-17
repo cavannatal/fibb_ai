@@ -81,6 +81,7 @@ const PricingPage: React.FC = () => {
           'Additional Generations: $0.30/ea'
         ],
         packageId: { monthly: 'cc2f2542-a7be-42cc-9290-d1f399c6830a', yearly: '51ae3be9-6aaf-4ea7-8e5f-5ea4707fd20f' },
+        popular: true,
       },
       {
         name: 'Fibb Pro',
@@ -109,7 +110,7 @@ const PricingPage: React.FC = () => {
           '100 Curated Headshots',
           '10 Clothing, Expression, and Background changes'
         ],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'launch-monthly', yearly: 'launch-yearly' },
       },
       {
         name: 'Ascent',
@@ -122,7 +123,7 @@ const PricingPage: React.FC = () => {
           'Corporate Headshot Package',
           'Creative Headshot Package'
         ],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'ascent-monthly', yearly: 'ascent-yearly' },
       },
       {
         name: 'Summit',
@@ -136,7 +137,7 @@ const PricingPage: React.FC = () => {
           'Creative Headshot Package',
           'Lifestyle Package'
         ],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'summit-monthly', yearly: 'summit-yearly' },
       },
       {
         name: 'Pinnacle',
@@ -152,7 +153,7 @@ const PricingPage: React.FC = () => {
           'Mega-Prompt Package',
           'Creative General Package'
         ],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'pinnacle-monthly', yearly: 'pinnacle-yearly' },
       }
     ],
     founders: [
@@ -161,27 +162,26 @@ const PricingPage: React.FC = () => {
         price: '$1,750',
         description: '',
         features: [],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'pioneers-palette-monthly', yearly: 'pioneers-palette-yearly' },
       },
       {
         name: 'Genesis Creator',
         price: '$3,000',
         description: '',
         features: [],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'genesis-creator-monthly', yearly: 'genesis-creator-yearly' },
       },
       {
         name: "Founder's Forge",
         price: '$10,000',
         description: '',
         features: [],
-        packageId: { monthly: '$12', yearly: '$120' },
+        packageId: { monthly: 'founders-forge-monthly', yearly: 'founders-forge-yearly' },
       },
     ],
-    
   };
   
-    const initiateStripeCheckout = async (packageId: string) => {
+  const initiateStripeCheckout = async (packageId: string) => {
     const { userId } = await getCurrentUser();
 
     try {
@@ -245,6 +245,41 @@ const PricingPage: React.FC = () => {
     }
   };
 
+  const getAbstractShape = (index: number) => {
+    const shapes = [
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 100 C 80 30, 130 30, 200 100 S 300 170, 400 100" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <circle cx="340" cy="60" r="100" fill="rgba(203,245,154,0.05)" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 150 Q 100 50, 200 150 T 400 150" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <rect x="240" y="0" width="160" height="160" fill="rgba(203,245,154,0.05)" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 100 C 80 30, 130 30, 200 100 S 300 170, 400 100" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <circle cx="60" cy="230" r="120" fill="rgba(203,245,154,0.05)" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M50 0 L100 50 L50 100 L0 50 Z" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <path d="M350 200 L400 250 L350 300 L300 250 Z" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <circle cx="200" cy="150" r="50" fill="rgba(203,245,154,0.05)" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 0 Q 200 0, 400 150 T 0 300" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <rect x="50" y="50" width="100" height="100" transform="rotate(45 100 100)" fill="rgba(203,245,154,0.05)" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 150 C 100 50, 300 50, 400 150 S 300 250, 200 150 S 100 50, 0 150" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <circle cx="200" cy="150" r="100" fill="none" stroke="rgba(203,245,154,0.05)" strokeWidth="2" />
+      </svg>,
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 0 L400 0 L200 300 Z" stroke="rgba(203,245,154,0.1)" strokeWidth="2" fill="none" />
+        <circle cx="200" cy="100" r="50" fill="rgba(203,245,154,0.05)" />
+      </svg>
+    ];
+    return shapes[index % shapes.length];
+  };
+
   return (
     <div className="bg-gradient-to-r from-[#093f48] to-[#004948] text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
@@ -305,43 +340,46 @@ const PricingPage: React.FC = () => {
 
         <div className={`grid gap-6 sm:gap-8 ${activeTab === 'founders' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'}`}>
            {allPlans[activeTab].map((plan, index) => (
-            <div key={plan.name} className="flex flex-col p-4 sm:p-6 rounded-2xl bg-gradient-to-b from-[#144a53] to-[#093f48] shadow-xl transform transition-all duration-300 hover:scale-105">
+            <div key={plan.name} className="relative flex flex-col p-4 sm:p-6 rounded-2xl bg-gradient-to-b from-[#144a53] to-[#093f48] shadow-xl transform transition-all duration-300 hover:scale-105 overflow-hidden">
+              {getAbstractShape(index)}
+              <div className="relative z-10">
               {plan.popular && <div className="text-xs font-semibold uppercase tracking-wide text-[#cbf59a] mb-2">Most popular</div>}
-              <h3 className="text-2xl sm:text-3xl font-bold mb-2"
-              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-              >{plan.name}</h3>
-              <p className="text-2xl sm:text-3xl font-bold mb-4"
-              style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-              >
-                {typeof plan.price === 'string' 
-                  ? plan.price
-                  : billingPeriod === 'monthly' 
-                    ? plan.price.monthly 
-                    : plan.price.yearly}
-                {activeTab === 'consumer' && <span className="text-lg sm:text-xl font-normal">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>}
-              </p>
-              <button 
-                  className="w-full bg-[#f79302] text-black py-2 sm:py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
-                  style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
-                  onClick={() => handleSubscription(billingPeriod === 'monthly' ? (plan.packageId as { monthly: string, yearly: string }).monthly : (plan.packageId as { monthly: string, yearly: string }).yearly)}
+                <h3 className="text-2xl sm:text-3xl font-bold mb-2"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                >{plan.name}</h3>
+                <p className="text-2xl sm:text-3xl font-bold mb-4"
+                style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
                 >
-                {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
-              </button>
-              <p className="text-base sm:text-lg text-[#cbf59a] mb-4"
-              style={{ fontFamily: '"Font1", sans-serif' }}
-              >{plan.description}</p>
-              <ul className="space-y-2 text-sm sm:text-md"
-              style={{ fontFamily: '"Font1", sans-serif' }}
-              >
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-[#cbf59a] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                  {typeof plan.price === 'string' 
+                    ? plan.price
+                    : billingPeriod === 'monthly' 
+                      ? plan.price.monthly 
+                      : plan.price.yearly}
+                  {activeTab === 'consumer' && <span className="text-lg sm:text-xl font-normal">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>}
+                </p>
+                <button 
+                    className="w-full bg-[#f79302] text-black py-2 sm:py-3 px-4 rounded-full font-semibold hover:bg-[#d8ffa7] transition-colors duration-300 mb-4 transform hover:scale-105"
+                    style={{ fontFamily: '"Sofia Pro Bold", sans-serif' }}
+                    onClick={() => handleSubscription(billingPeriod === 'monthly' ? (plan.packageId as { monthly: string, yearly: string }).monthly : (plan.packageId as { monthly: string, yearly: string }).yearly)}
+                  >
+                  {activeTab === 'consumer' ? 'Subscribe' : activeTab === 'professional' ? 'Subscribe' : 'Subscribe'}
+                </button>
+                <p className="text-base sm:text-lg text-[#cbf59a] mb-4"
+                style={{ fontFamily: '"Font1", sans-serif' }}
+                >{plan.description}</p>
+                <ul className="space-y-2 text-sm sm:text-md"
+                style={{ fontFamily: '"Font1", sans-serif' }}
+                >
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-[#cbf59a] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
